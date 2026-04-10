@@ -26,6 +26,9 @@ export class UserRepository {
     if (!user) {
       user = await this.model.create({ walletAddress, isAdmin });
       (user as unknown as { isNew: boolean }).isNew = true;
+    } else if (isAdmin && !user.isAdmin) {
+      user.isAdmin = true;
+      await user.save();
     }
     return user as InstanceType<typeof UserModel> & { isNew?: boolean };
   }
