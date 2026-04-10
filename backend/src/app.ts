@@ -2,6 +2,7 @@ import { dbConnection } from "@database/index";
 import { errorHandlerMiddleware } from "@middlewares/error.middleware";
 import { globalRateLimiter } from "@middlewares/rateLimit.middleware";
 import { systemRouter } from "@routes/system.routes";
+import { x402PaymentMiddleware } from "@libraries/x402.service";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import express, { Request, Response, NextFunction, Router } from "express";
@@ -29,6 +30,7 @@ export class App {
     this.initializeCors();
     this.initializeSwagger();
     this.initializeMiddlewares();
+    this.initializeX402();
     this.initializeRoutes(routes);
     this.initializeErrorHandling();
   }
@@ -68,7 +70,11 @@ export class App {
       );
       res.setHeader(
         "Access-Control-Allow-Headers",
-        "Content-Type, Authorization, X-Payment, X-PAYMENT, X-Payment-Wallet, x-payment, x-payment-wallet"
+        "Content-Type, Authorization, X-Payment, X-PAYMENT, Payment-Signature, PAYMENT-SIGNATURE, X-Payment-Wallet, x-payment, x-payment-wallet, payment-signature, Access-Control-Expose-Headers"
+      );
+      res.setHeader(
+        "Access-Control-Expose-Headers",
+        "X-Payment, PAYMENT-REQUIRED, PAYMENT-RESPONSE, Payment-Response, X-PAYMENT-REQUIREMENTS"
       );
       res.setHeader("Access-Control-Max-Age", "86400");
 
@@ -132,6 +138,10 @@ export class App {
       })
     );
     this.app.use(cookieParser());
+  }
+
+  private initializeX402() {
+    this.app.use(x402PaymentMiddleware);
   }
 
   private initializeRoutes(routes: Routes[]) {

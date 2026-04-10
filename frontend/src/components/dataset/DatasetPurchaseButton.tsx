@@ -8,19 +8,14 @@ import {
   Typography,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import config from "@/config";
 import { formatUSDC } from "@/utils";
+import { wrapFetchWithPayment, x402Client } from "@x402-avm/fetch";
+import { registerExactAvmScheme } from "@x402-avm/avm/exact/client";
+import type { ClientAvmSigner } from "@x402-avm/avm";
 import algosdk from "algosdk";
-
-function uint8ToBase64(bytes: Uint8Array): string {
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
 
 interface Props {
   datasetId: string;
@@ -31,16 +26,50 @@ interface Props {
 export default function DatasetPurchaseButton({
   datasetId,
   priceUSDC,
-  sellerWalletAddress,
 }: Props) {
-  const { isConnected, peraWallet, walletAddress } = useAuth();
+  const { isConnected, peraWallet, walletAddress, jwt } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
 
-  const handlePurchase = async () => {
-    if (!isConnected || !peraWallet || !walletAddress) {
+  const signer: ClientAvmSigner | null = useMemo(() => {
+    if (!isConnected || !peraWallet || !walletAddress) return null;
+    return {
+      address: walletAddress,
+      signTransactions: async (
+        txns: Uint8Array[],
+        indexesToSign?: number[]
+      ): Promise<(Uint8Array | null)[]> => {
+        const txnGroup = txns.map((txnBytes, i) => {
+          const decoded = algosdk.decodeUnsignedTransaction(txnBytes);
+          const shouldSign =
+            !indexesToSign || indexesToSign.includes(i);
+          return {
+            txn: decoded,
+            signers: shouldSign ? [walletAddress] : [],
+          };
+        });
+
+        const signedTxns = await peraWallet!.signTransaction([txnGroup]);
+
+        return txns.map((_, i) => {
+          if (indexesToSign && !indexesToSign.includes(i)) return null;
+          return new Uint8Array(signedTxns.shift() ?? []);
+        });
+      },
+    };
+  }, [isConnected, peraWallet, walletAddress]);
+
+  const fetchWithPay = useMemo(() => {
+    if (!signer) return null;
+    const client = new x402Client();
+    registerExactAvmScheme(client, { signer });
+    return wrapFetchWithPayment(fetch, client);
+  }, [signer]);
+
+  const handlePurchase = useCallback(async () => {
+    if (!fetchWithPay || !walletAddress) {
       setError("Please connect your wallet first");
       return;
     }
@@ -50,86 +79,36 @@ export default function DatasetPurchaseButton({
 
     try {
       const downloadEndpoint = `${config.apiUrl}/api/datasets/${datasetId}/download`;
-      const jwt = localStorage.getItem("ide_jwt");
-
-      const initialRes = await fetch(downloadEndpoint, {
-        headers: {
-          Authorization: jwt ? `Bearer ${jwt}` : "",
-          "x-payment-wallet": walletAddress,
-        },
-      });
-
-      if (initialRes.ok) {
-        const body = await initialRes.json();
-        setDownloadUrl(body.downloadUrl);
-        setFileName(body.fileName);
-        setLoading(false);
-        return;
+      const headers: Record<string, string> = {
+        "x-payment-wallet": walletAddress,
+      };
+      if (jwt) {
+        headers["Authorization"] = `Bearer ${jwt}`;
       }
 
-      if (initialRes.status !== 402) {
-        throw new Error("Unexpected response from server");
+      const response = await fetchWithPay(downloadEndpoint, { headers });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(
+          (body as Record<string, string>).message ||
+            `Purchase failed (HTTP ${response.status})`
+        );
       }
 
-      const paymentRequirement = await initialRes.json();
-      const accepts = paymentRequirement.accepts?.[0];
-      if (!accepts) throw new Error("No payment requirements received");
-
-      const algodClient = new algosdk.Algodv2(
-        "",
-        "https://testnet-api.algonode.cloud",
-        ""
-      );
-      const suggestedParams = await algodClient.getTransactionParams().do();
-
-      const microAmount = Math.round(priceUSDC * 1_000_000);
-      const usdcAssetId = config.usdcAssetId;
-
-      const paymentTxn =
-        algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-          sender: walletAddress,
-          receiver: sellerWalletAddress,
-          amount: microAmount,
-          assetIndex: usdcAssetId,
-          suggestedParams,
-        });
-
-      const signedTxns = await peraWallet.signTransaction([[{ txn: paymentTxn }]]);
-      const signedBytes = new Uint8Array(signedTxns[0]);
-
-      const submitRes = await algodClient.sendRawTransaction(signedBytes).do();
-      const txId =
-        (submitRes as any).txId ??
-        (submitRes as any).txid ??
-        (submitRes as any).txID ??
-        "";
-
-      if (txId) {
-        await algosdk.waitForConfirmation(algodClient, txId, 4);
-      }
-
-      const downloadRes = await fetch(downloadEndpoint, {
-        headers: {
-          Authorization: jwt ? `Bearer ${jwt}` : "",
-          "x-payment": txId,
-          "x-payment-wallet": walletAddress,
-        },
-      });
-
-      if (!downloadRes.ok)
-        throw new Error("Failed to get download URL after payment");
-
-      const body = await downloadRes.json();
+      const body = await response.json();
       setDownloadUrl(body.downloadUrl);
       setFileName(body.fileName);
     } catch (err: unknown) {
-      setError(
-        err instanceof Error ? err.message : "Purchase failed. Please try again."
-      );
+      const message =
+        err instanceof Error ? err.message : "Purchase failed. Please try again.";
+      if (!message.includes("cancelled") && !message.includes("rejected")) {
+        setError(message);
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchWithPay, walletAddress, jwt, datasetId]);
 
   if (downloadUrl) {
     return (
@@ -171,7 +150,7 @@ export default function DatasetPurchaseButton({
         variant="contained"
         size="large"
         fullWidth
-        disabled={loading}
+        disabled={loading || !isConnected}
         onClick={handlePurchase}
         startIcon={
           loading ? (
@@ -182,7 +161,9 @@ export default function DatasetPurchaseButton({
         }
         sx={{ fontWeight: 700, py: 1.5 }}
       >
-        {loading ? "Processing Payment..." : `Purchase for ${formatUSDC(priceUSDC)}`}
+        {loading
+          ? "Processing Payment..."
+          : `Purchase for ${formatUSDC(priceUSDC)}`}
       </Button>
       {!isConnected && (
         <Typography

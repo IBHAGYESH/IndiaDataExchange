@@ -118,51 +118,19 @@ export class DatasetRoute {
       })
     );
 
-    // Download route — x402 protected (wired separately in server.ts)
+    // Download route — protected by x402 payment middleware (applied globally in app.ts).
+    // By the time this handler runs, payment has been verified by the facilitator
+    // OR the buyer has existing access (re-download granted by onProtectedRequest hook).
     this.router.get(
       `${this.path}/:id/download`,
       optionalAuth,
       tryCatch(async (req: AuthRequest, res: Response) => {
         const { id } = req.params as Record<string, string>;
-        const paymentHeader = req.headers["x-payment"] as string;
-        const payerWallet = req.headers["x-payment-wallet"] as string;
 
-        if (!paymentHeader && !payerWallet) {
-          // Return 402 payment required with dataset info for x402 client
-          const datasetService = new DatasetService();
-          const { data: datasetData } = await datasetService.getDataset(id);
-          const dataset = (datasetData as { dataset: { priceUSDC: number; sellerWalletAddress: string } }).dataset;
-
-          res.status(402).json({
-            error: "Payment Required",
-            accepts: [
-              {
-                scheme: "exact",
-                network: "algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=",
-                payTo: dataset.sellerWalletAddress,
-                price: `$${dataset.priceUSDC.toFixed(2)}`,
-                extra: { asset: "10458941" },
-              },
-            ],
-          });
-          return;
-        }
-
-        const walletAddress = payerWallet || req.user?.walletAddress;
-        if (!walletAddress) {
-          throw new AppError("ValidationError", 400, "Wallet address required", true);
-        }
-
-        const txId = paymentHeader || "redownload";
-        const isHuman = !!req.user;
-        const buyerId = req.user?.userId;
-
-        const { data, code } = await this.service.getDownloadUrl(
+        const { data, code } = await this.service.getDownloadUrlAfterPayment(
           id,
-          walletAddress,
-          txId,
-          isHuman,
-          buyerId
+          req.user?.walletAddress || (req.headers["x-payment-wallet"] as string),
+          req.user?.userId
         );
         res.status(code).json(data);
       })

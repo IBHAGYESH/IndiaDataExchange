@@ -162,69 +162,44 @@ export class DatasetService {
     return returnDataObj({ success: true });
   }
 
-  async getDownloadUrl(
+  /**
+   * Called after x402 payment verification/settlement OR for re-downloads.
+   * Purchase recording for NEW purchases is handled by the x402 onAfterSettle hook
+   * in x402.service.ts. This method handles re-download tracking and URL generation.
+   */
+  async getDownloadUrlAfterPayment(
     datasetId: string,
-    buyerWalletAddress: string,
-    paymentTxId: string,
-    isHuman: boolean,
+    buyerWalletAddress?: string,
     buyerId?: string
   ) {
-    const dataset = await datasetRepo.findById(datasetId);
+    const dataset = await datasetRepo.findByIdWithFullData(datasetId);
     if (!dataset) throw new AppError("NotFound", 404, "Dataset not found", true);
 
-    // Check for existing valid access (re-download)
-    const hasAccess = await purchaseRepo.hasValidAccess(buyerWalletAddress, datasetId);
-
-    if (!hasAccess) {
-      // Create purchase record
-      const expiresAt = isHuman ? undefined : new Date(Date.now() + 24 * 60 * 60 * 1000);
-      await purchaseRepo.create({
+    if (buyerWalletAddress) {
+      const existingPurchase = await purchaseRepo.findByWalletAndDataset(
         buyerWalletAddress,
-        buyerId: buyerId as unknown as import("mongoose").Types.ObjectId | undefined,
-        datasetId: datasetId as unknown as import("mongoose").Types.ObjectId,
-        paymentTxId,
-        amountPaidUSDC: dataset.priceUSDC,
-        downloadCount: 1,
-        lastDownloadAt: new Date(),
-        redownloadExpiresAt: expiresAt,
-        isHuman,
-      });
-
-      // Increment total purchases on dataset
-      await datasetRepo.incrementPurchases(datasetId);
-
-      // Update seller's totalEarnings
-      const seller = await userRepo.findByWallet(dataset.sellerWalletAddress);
-      if (seller) {
-        await userRepo.update(seller._id!.toString(), {
-          totalEarnings: (seller.totalEarnings || 0) + dataset.priceUSDC,
-        });
+        datasetId
+      );
+      if (existingPurchase) {
+        await purchaseRepo.incrementDownload(existingPurchase._id as string);
       }
 
-      // Update buyer's totalSpent if human
-      if (isHuman && buyerId) {
+      if (buyerId) {
         const buyer = await userRepo.findById(buyerId);
-        if (buyer) {
+        if (buyer && !existingPurchase) {
           await userRepo.update(buyerId, {
             totalSpent: (buyer.totalSpent || 0) + dataset.priceUSDC,
           });
         }
       }
-    } else {
-      // Update download count
-      const purchase = await purchaseRepo.findByWalletAndDataset(buyerWalletAddress, datasetId);
-      if (purchase) {
-        await purchaseRepo.incrementDownload(purchase._id as string);
-      }
     }
 
-    const fullDataset = await datasetRepo.findById(datasetId);
-    const downloadUrl = getSignedUrl(fullDataset!.fullDataIpfsCid);
-    const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
+    const downloadUrl = getSignedUrl(dataset.fullDataIpfsCid);
+    const expiresAt = Date.now() + 60 * 60 * 1000;
 
     return returnDataObj({
       downloadUrl,
-      fileName: fullDataset!.fullDataFileName,
+      fileName: dataset.fullDataFileName,
       expiresAt,
     });
   }

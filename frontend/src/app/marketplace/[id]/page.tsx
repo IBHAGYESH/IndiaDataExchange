@@ -2,8 +2,18 @@
 
 import { use } from "react";
 import {
-  Container, Grid, Typography, Box, Chip, Stack, Button,
-  Card, CardContent, CircularProgress, Divider, Link as MuiLink
+  Container,
+  Grid,
+  Typography,
+  Box,
+  Chip,
+  Stack,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Divider,
+  Link as MuiLink,
 } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import MainLayout from "@/components/layouts/MainLayout";
@@ -12,7 +22,11 @@ import { useGetDatasetQuery } from "@/redux/api/datasetApi";
 import { formatUSDC, truncateAddress, formatBytes, formatDate } from "@/utils";
 import config from "@/config";
 
-export default function DatasetDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function DatasetDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = use(params);
   const { data, isLoading, isError } = useGetDatasetQuery(id);
 
@@ -46,8 +60,14 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
           <Grid item xs={12} md={8}>
             <Box sx={{ mb: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
               <Chip label={dataset.category} color="primary" />
-              <Chip label={`Format: ${dataset.format.toUpperCase()}`} variant="outlined" />
-              <Chip label={`${dataset.recordCount.toLocaleString()} records`} variant="outlined" />
+              <Chip
+                label={`Format: ${dataset.format.toUpperCase()}`}
+                variant="outlined"
+              />
+              <Chip
+                label={`${dataset.recordCount.toLocaleString()} records`}
+                variant="outlined"
+              />
             </Box>
 
             <Typography variant="h4" fontWeight={800} gutterBottom>
@@ -60,7 +80,12 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
 
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 3 }}>
               {dataset.tags.map((tag) => (
-                <Chip key={tag} label={`#${tag}`} size="small" sx={{ bgcolor: "background.paper" }} />
+                <Chip
+                  key={tag}
+                  label={`#${tag}`}
+                  size="small"
+                  sx={{ bgcolor: "background.paper" }}
+                />
               ))}
             </Box>
 
@@ -72,16 +97,29 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
             <Grid container spacing={2}>
               {[
                 { label: "Format", value: dataset.format.toUpperCase() },
-                { label: "Records", value: dataset.recordCount.toLocaleString() },
+                {
+                  label: "Records",
+                  value: dataset.recordCount.toLocaleString(),
+                },
                 { label: "File Size", value: formatBytes(dataset.sizeBytes) },
-                { label: "Total Purchases", value: dataset.totalPurchases.toString() },
+                {
+                  label: "Total Purchases",
+                  value: dataset.totalPurchases.toString(),
+                },
                 { label: "Listed On", value: formatDate(dataset.createdAt) },
-                { label: "Seller", value: truncateAddress(dataset.sellerWalletAddress) },
+                {
+                  label: "Seller",
+                  value: truncateAddress(dataset.sellerWalletAddress),
+                },
               ].map((item) => (
                 <Grid item xs={6} sm={4} key={item.label}>
                   <Box>
-                    <Typography variant="caption" color="text.secondary">{item.label}</Typography>
-                    <Typography variant="body2" fontWeight={600}>{item.value}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {item.label}
+                    </Typography>
+                    <Typography variant="body2" fontWeight={600}>
+                      {item.value}
+                    </Typography>
                   </Box>
                 </Grid>
               ))}
@@ -93,7 +131,8 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
               Sample Preview
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Preview the sample data before purchasing. The full dataset is larger and higher quality.
+              Preview the sample data before purchasing. The full dataset is
+              larger and higher quality.
             </Typography>
             <Button
               variant="outlined"
@@ -119,10 +158,19 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
               }}
             >
               <CardContent>
-                <Typography variant="h4" color="primary" fontWeight={800} gutterBottom>
+                <Typography
+                  variant="h4"
+                  color="primary"
+                  fontWeight={800}
+                  gutterBottom
+                >
                   {formatUSDC(dataset.priceUSDC)}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 3 }}
+                >
                   One-time purchase. Re-download anytime from your dashboard.
                 </Typography>
 
@@ -135,12 +183,13 @@ export default function DatasetDetailPage({ params }: { params: Promise<{ id: st
                 <Divider sx={{ my: 2 }} />
 
                 <Typography variant="caption" color="text.secondary">
-                  Payment goes directly to seller&apos;s wallet. No platform fees. Powered by Algorand + x402.
+                  Payment goes directly to seller&apos;s wallet. No platform
+                  fees. Powered by Algorand + x402.
                 </Typography>
 
                 <Box sx={{ mt: 2 }}>
                   <MuiLink
-                    href={`https://testnet.algoexplorer.io/address/${dataset.sellerWalletAddress}`}
+                    href={`https://lora.algokit.io/testnet/account/${dataset.sellerWalletAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     variant="caption"
