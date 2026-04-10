@@ -24,9 +24,15 @@ export const fromMicroUSDC = (microAmount: bigint | number): number =>
 
 export async function isOptedIntoUSDC(walletAddress: string): Promise<boolean> {
   try {
-    const accountInfo = await algodClient.accountInformation(walletAddress).do();
-    const assets = accountInfo.assets || [];
-    return assets.some((asset) => asset.assetId === BigInt(USDC_ASSET_ID));
+    const accountInfo = await algodClient
+      .accountInformation(walletAddress)
+      .do();
+    const assets = (accountInfo as any).assets || [];
+    return assets.some(
+      (asset: any) =>
+        Number(asset["asset-id"] ?? asset.assetId ?? asset["asset_id"]) ===
+        USDC_ASSET_ID
+    );
   } catch {
     return false;
   }
@@ -34,16 +40,24 @@ export async function isOptedIntoUSDC(walletAddress: string): Promise<boolean> {
 
 export async function getUSDCBalance(walletAddress: string): Promise<number> {
   try {
-    const accountInfo = await algodClient.accountInformation(walletAddress).do();
-    const assets = accountInfo.assets || [];
-    const usdc = assets.find((asset) => asset.assetId === BigInt(USDC_ASSET_ID));
+    const accountInfo = await algodClient
+      .accountInformation(walletAddress)
+      .do();
+    const assets = (accountInfo as any).assets || [];
+    const usdc = assets.find(
+      (asset: any) =>
+        Number(asset["asset-id"] ?? asset.assetId ?? asset["asset_id"]) ===
+        USDC_ASSET_ID
+    );
     return usdc ? Number(usdc.amount) / 10 ** USDC_DECIMALS : 0;
   } catch {
     return 0;
   }
 }
 
-export async function buildOptInTransaction(walletAddress: string): Promise<string> {
+export async function buildOptInTransaction(
+  walletAddress: string
+): Promise<string> {
   const suggestedParams = await algodClient.getTransactionParams().do();
   const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     sender: walletAddress,
@@ -55,11 +69,16 @@ export async function buildOptInTransaction(walletAddress: string): Promise<stri
   return Buffer.from(algosdk.encodeUnsignedTransaction(txn)).toString("base64");
 }
 
-export async function submitSignedTransaction(signedTxnBase64: string): Promise<string> {
+export async function submitSignedTransaction(
+  signedTxnBase64: string
+): Promise<string> {
   const signedTxnBytes = Buffer.from(signedTxnBase64, "base64");
-  const { txid } = await algodClient.sendRawTransaction(signedTxnBytes).do();
-  await algosdk.waitForConfirmation(algodClient, txid, 4);
-  return txid;
+  const result = await algodClient.sendRawTransaction(signedTxnBytes).do();
+  const txid = (result as any).txId ?? (result as any).txid ?? (result as any).txID;
+  if (txid) {
+    await algosdk.waitForConfirmation(algodClient, txid, 4);
+  }
+  return txid || "";
 }
 
 export async function submitSignedTransactionGroup(
@@ -67,26 +86,98 @@ export async function submitSignedTransactionGroup(
 ): Promise<string> {
   const signedBytes = signedTxnsBase64.map((t) => Buffer.from(t, "base64"));
   const combined = Buffer.concat(signedBytes);
-  const { txid } = await algodClient.sendRawTransaction(combined).do();
-  await algosdk.waitForConfirmation(algodClient, txid, 4);
-  return txid;
+  const result = await algodClient.sendRawTransaction(combined).do();
+  const txid = (result as any).txId ?? (result as any).txid ?? (result as any).txID;
+  if (txid) {
+    await algosdk.waitForConfirmation(algodClient, txid, 4);
+  }
+  return txid || "";
 }
 
-export async function verifyTransaction(txId: string): Promise<Record<string, unknown>> {
+export async function verifyTransaction(
+  txId: string
+): Promise<Record<string, unknown>> {
   const txInfo = await indexerClient.lookupTransactionByID(txId).do();
   return txInfo.transaction as unknown as Record<string, unknown>;
 }
 
-export async function verifyWalletSignature(
+/**
+ * Verify wallet ownership via a signed zero-ALGO transaction.
+ * The frontend builds a 0-ALGO payment from the wallet to itself,
+ * includes the nonce in the note field, and signs it with Pera.
+ * We decode the signed txn, verify sender == claimed address and
+ * note contains the nonce. The txn is never submitted on-chain.
+ */
+export function verifySignedAuthTransaction(
   walletAddress: string,
   nonce: string,
-  signature: string
-): Promise<boolean> {
+  signedTxnBase64: string
+): boolean {
   try {
-    const encodedNonce = new TextEncoder().encode(nonce);
-    const signatureBytes = Buffer.from(signature, "base64");
-    return algosdk.verifyBytes(encodedNonce, signatureBytes, walletAddress);
-  } catch {
+    const signedTxnBytes = new Uint8Array(
+      Buffer.from(signedTxnBase64, "base64")
+    );
+    const decoded = algosdk.decodeSignedTransaction(signedTxnBytes);
+
+    const txn = decoded.txn as any;
+
+    let senderAddress = "";
+    if (txn.sender) {
+      senderAddress =
+        typeof txn.sender === "string"
+          ? txn.sender
+          : txn.sender.toString
+            ? txn.sender.toString()
+            : "";
+    }
+    if (!senderAddress && txn.from) {
+      senderAddress =
+        typeof txn.from === "string"
+          ? txn.from
+          : txn.from.toString
+            ? txn.from.toString()
+            : "";
+    }
+    if (!senderAddress && txn.snd) {
+      if (txn.snd instanceof Uint8Array) {
+        senderAddress = algosdk.encodeAddress(txn.snd);
+      } else if (txn.snd.publicKey instanceof Uint8Array) {
+        senderAddress = algosdk.encodeAddress(txn.snd.publicKey);
+      } else {
+        senderAddress = txn.snd.toString ? txn.snd.toString() : "";
+      }
+    }
+
+    if (senderAddress !== walletAddress) {
+      console.error(
+        `Auth verify: sender mismatch. Expected ${walletAddress}, got ${senderAddress}`
+      );
+      return false;
+    }
+
+    let noteBytes: Uint8Array | undefined;
+    if (txn.note instanceof Uint8Array) {
+      noteBytes = txn.note;
+    } else if ((decoded as any).txn?.note instanceof Uint8Array) {
+      noteBytes = (decoded as any).txn.note;
+    }
+
+    if (!noteBytes) {
+      console.error("Auth verify: no note field in transaction");
+      return false;
+    }
+
+    const noteStr = new TextDecoder().decode(noteBytes);
+    if (!noteStr.includes(nonce)) {
+      console.error(
+        `Auth verify: nonce mismatch. Note: "${noteStr}", expected nonce: "${nonce}"`
+      );
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error("Auth verify: transaction decode failed:", err);
     return false;
   }
 }
@@ -103,13 +194,14 @@ export async function buildBountyEscrowTxnGroup(
 
   const contractAddress = algosdk.getApplicationAddress(appId);
 
-  const usdcTransferTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-    sender: buyerAddress,
-    receiver: contractAddress,
-    amount: microAmount,
-    assetIndex: USDC_ASSET_ID,
-    suggestedParams,
-  });
+  const usdcTransferTxn =
+    algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+      sender: buyerAddress,
+      receiver: contractAddress,
+      amount: microAmount,
+      assetIndex: USDC_ASSET_ID,
+      suggestedParams,
+    });
 
   const boxName = new TextEncoder().encode(bountyId);
   const appCallTxn = algosdk.makeApplicationCallTxnFromObject({
@@ -117,7 +209,7 @@ export async function buildBountyEscrowTxnGroup(
     appIndex: appId,
     onComplete: algosdk.OnApplicationComplete.NoOpOC,
     appArgs: [
-      algosdk.encodeUint64(BigInt(appId)), // selector placeholder
+      algosdk.encodeUint64(BigInt(appId)),
       new TextEncoder().encode(bountyId),
       algosdk.encodeUint64(microAmount),
       algosdk.encodeUint64(BigInt(deadline)),
@@ -131,8 +223,12 @@ export async function buildBountyEscrowTxnGroup(
 
   return {
     unsignedTxnGroupBase64: [
-      Buffer.from(algosdk.encodeUnsignedTransaction(usdcTransferTxn)).toString("base64"),
-      Buffer.from(algosdk.encodeUnsignedTransaction(appCallTxn)).toString("base64"),
+      Buffer.from(algosdk.encodeUnsignedTransaction(usdcTransferTxn)).toString(
+        "base64"
+      ),
+      Buffer.from(algosdk.encodeUnsignedTransaction(appCallTxn)).toString(
+        "base64"
+      ),
     ],
   };
 }
@@ -160,7 +256,9 @@ export async function buildAcceptSubmissionTxn(
     suggestedParams: { ...suggestedParams, fee: 3000, flatFee: true },
   });
 
-  return Buffer.from(algosdk.encodeUnsignedTransaction(appCallTxn)).toString("base64");
+  return Buffer.from(algosdk.encodeUnsignedTransaction(appCallTxn)).toString(
+    "base64"
+  );
 }
 
 export async function buildRefundBountyTxn(
@@ -181,5 +279,7 @@ export async function buildRefundBountyTxn(
     suggestedParams: { ...suggestedParams, fee: 2000, flatFee: true },
   });
 
-  return Buffer.from(algosdk.encodeUnsignedTransaction(appCallTxn)).toString("base64");
+  return Buffer.from(algosdk.encodeUnsignedTransaction(appCallTxn)).toString(
+    "base64"
+  );
 }

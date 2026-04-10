@@ -1,0 +1,308 @@
+tags:
+  - name: datasets
+    description: Dataset marketplace CRUD and x402 purchase flow
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: JWT Bearer token
+
+paths:
+  /api/datasets:
+    get:
+      tags:
+        - datasets
+      summary: List all active datasets (public)
+      parameters:
+        - in: query
+          name: category
+          type: string
+          enum: [agriculture, language, traffic, healthcare, cultural, financial, other]
+        - in: query
+          name: format
+          type: string
+          enum: [csv, json, images, audio, video, pdf, other]
+        - in: query
+          name: search
+          type: string
+          description: Full-text search on title and description
+        - in: query
+          name: tags
+          type: string
+          description: Comma-separated tags
+        - in: query
+          name: minPrice
+          type: number
+        - in: query
+          name: maxPrice
+          type: number
+        - in: query
+          name: page
+          type: integer
+          default: 1
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+        - in: query
+          name: sortBy
+          type: string
+          enum: [createdAt, price, purchases]
+          default: createdAt
+        - in: query
+          name: sortOrder
+          type: string
+          enum: [asc, desc]
+          default: desc
+      responses:
+        '200':
+          description: Paginated dataset list
+          schema:
+            type: object
+            properties:
+              datasets:
+                type: array
+                items:
+                  $ref: '#/definitions/Dataset'
+              total:
+                type: integer
+              page:
+                type: integer
+              totalPages:
+                type: integer
+
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - datasets
+      summary: Create a new dataset listing
+      description: Upload sample and full data files. Seller must be opted into USDC.
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: sampleFile
+          type: file
+          required: true
+          description: Sample preview file (public on IPFS)
+        - in: formData
+          name: fullDataFile
+          type: file
+          required: true
+          description: Full dataset file (private on IPFS)
+        - in: formData
+          name: title
+          type: string
+          required: true
+        - in: formData
+          name: description
+          type: string
+          required: true
+        - in: formData
+          name: category
+          type: string
+          required: true
+        - in: formData
+          name: tags
+          type: string
+          description: JSON array of tag strings
+        - in: formData
+          name: priceUSDC
+          type: number
+          required: true
+          description: Price between 0.10 and 100.00
+        - in: formData
+          name: format
+          type: string
+          required: true
+        - in: formData
+          name: recordCount
+          type: integer
+        - in: formData
+          name: sizeBytes
+          type: integer
+      responses:
+        '201':
+          description: Dataset created
+          schema:
+            type: object
+            properties:
+              dataset:
+                $ref: '#/definitions/Dataset'
+        '400':
+          description: Validation error or USDC not opted in
+        '401':
+          description: Authentication required
+
+  /api/datasets/{id}:
+    get:
+      tags:
+        - datasets
+      summary: Get single dataset details (public)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Dataset details (fullDataIpfsCid excluded)
+        '404':
+          description: Dataset not found
+
+    patch:
+      security:
+        - Bearer: []
+      tags:
+        - datasets
+      summary: Update a dataset
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+              tags:
+                type: array
+                items:
+                  type: string
+              priceUSDC:
+                type: number
+              status:
+                type: string
+                enum: [active, unlisted]
+      responses:
+        '200':
+          description: Dataset updated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+
+    delete:
+      security:
+        - Bearer: []
+      tags:
+        - datasets
+      summary: Soft-delete (unlist) a dataset
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Dataset unlisted
+        '403':
+          description: Not authorized
+
+  /api/datasets/{id}/download:
+    get:
+      tags:
+        - datasets
+      summary: Download dataset (x402 payment flow)
+      description: >
+        Returns HTTP 402 with payment requirements if no payment header is present.
+        After payment, include the transaction ID in x-payment header to receive a signed download URL.
+        AI agents use x402 protocol automatically.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          type: string
+          description: "Bearer <JWT> (optional for human buyers)"
+        - in: header
+          name: x-payment
+          type: string
+          description: Algorand transaction ID of USDC payment
+        - in: header
+          name: x-payment-wallet
+          type: string
+          description: Wallet address of the payer
+      responses:
+        '200':
+          description: Download URL returned
+          schema:
+            type: object
+            properties:
+              downloadUrl:
+                type: string
+              fileName:
+                type: string
+              expiresAt:
+                type: number
+        '402':
+          description: Payment required — includes x402 accepts array
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              accepts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    scheme:
+                      type: string
+                    network:
+                      type: string
+                    payTo:
+                      type: string
+                    price:
+                      type: string
+
+definitions:
+  Dataset:
+    type: object
+    properties:
+      _id:
+        type: string
+      sellerId:
+        type: string
+      sellerWalletAddress:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      category:
+        type: string
+      tags:
+        type: array
+        items:
+          type: string
+      priceUSDC:
+        type: number
+      sampleIpfsCid:
+        type: string
+      sampleFileName:
+        type: string
+      format:
+        type: string
+      recordCount:
+        type: integer
+      sizeBytes:
+        type: integer
+      totalPurchases:
+        type: integer
+      status:
+        type: string
+      createdAt:
+        type: string
+      updatedAt:
+        type: string

@@ -9,13 +9,11 @@ import { ToastProvider } from "./toast-provider";
 export const AppProviders = ({ children }: PropsWithChildren) => {
   return (
     <ReduxProvider>
-      <AuthProvider>
-        <ThemeProvider>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
-        </ThemeProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ToastProvider>
+      </ThemeProvider>
     </ReduxProvider>
   );
 };

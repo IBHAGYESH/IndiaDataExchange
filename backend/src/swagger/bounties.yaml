@@ -1,0 +1,359 @@
+tags:
+  - name: bounties
+    description: Data bounty system with smart contract escrow
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+  /api/bounties:
+    get:
+      tags:
+        - bounties
+      summary: List all bounties (public)
+      parameters:
+        - in: query
+          name: status
+          type: string
+          enum: [open, accepted, cancelled, expired]
+        - in: query
+          name: category
+          type: string
+        - in: query
+          name: page
+          type: integer
+          default: 1
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+      responses:
+        '200':
+          description: Paginated bounty list
+          schema:
+            type: object
+            properties:
+              bounties:
+                type: array
+                items:
+                  $ref: '#/definitions/Bounty'
+              total:
+                type: integer
+              page:
+                type: integer
+              totalPages:
+                type: integer
+
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - bounties
+      summary: Initiate a new bounty (returns unsigned txn group)
+      description: >
+        Returns unsigned atomic transaction group that locks USDC in the
+        BountyEscrow smart contract. Frontend signs with Pera and calls /confirm.
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - title
+              - description
+              - category
+              - rewardUSDC
+              - deadline
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+              category:
+                type: string
+              tags:
+                type: array
+                items:
+                  type: string
+              rewardUSDC:
+                type: number
+              deadline:
+                type: string
+                format: date-time
+      responses:
+        '200':
+          description: Unsigned transaction group returned
+          schema:
+            type: object
+            properties:
+              unsignedTxnGroupBase64:
+                type: array
+                items:
+                  type: string
+              bountyId:
+                type: string
+              bountyData:
+                type: object
+
+  /api/bounties/{id}:
+    get:
+      tags:
+        - bounties
+      summary: Get bounty details with submissions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          type: string
+          description: Optional — provides ownership context
+      responses:
+        '200':
+          description: Bounty details
+        '404':
+          description: Not found
+
+  /api/bounties/{id}/confirm:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - bounties
+      summary: Confirm bounty after on-chain escrow transaction
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - txId
+              - bountyData
+            properties:
+              txId:
+                type: string
+              bountyData:
+                type: object
+      responses:
+        '200':
+          description: Bounty confirmed and saved
+        '400':
+          description: Invalid transaction
+
+  /api/bounties/{id}/submit:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - bounties
+      summary: Submit data to a bounty
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: formData
+          name: sampleFile
+          type: file
+          required: true
+        - in: formData
+          name: fullDataFile
+          type: file
+          required: true
+        - in: formData
+          name: title
+          type: string
+          required: true
+        - in: formData
+          name: description
+          type: string
+          required: true
+      responses:
+        '201':
+          description: Submission created
+        '400':
+          description: Validation error
+
+  /api/bounties/{id}/accept/{submissionId}:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - bounties
+      summary: Accept a submission (returns unsigned app call)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: path
+          name: submissionId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Unsigned acceptance transaction
+          schema:
+            type: object
+            properties:
+              unsignedTxnBase64:
+                type: string
+              submissionId:
+                type: string
+
+  /api/bounties/{id}/accept/{submissionId}/confirm:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - bounties
+      summary: Confirm acceptance after on-chain transaction
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: path
+          name: submissionId
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - txId
+            properties:
+              txId:
+                type: string
+      responses:
+        '200':
+          description: Acceptance confirmed, download URL returned
+
+  /api/bounties/{id}/refund:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - bounties
+      summary: Initiate bounty refund (returns unsigned app call)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Unsigned refund transaction
+
+  /api/bounties/{id}/refund/confirm:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - bounties
+      summary: Confirm refund after on-chain transaction
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - txId
+            properties:
+              txId:
+                type: string
+      responses:
+        '200':
+          description: Refund confirmed
+
+definitions:
+  Bounty:
+    type: object
+    properties:
+      _id:
+        type: string
+      buyerId:
+        type: string
+      buyerWalletAddress:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      category:
+        type: string
+      tags:
+        type: array
+        items:
+          type: string
+      rewardUSDC:
+        type: number
+      deadline:
+        type: string
+      escrowTxId:
+        type: string
+      contractBountyId:
+        type: string
+      status:
+        type: string
+        enum: [open, accepted, cancelled, expired]
+      submissionCount:
+        type: integer
+      winnerSubmissionId:
+        type: string
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
+
+  Submission:
+    type: object
+    properties:
+      _id:
+        type: string
+      bountyId:
+        type: string
+      sellerId:
+        type: string
+      sellerWalletAddress:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      sampleIpfsCid:
+        type: string
+      sampleFileName:
+        type: string
+      status:
+        type: string
+        enum: [pending, accepted, rejected]
+      paymentTxId:
+        type: string
+      createdAt:
+        type: string
+      updatedAt:
+        type: string

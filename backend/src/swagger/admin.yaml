@@ -1,0 +1,140 @@
+tags:
+  - name: admin
+    description: Admin-only platform management
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+  /api/admin/stats:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - admin
+      summary: Get platform statistics
+      description: Admin-only. Returns aggregate counts and totals.
+      responses:
+        '200':
+          description: Platform stats
+          schema:
+            type: object
+            properties:
+              totalUsers:
+                type: integer
+              totalDatasets:
+                type: integer
+              totalBounties:
+                type: integer
+              totalPurchases:
+                type: integer
+              totalVolume:
+                type: number
+        '403':
+          description: Admin access required
+
+  /api/admin/datasets:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - admin
+      summary: List all datasets (admin view)
+      description: Includes unlisted datasets. Admin-only.
+      parameters:
+        - in: query
+          name: page
+          type: integer
+        - in: query
+          name: limit
+          type: integer
+        - in: query
+          name: status
+          type: string
+          enum: [active, unlisted]
+      responses:
+        '200':
+          description: All datasets (paginated)
+        '403':
+          description: Admin access required
+
+  /api/admin/datasets/{id}/status:
+    patch:
+      security:
+        - Bearer: []
+      tags:
+        - admin
+      summary: Change dataset status (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                type: string
+                enum: [active, unlisted]
+      responses:
+        '200':
+          description: Status updated
+        '403':
+          description: Admin access required
+
+  /api/admin/bounties:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - admin
+      summary: List all bounties (admin view)
+      parameters:
+        - in: query
+          name: page
+          type: integer
+        - in: query
+          name: limit
+          type: integer
+      responses:
+        '200':
+          description: All bounties (paginated)
+        '403':
+          description: Admin access required
+
+  /api/admin/bounties/{id}/status:
+    patch:
+      security:
+        - Bearer: []
+      tags:
+        - admin
+      summary: Change bounty status (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                type: string
+                enum: [open, accepted, cancelled, expired]
+      responses:
+        '200':
+          description: Status updated
+        '403':
+          description: Admin access required

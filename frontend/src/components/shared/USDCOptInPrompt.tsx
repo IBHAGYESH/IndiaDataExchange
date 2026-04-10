@@ -1,8 +1,15 @@
 "use client";
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, Typography, Box, CircularProgress, Alert
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+  Box,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { useState } from "react";
@@ -10,13 +17,34 @@ import { useAuth } from "@/providers/auth-provider";
 import config from "@/config";
 import algosdk from "algosdk";
 
+function base64ToUint8(b64: string): Uint8Array {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+function uint8ToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 interface Props {
   open: boolean;
   onClose: () => void;
   onOptInSuccess: () => void;
 }
 
-export default function USDCOptInPrompt({ open, onClose, onOptInSuccess }: Props) {
+export default function USDCOptInPrompt({
+  open,
+  onClose,
+  onOptInSuccess,
+}: Props) {
   const { walletAddress, peraWallet, setOptedIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,22 +55,20 @@ export default function USDCOptInPrompt({ open, onClose, onOptInSuccess }: Props
     setError(null);
 
     try {
-      // 1. Ask backend to build the opt-in transaction
       const buildRes = await fetch(`${config.apiUrl}/auth/build-optin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ walletAddress }),
       });
+      if (!buildRes.ok) throw new Error("Failed to build opt-in transaction");
       const { unsignedTxnBase64 } = await buildRes.json();
 
-      // 2. Decode and sign via Pera
-      const unsignedTxnBytes = Buffer.from(unsignedTxnBase64, "base64");
+      const unsignedTxnBytes = base64ToUint8(unsignedTxnBase64);
       const txn = algosdk.decodeUnsignedTransaction(unsignedTxnBytes);
 
       const signedTxns = await peraWallet.signTransaction([[{ txn }]]);
-      const signedTxnBase64 = Buffer.from(signedTxns[0]).toString("base64");
+      const signedTxnBase64 = uint8ToBase64(new Uint8Array(signedTxns[0]));
 
-      // 3. Submit via backend
       const submitRes = await fetch(`${config.apiUrl}/auth/submit-optin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,7 +81,9 @@ export default function USDCOptInPrompt({ open, onClose, onOptInSuccess }: Props
       onOptInSuccess();
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to opt-in to USDC");
+      setError(
+        err instanceof Error ? err.message : "Failed to opt-in to USDC"
+      );
     } finally {
       setLoading(false);
     }
@@ -71,10 +99,13 @@ export default function USDCOptInPrompt({ open, onClose, onOptInSuccess }: Props
       </DialogTitle>
       <DialogContent>
         <Typography variant="body1" sx={{ mb: 2 }}>
-          To list datasets or submit bounty responses, your wallet must opt-in to USDC (the payment token used on India Data Exchange).
+          To list datasets or submit bounty responses, your wallet must opt-in
+          to USDC (the payment token used on India Data Exchange).
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          This is a free, one-time transaction that allows your Algorand wallet to hold USDC. You&apos;ll need a small amount of ALGO for the transaction fee (~0.001 ALGO).
+          This is a free, one-time transaction that allows your Algorand wallet
+          to hold USDC. You&apos;ll need a small amount of ALGO for the
+          transaction fee (~0.001 ALGO).
         </Typography>
         {error && (
           <Alert severity="error" sx={{ mt: 2 }}>
@@ -90,7 +121,13 @@ export default function USDCOptInPrompt({ open, onClose, onOptInSuccess }: Props
           variant="contained"
           onClick={handleOptIn}
           disabled={loading}
-          startIcon={loading ? <CircularProgress size={16} /> : <MonetizationOnIcon />}
+          startIcon={
+            loading ? (
+              <CircularProgress size={16} />
+            ) : (
+              <MonetizationOnIcon />
+            )
+          }
         >
           {loading ? "Processing..." : "Opt In to USDC"}
         </Button>

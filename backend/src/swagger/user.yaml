@@ -1,0 +1,124 @@
+tags:
+  - name: user
+    description: User profile and dashboard
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+  /api/user/profile:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - user
+      summary: Get current user profile with stats
+      responses:
+        '200':
+          description: User profile
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: '#/definitions/User'
+        '401':
+          description: Not authenticated
+
+    patch:
+      security:
+        - Bearer: []
+      tags:
+        - user
+      summary: Update user profile
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              bio:
+                type: string
+      responses:
+        '200':
+          description: Profile updated
+        '401':
+          description: Not authenticated
+
+  /api/user/listings:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - user
+      summary: Get datasets listed by current user
+      parameters:
+        - in: query
+          name: page
+          type: integer
+        - in: query
+          name: limit
+          type: integer
+      responses:
+        '200':
+          description: User's dataset listings
+
+  /api/user/purchases:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - user
+      summary: Get datasets purchased by current user
+      parameters:
+        - in: query
+          name: page
+          type: integer
+        - in: query
+          name: limit
+          type: integer
+      responses:
+        '200':
+          description: User's purchases with re-download URLs
+
+  /api/user/bounties:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - user
+      summary: Get bounties posted by current user
+      parameters:
+        - in: query
+          name: page
+          type: integer
+        - in: query
+          name: limit
+          type: integer
+      responses:
+        '200':
+          description: User's bounties
+
+  /api/user/submissions:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - user
+      summary: Get submissions made by current user
+      parameters:
+        - in: query
+          name: page
+          type: integer
+        - in: query
+          name: limit
+          type: integer
+      responses:
+        '200':
+          description: User's submissions

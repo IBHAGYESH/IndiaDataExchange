@@ -1,7 +1,7 @@
-import { Router, Response } from "express";
+import { Router, Request, Response } from "express";
 import { tryCatch } from "@utils/index";
 import { AppError } from "@middlewares/error.middleware";
-import { authMiddleware } from "@middlewares/auth.middleware";
+import { authMiddleware, optionalAuth } from "@middlewares/auth.middleware";
 import { submissionUpload, MulterFiles } from "@middlewares/multer.middleware";
 import { BountyService } from "@components/bounty/services/bounty.service";
 import { AuthRequest } from "@utils/interface";
@@ -16,11 +16,10 @@ export class BountyRoute {
   }
 
   private initializeRoutes() {
-    // List bounties (auth required)
+    // List bounties (public)
     this.router.get(
       `${this.path}`,
-      authMiddleware,
-      tryCatch(async (req: AuthRequest, res: Response) => {
+      tryCatch(async (req: Request, res: Response) => {
         const { category, tags, status, page, limit, sortBy, sortOrder } = req.query as Record<string, string>;
         const { data, code } = await this.service.listBounties({
           category: category as import("@components/dataset/database/models").DatasetCategory,
@@ -35,13 +34,14 @@ export class BountyRoute {
       })
     );
 
-    // Get single bounty
+    // Get single bounty (optional auth for ownership context)
     this.router.get(
       `${this.path}/:id`,
-      authMiddleware,
+      optionalAuth,
       tryCatch(async (req: AuthRequest, res: Response) => {
         const { id } = req.params as Record<string, string>;
-        const { data, code } = await this.service.getBounty(id, req.user!.userId);
+        const userId = req.user?.userId || "";
+        const { data, code } = await this.service.getBounty(id, userId);
         res.status(code).json(data);
       })
     );

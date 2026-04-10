@@ -4,10 +4,11 @@ import { globalRateLimiter } from "@middlewares/rateLimit.middleware";
 import { systemRouter } from "@routes/system.routes";
 import compression from "compression";
 import cookieParser from "cookie-parser";
-import cors from "cors";
-import express, { Router } from "express";
+import express, { Request, Response, NextFunction, Router } from "express";
 import helmet from "helmet";
 import hpp from "hpp";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 import { appConfig } from "@/config";
 
 export interface Routes {
@@ -25,6 +26,8 @@ export class App {
     this.env = appConfig.nodeEnv || "development";
     this.port = appConfig.port || 5000;
 
+    this.initializeCors();
+    this.initializeSwagger();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initializeErrorHandling();
@@ -40,6 +43,7 @@ export class App {
       console.log(`=================================`);
       console.log(`ENV: ${this.env}`);
       console.log(`App listening on port ${this.port}`);
+      console.log(`Swagger docs: http://localhost:${this.port}/api-docs`);
       console.log(`=================================`);
     });
     return server;
@@ -49,27 +53,83 @@ export class App {
     return this.app;
   }
 
+  /**
+   * CORS must be the very first middleware so every response
+   * (including errors, rate-limit rejections, etc.) carries the headers.
+   */
+  private initializeCors() {
+    this.app.use((req: Request, res: Response, next: NextFunction) => {
+      const origin = req.headers.origin || "*";
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+      );
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization, X-Payment, X-PAYMENT, X-Payment-Wallet, x-payment, x-payment-wallet"
+      );
+      res.setHeader("Access-Control-Max-Age", "86400");
+
+      if (req.method === "OPTIONS") {
+        res.sendStatus(204);
+        return;
+      }
+      next();
+    });
+  }
+
+  /**
+   * Swagger UI must be mounted BEFORE helmet so its inline
+   * scripts and CDN resources are not blocked.
+   */
+  private initializeSwagger() {
+    const options: swaggerJSDoc.Options = {
+      swaggerDefinition: {
+        info: {
+          title: "India Data Exchange API",
+          version: "1.0.0",
+          description:
+            "Decentralized data marketplace API on Algorand. Supports x402 payments, wallet-based auth, and smart contract escrow bounties.",
+        },
+        host: `localhost:${this.port}`,
+        basePath: "/",
+        schemes: ["http", "https"],
+        securityDefinitions: {
+          Bearer: {
+            type: "apiKey",
+            name: "Authorization",
+            in: "header",
+            description: "JWT Bearer token — format: Bearer <token>",
+          },
+        },
+      },
+      apis: ["./src/swagger/*.yaml"],
+    };
+
+    const specs = swaggerJSDoc(options);
+    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+  }
+
   private initializeMiddlewares() {
-    this.app.use(
-      cors({
-        origin: "*",
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization", "X-Payment", "X-PAYMENT"],
-      })
-    );
     this.app.use(globalRateLimiter);
     this.app.use(hpp());
     this.app.use(
       helmet({
-        crossOriginResourcePolicy: { policy: "cross-origin" },
         contentSecurityPolicy: false,
+        crossOriginEmbedderPolicy: false,
+        crossOriginOpenerPolicy: false,
+        crossOriginResourcePolicy: false,
       })
     );
     this.app.use(compression());
     this.app.use(express.json({ limit: appConfig.http.bodySizeLimit }));
     this.app.use(
-      express.urlencoded({ extended: true, limit: appConfig.http.bodySizeLimit })
+      express.urlencoded({
+        extended: true,
+        limit: appConfig.http.bodySizeLimit,
+      })
     );
     this.app.use(cookieParser());
   }

@@ -17,7 +17,8 @@ export class AuthRoute {
       `${this.path}/nonce/:walletAddress`,
       tryCatch(async (req: Request, res: Response) => {
         const { walletAddress } = req.params as Record<string, string>;
-        if (!walletAddress) throw new AppError("ValidationError", 400, "walletAddress required", true);
+        if (!walletAddress)
+          throw new AppError("ValidationError", 400, "walletAddress required", true);
         const { data, code } = await this.service.generateNonce(walletAddress);
         res.status(code).json(data);
       })
@@ -26,11 +27,20 @@ export class AuthRoute {
     this.router.post(
       `${this.path}/verify`,
       tryCatch(async (req: Request, res: Response) => {
-        const { walletAddress, signature, nonce } = req.body;
-        if (!walletAddress || !signature || !nonce) {
-          throw new AppError("ValidationError", 400, "walletAddress, signature, and nonce required", true);
+        const { walletAddress, signedTxnBase64, nonce } = req.body;
+        if (!walletAddress || !signedTxnBase64 || !nonce) {
+          throw new AppError(
+            "ValidationError",
+            400,
+            "walletAddress, signedTxnBase64, and nonce are required",
+            true
+          );
         }
-        const { data, code } = await this.service.verifyAndIssueJWT(walletAddress, nonce, signature);
+        const { data, code } = await this.service.verifyAndIssueJWT(
+          walletAddress,
+          nonce,
+          signedTxnBase64
+        );
         res.status(code).json(data);
       })
     );
@@ -48,7 +58,8 @@ export class AuthRoute {
       `${this.path}/build-optin`,
       tryCatch(async (req: Request, res: Response) => {
         const { walletAddress } = req.body;
-        if (!walletAddress) throw new AppError("ValidationError", 400, "walletAddress required", true);
+        if (!walletAddress)
+          throw new AppError("ValidationError", 400, "walletAddress required", true);
         const { data, code } = await this.service.buildOptIn(walletAddress);
         res.status(code).json(data);
       })
@@ -59,9 +70,17 @@ export class AuthRoute {
       tryCatch(async (req: Request, res: Response) => {
         const { walletAddress, signedTxnBase64 } = req.body;
         if (!walletAddress || !signedTxnBase64) {
-          throw new AppError("ValidationError", 400, "walletAddress and signedTxnBase64 required", true);
+          throw new AppError(
+            "ValidationError",
+            400,
+            "walletAddress and signedTxnBase64 required",
+            true
+          );
         }
-        const { data, code } = await this.service.submitOptIn(walletAddress, signedTxnBase64);
+        const { data, code } = await this.service.submitOptIn(
+          walletAddress,
+          signedTxnBase64
+        );
         res.status(code).json(data);
       })
     );

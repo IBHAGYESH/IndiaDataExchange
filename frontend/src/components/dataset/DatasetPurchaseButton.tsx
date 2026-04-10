@@ -1,13 +1,26 @@
 "use client";
 
-import { Button, CircularProgress, Alert, Box, Typography, Link as MuiLink } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Alert,
+  Box,
+  Typography,
+} from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useState } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import config from "@/config";
 import { formatUSDC } from "@/utils";
 import algosdk from "algosdk";
+
+function uint8ToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
 
 interface Props {
   datasetId: string;
@@ -15,7 +28,11 @@ interface Props {
   sellerWalletAddress: string;
 }
 
-export default function DatasetPurchaseButton({ datasetId, priceUSDC, sellerWalletAddress }: Props) {
+export default function DatasetPurchaseButton({
+  datasetId,
+  priceUSDC,
+  sellerWalletAddress,
+}: Props) {
   const { isConnected, peraWallet, walletAddress } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,9 +50,8 @@ export default function DatasetPurchaseButton({ datasetId, priceUSDC, sellerWall
 
     try {
       const downloadEndpoint = `${config.apiUrl}/api/datasets/${datasetId}/download`;
-
-      // Step 1: Make initial request to get 402 challenge
       const jwt = localStorage.getItem("ide_jwt");
+
       const initialRes = await fetch(downloadEndpoint, {
         headers: {
           Authorization: jwt ? `Bearer ${jwt}` : "",
@@ -43,11 +59,10 @@ export default function DatasetPurchaseButton({ datasetId, priceUSDC, sellerWall
         },
       });
 
-      // If already purchased, we get 200 directly
       if (initialRes.ok) {
-        const { downloadUrl: url, fileName: name } = await initialRes.json();
-        setDownloadUrl(url);
-        setFileName(name);
+        const body = await initialRes.json();
+        setDownloadUrl(body.downloadUrl);
+        setFileName(body.fileName);
         setLoading(false);
         return;
       }
@@ -60,33 +75,39 @@ export default function DatasetPurchaseButton({ datasetId, priceUSDC, sellerWall
       const accepts = paymentRequirement.accepts?.[0];
       if (!accepts) throw new Error("No payment requirements received");
 
-      // Step 2: Build USDC payment transaction
-      const algodClient = new algosdk.Algodv2("", config.apiUrl.includes("localhost") ? "https://testnet-api.algonode.cloud" : "https://testnet-api.algonode.cloud", "");
+      const algodClient = new algosdk.Algodv2(
+        "",
+        "https://testnet-api.algonode.cloud",
+        ""
+      );
       const suggestedParams = await algodClient.getTransactionParams().do();
 
       const microAmount = Math.round(priceUSDC * 1_000_000);
       const usdcAssetId = config.usdcAssetId;
 
-      const paymentTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-        from: walletAddress,
-        to: sellerWalletAddress,
-        amount: microAmount,
-        assetIndex: usdcAssetId,
-        suggestedParams,
-      });
+      const paymentTxn =
+        algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+          sender: walletAddress,
+          receiver: sellerWalletAddress,
+          amount: microAmount,
+          assetIndex: usdcAssetId,
+          suggestedParams,
+        });
 
-      // Step 3: Sign with Pera
       const signedTxns = await peraWallet.signTransaction([[{ txn: paymentTxn }]]);
-      const signedTxnBase64 = Buffer.from(signedTxns[0]).toString("base64");
+      const signedBytes = new Uint8Array(signedTxns[0]);
 
-      // Step 4: Submit transaction and get txId
-      const submitRes = await algodClient.sendRawTransaction(signedTxns[0]).do();
-      const txId = submitRes.txId;
+      const submitRes = await algodClient.sendRawTransaction(signedBytes).do();
+      const txId =
+        (submitRes as any).txId ??
+        (submitRes as any).txid ??
+        (submitRes as any).txID ??
+        "";
 
-      // Wait for confirmation
-      await algosdk.waitForConfirmation(algodClient, txId, 4);
+      if (txId) {
+        await algosdk.waitForConfirmation(algodClient, txId, 4);
+      }
 
-      // Step 5: Request download with payment proof
       const downloadRes = await fetch(downloadEndpoint, {
         headers: {
           Authorization: jwt ? `Bearer ${jwt}` : "",
@@ -95,13 +116,16 @@ export default function DatasetPurchaseButton({ datasetId, priceUSDC, sellerWall
         },
       });
 
-      if (!downloadRes.ok) throw new Error("Failed to get download URL after payment");
+      if (!downloadRes.ok)
+        throw new Error("Failed to get download URL after payment");
 
-      const { downloadUrl: url, fileName: name } = await downloadRes.json();
-      setDownloadUrl(url);
-      setFileName(name);
+      const body = await downloadRes.json();
+      setDownloadUrl(body.downloadUrl);
+      setFileName(body.fileName);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Purchase failed. Please try again.");
+      setError(
+        err instanceof Error ? err.message : "Purchase failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -125,7 +149,11 @@ export default function DatasetPurchaseButton({ datasetId, priceUSDC, sellerWall
         >
           Download {fileName || "Dataset"}
         </Button>
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ mt: 1, display: "block" }}
+        >
           Link expires in 1 hour. Return to dashboard to re-download anytime.
         </Typography>
       </Box>
@@ -145,14 +173,25 @@ export default function DatasetPurchaseButton({ datasetId, priceUSDC, sellerWall
         fullWidth
         disabled={loading}
         onClick={handlePurchase}
-        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
+        startIcon={
+          loading ? (
+            <CircularProgress size={20} color="inherit" />
+          ) : (
+            <DownloadIcon />
+          )
+        }
         sx={{ fontWeight: 700, py: 1.5 }}
       >
         {loading ? "Processing Payment..." : `Purchase for ${formatUSDC(priceUSDC)}`}
       </Button>
       {!isConnected && (
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block", textAlign: "center" }}>
-          Connect your wallet to purchase. AI agents can purchase directly via x402.
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ mt: 1, display: "block", textAlign: "center" }}
+        >
+          Connect your wallet to purchase. AI agents can purchase directly via
+          x402.
         </Typography>
       )}
     </Box>

@@ -4,7 +4,7 @@ import { appConfig } from "@/config";
 import { NonceRepository } from "../database/repository/nonce.repository";
 import { UserRepository } from "@components/user/database/repository/user.repository";
 import {
-  verifyWalletSignature,
+  verifySignedAuthTransaction,
   isOptedIntoUSDC,
   getUSDCBalance,
   buildOptInTransaction,
@@ -26,31 +26,33 @@ export class AuthService {
   async verifyAndIssueJWT(
     walletAddress: string,
     nonce: string,
-    signature: string
+    signedTxnBase64: string
   ) {
-    // Verify nonce exists and is valid
     const nonceRecord = await nonceRepo.findValid(walletAddress, nonce);
     if (!nonceRecord) {
       throw new Error("Invalid or expired nonce");
     }
 
-    // Verify Algorand signature
-    const isValid = await verifyWalletSignature(walletAddress, nonce, signature);
+    const isValid = verifySignedAuthTransaction(
+      walletAddress,
+      nonce,
+      signedTxnBase64
+    );
     if (!isValid) {
-      throw new Error("Invalid signature");
+      throw new Error("Invalid signature — wallet ownership could not be verified");
     }
 
-    // Delete used nonce
     await nonceRepo.delete(walletAddress);
 
-    // Check if admin wallet
     const isAdmin = appConfig.admin.walletAddress === walletAddress;
-
-    // Find or create user
     const user = await userRepo.findOrCreate(walletAddress, isAdmin);
-    const isNewUser = (user as unknown as { isNew?: boolean }).isNew ?? false;
 
-    // Issue JWT
+    const optedIn = await isOptedIntoUSDC(walletAddress);
+    if (user && user.isUSDCOptedIn !== optedIn) {
+      await userRepo.update(user._id!.toString(), { isUSDCOptedIn: optedIn });
+      user.isUSDCOptedIn = optedIn;
+    }
+
     const payload = {
       walletAddress,
       userId: user._id?.toString() ?? "",
@@ -61,7 +63,7 @@ export class AuthService {
       expiresIn: appConfig.jwt.expiresIn,
     } as jwt.SignOptions);
 
-    return returnDataObj({ token, user, isNewUser });
+    return returnDataObj({ token, user });
   }
 
   async checkUSDCStatus(walletAddress: string) {
@@ -80,7 +82,6 @@ export class AuthService {
   async submitOptIn(walletAddress: string, signedTxnBase64: string) {
     const txId = await submitSignedTransaction(signedTxnBase64);
 
-    // Update user opt-in status in DB
     const user = await userRepo.findByWallet(walletAddress);
     if (user) {
       await userRepo.update(user._id!.toString(), { isUSDCOptedIn: true });
