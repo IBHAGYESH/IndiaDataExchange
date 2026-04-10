@@ -64,7 +64,7 @@ export default function ListingsPage() {
         {(!data?.datasets || data.datasets.length === 0) && (
           <Grid item xs={12}>
             <Typography color="text.secondary" textAlign="center" sx={{ py: 4 }}>
-              No datasets listed yet. <a href="/list-dataset">List your first dataset →</a>
+              No datasets listed yet. <a href="/dashboard/list-dataset">List your first dataset →</a>
             </Typography>
           </Grid>
         )}

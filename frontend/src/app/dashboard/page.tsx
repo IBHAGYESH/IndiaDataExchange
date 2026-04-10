@@ -45,9 +45,9 @@ export default function DashboardPage() {
 
       <Grid container spacing={3} sx={{ mt: 2 }}>
         {[
-          { label: "List a Dataset", href: "/list-dataset", desc: "Earn USDC by sharing your data", color: "#138808" },
+          { label: "List a Dataset", href: "/dashboard/list-dataset", desc: "Earn USDC by sharing your data", color: "#138808" },
           { label: "Browse Marketplace", href: "/marketplace", desc: "Find datasets to power your AI", color: "#FF6B35" },
-          { label: "Post a Bounty", href: "/post-bounty", desc: "Request specific data with USDC reward", color: "#8B5CF6" },
+          { label: "Post a Bounty", href: "/dashboard/post-bounty", desc: "Request specific data with USDC reward", color: "#8B5CF6" },
           { label: "View Bounties", href: "/bounties", desc: "Earn USDC by fulfilling data requests", color: "#FFB800" },
         ].map((action) => (
           <Grid item xs={12} sm={6} md={3} key={action.label}>

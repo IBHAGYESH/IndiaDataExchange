@@ -27,8 +27,8 @@ const navItems = [
   { label: "My Bounties", href: "/dashboard/bounties", icon: <EmojiEventsIcon fontSize="small" /> },
   { label: "My Submissions", href: "/dashboard/submissions", icon: <AssignmentIcon fontSize="small" /> },
   { divider: true },
-  { label: "List Dataset", href: "/list-dataset", icon: <AddIcon fontSize="small" /> },
-  { label: "Post Bounty", href: "/post-bounty", icon: <PostAddIcon fontSize="small" /> },
+  { label: "List Dataset", href: "/dashboard/list-dataset", icon: <AddIcon fontSize="small" /> },
+  { label: "Post Bounty", href: "/dashboard/post-bounty", icon: <PostAddIcon fontSize="small" /> },
 ] as const;
 
 interface Props {

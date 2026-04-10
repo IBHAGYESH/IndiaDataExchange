@@ -91,6 +91,41 @@ a {
   100% { background-position: 0% 50%; }
 }
 
+@keyframes blobDrift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(80px, -60px) scale(1.1); }
+  50% { transform: translate(-40px, 40px) scale(0.95); }
+  75% { transform: translate(60px, 80px) scale(1.05); }
+}
+
+@keyframes blobDrift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-100px, 50px) scale(1.15); }
+  50% { transform: translate(60px, -80px) scale(0.9); }
+  75% { transform: translate(-30px, -40px) scale(1.1); }
+}
+
+@keyframes blobDrift3 {
+  0%, 100% { transform: translate(0, 0) scale(1.05); }
+  33% { transform: translate(70px, 70px) scale(0.95); }
+  66% { transform: translate(-80px, -30px) scale(1.1); }
+}
+
+@keyframes flowPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: currentColor; }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.5s ease both;
 }

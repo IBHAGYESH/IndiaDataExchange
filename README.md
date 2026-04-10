@@ -4,8 +4,6 @@
 
 A decentralized data marketplace built on Algorand where sellers upload Indian datasets and buyers purchase them using USDC via the x402 payment protocol. AI agents can autonomously browse and purchase datasets using HTTP 402 payments.
 
-Built for **AlgoBharat Hack Series 3.0 — Agentic Commerce Track**.
-
 ---
 
 ## Architecture

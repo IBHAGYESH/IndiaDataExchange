@@ -22,6 +22,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import MainLayout from "@/components/layouts/MainLayout";
+import ProtectedRoute from "@/components/shared/ProtectedRoute";
 import BountyCard from "@/components/bounty/BountyCard";
 import { useGetBountiesQuery } from "@/redux/api/bountyApi";
 import { useAuth } from "@/providers/auth-provider";
@@ -79,6 +80,7 @@ function BountiesContent() {
   });
 
   return (
+    <ProtectedRoute>
     <MainLayout>
       <Box
         sx={{
@@ -97,7 +99,7 @@ function BountiesContent() {
               </Typography>
             </Box>
             {isConnected && (
-              <Link href="/post-bounty">
+              <Link href="/dashboard/post-bounty">
                 <Button variant="contained" startIcon={<AddIcon />}>
                   Post Bounty
                 </Button>
@@ -224,5 +226,6 @@ function BountiesContent() {
         </Container>
       </Box>
     </MainLayout>
+    </ProtectedRoute>
   );
 }

@@ -24,7 +24,6 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import AddIcon from "@mui/icons-material/Add";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import WalletConnectButton from "./WalletConnectButton";
@@ -50,7 +49,6 @@ export default function Topbar({ toggleSidebar, showMenu = false }: Props) {
       ? [
           { href: "/bounties", label: "Bounties", icon: <EmojiEventsIcon fontSize="small" /> },
           { href: "/dashboard", label: "Dashboard", icon: <DashboardIcon fontSize="small" /> },
-          { href: "/list-dataset", label: "Sell Data", icon: <AddIcon fontSize="small" /> },
         ]
       : []),
   ];
@@ -98,7 +96,7 @@ export default function Topbar({ toggleSidebar, showMenu = false }: Props) {
                 letterSpacing: "-0.02em",
               }}
             >
-              India Data Exchange
+              IDE
             </Typography>
           </Link>
 

@@ -114,7 +114,7 @@ export default function DashboardBountiesPage() {
 
       {(!data?.bounties || data.bounties.length === 0) && (
         <Typography color="text.secondary" textAlign="center" sx={{ py: 4 }}>
-          No bounties posted yet. <a href="/post-bounty">Post a bounty →</a>
+          No bounties posted yet. <a href="/dashboard/post-bounty">Post a bounty →</a>
         </Typography>
       )}
     </Box>

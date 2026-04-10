@@ -119,8 +119,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         primary: { main: "#FF6B35", light: "#FF8C5A", dark: "#E05520" },
         secondary: { main: isLight ? "#138808" : "#2EC84F", light: "#4ADE7B" },
         background: {
-          default: isLight ? "#FAFAF8" : "#09090B",
-          paper: isLight ? "#FFFFFF" : "#111113",
+          default: isLight ? "#FAFAF8" : "#121214",
+          paper: isLight ? "#FFFFFF" : "#1A1A1E",
         },
         text: {
           primary: isLight ? "#0C0C0D" : "#FAFAFA",
@@ -141,7 +141,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
               borderColor: isLight
                 ? "rgba(0, 0, 0, 0.06)"
                 : "rgba(255, 255, 255, 0.06)",
-              backgroundColor: isLight ? "#FFFFFF" : "#111113",
+              backgroundColor: isLight ? "#FFFFFF" : "#1A1A1E",
               "&:hover": {
                 borderColor: "#FF6B35",
                 transform: "translateY(-4px)",
