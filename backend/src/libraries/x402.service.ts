@@ -30,7 +30,7 @@ resourceServer.onAfterSettle(async (context) => {
   try {
     const { result, requirements } = context;
     const transportContext = context.transportContext as
-      | { request: { path: string } }
+      | { request: { adapter?: { getHeader(name: string): string | undefined }; path: string } }
       | undefined;
 
     if (!transportContext?.request?.path) return;
@@ -51,9 +51,18 @@ resourceServer.onAfterSettle(async (context) => {
     );
     if (existingPurchase) return;
 
-    const isHuman = false;
+    const authHeader = transportContext.request.adapter?.getHeader("authorization");
+    const isHuman = !!authHeader && authHeader.startsWith("Bearer ");
+
+    let buyerId: import("mongoose").Types.ObjectId | undefined;
+    const buyerUser = await userRepo.findByWallet(buyerWalletAddress);
+    if (buyerUser) {
+      buyerId = buyerUser._id as unknown as import("mongoose").Types.ObjectId;
+    }
+
     await purchaseRepo.create({
       buyerWalletAddress,
+      buyerId,
       datasetId: datasetId as unknown as import("mongoose").Types.ObjectId,
       paymentTxId,
       amountPaidUSDC: amountUSDC,

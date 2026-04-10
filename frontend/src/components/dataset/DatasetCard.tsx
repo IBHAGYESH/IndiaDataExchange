@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Dataset } from "@/types";
 import { formatUSDC, truncateAddress, formatBytes } from "@/utils";
 import config from "@/config";
@@ -45,16 +45,26 @@ const categoryGradients: Record<string, string> = {
 
 export default function DatasetCard({ dataset }: Props) {
   const theme = useTheme();
+  const router = useRouter();
+
+  const detailPath = `/marketplace/${dataset._id}`;
 
   return (
     <Card
       elevation={0}
+      onClick={() => router.push(detailPath)}
       sx={{
         height: "100%",
         display: "flex",
         flexDirection: "column",
         position: "relative",
         overflow: "visible",
+        cursor: "pointer",
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        "&:hover": {
+          transform: "translateY(-4px)",
+          boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.12)}`,
+        },
       }}
     >
       <Box
@@ -188,7 +198,10 @@ export default function DatasetCard({ dataset }: Props) {
         </Box>
       </CardContent>
 
-      <CardActions sx={{ p: 2, pt: 0, gap: 1 }}>
+      <CardActions
+        sx={{ p: 2, pt: 0, gap: 1 }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <Button
           size="small"
           variant="outlined"
@@ -205,17 +218,15 @@ export default function DatasetCard({ dataset }: Props) {
         >
           Preview
         </Button>
-        <Link href={`/marketplace/${dataset._id}`} style={{ flex: 1 }}>
-          <Button
-            size="small"
-            variant="contained"
-            startIcon={<ShoppingCartIcon />}
-            fullWidth
-            sx={{ fontSize: "0.8rem" }}
-          >
-            Buy
-          </Button>
-        </Link>
+        <Button
+          size="small"
+          variant="contained"
+          startIcon={<ShoppingCartIcon />}
+          onClick={() => router.push(`${detailPath}?purchase=true`)}
+          sx={{ flex: 1, fontSize: "0.8rem" }}
+        >
+          Buy
+        </Button>
       </CardActions>
     </Card>
   );

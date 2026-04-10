@@ -40,9 +40,11 @@ export class UserService {
   }
 
   async getPurchases(userId: string) {
-    const purchases = await purchaseRepo.findByBuyerId(userId);
+    const user = await userRepo.findById(userId);
+    if (!user) throw new AppError("NotFound", 404, "User not found", true);
 
-    // Generate fresh signed URLs for each purchase
+    const purchases = await purchaseRepo.findByBuyerWallet(user.walletAddress);
+
     const purchasesWithUrls = await Promise.all(
       purchases.map(async (p: any) => {
         const dataset = p.datasetId;

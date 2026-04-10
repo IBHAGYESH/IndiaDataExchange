@@ -19,6 +19,14 @@ export class PurchaseRepository {
       .lean();
   }
 
+  async findByBuyerWallet(walletAddress: string) {
+    return await this.model
+      .find({ buyerWalletAddress: walletAddress })
+      .populate("datasetId")
+      .sort("-createdAt")
+      .lean();
+  }
+
   async incrementDownload(id: string) {
     return await this.model.findByIdAndUpdate(
       id,

@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useRef, useEffect } from "react";
 import {
   Container,
   Grid,
@@ -15,11 +15,13 @@ import {
   Divider,
   Link as MuiLink,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import MainLayout from "@/components/layouts/MainLayout";
 import DatasetPurchaseButton from "@/components/dataset/DatasetPurchaseButton";
 import { useGetDatasetQuery } from "@/redux/api/datasetApi";
 import { formatUSDC, truncateAddress, formatBytes, formatDate } from "@/utils";
+import { useRouter, useSearchParams } from "next/navigation";
 import config from "@/config";
 
 export default function DatasetDetailPage({
@@ -28,7 +30,16 @@ export default function DatasetDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const purchaseRef = useRef<HTMLDivElement>(null);
   const { data, isLoading, isError } = useGetDatasetQuery(id);
+
+  useEffect(() => {
+    if (searchParams.get("purchase") === "true" && data?.dataset && purchaseRef.current) {
+      purchaseRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [searchParams, data]);
 
   if (isLoading) {
     return (
@@ -55,6 +66,14 @@ export default function DatasetDetailPage({
   return (
     <MainLayout>
       <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => router.push("/marketplace")}
+          sx={{ mb: 3, fontWeight: 600 }}
+        >
+          Back to Marketplace
+        </Button>
+
         <Grid container spacing={4}>
           {/* Main Content */}
           <Grid item xs={12} md={8}>
@@ -148,6 +167,7 @@ export default function DatasetDetailPage({
           {/* Purchase Card */}
           <Grid item xs={12} md={4}>
             <Card
+              ref={purchaseRef}
               elevation={0}
               sx={{
                 border: "1px solid",
