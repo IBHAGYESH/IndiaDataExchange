@@ -1,0 +1,448 @@
+#pragma version 11
+#pragma typetrack false
+
+
+main:
+    intcblock 0 1 2 10458941
+    bytecblock "bounty_" 0x151f7c750020
+
+
+    txn NumAppArgs
+    bz main___algots__.defaultCreate@12
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    assert
+    pushbytess 0xd942c875 0xe432ab9f 0xa68c40e1 0x1bc72dd9 0x54254f0a
+    txna ApplicationArgs 0
+    match postBounty acceptSubmission refundBounty getBountyEscrow fundContract
+    err
+
+main___algots__.defaultCreate@12:
+
+
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    assert
+    intc_1
+    return
+
+
+
+postBounty:
+
+
+    txna ApplicationArgs 1
+    dup
+    intc_0
+    extract_uint16
+    intc_2
+    +
+    dig 1
+    len
+    ==
+    assert
+    txna ApplicationArgs 2
+    dup
+    len
+    pushint 8
+    ==
+    assert
+    txna ApplicationArgs 3
+    dup
+    len
+    pushint 8
+    ==
+    assert
+
+
+    bytec_0
+    uncover 3
+    concat
+
+
+    dup
+    box_len
+    bury 1
+    !
+    assert
+
+
+
+
+
+
+
+
+
+    itxn_begin
+
+
+    global CurrentApplicationAddress
+
+
+    intc_0
+    itxn_field AssetAmount
+
+
+    intc_3
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+
+
+
+
+
+
+
+
+    pushint 4
+    itxn_field TypeEnum
+
+
+    intc_0
+    itxn_field Fee
+
+
+
+
+
+
+
+
+
+    itxn_submit
+
+
+    txn Sender
+
+
+
+
+
+
+
+    uncover 3
+    concat
+    uncover 2
+    concat
+
+
+    pushbytes 0x00
+
+
+
+
+
+
+
+    concat
+
+
+    box_put
+
+
+    bytec_1
+
+
+    txn TxID
+
+
+    concat
+    log
+    intc_1
+    return
+
+
+
+acceptSubmission:
+
+
+    txna ApplicationArgs 1
+    dup
+    intc_0
+    extract_uint16
+    intc_2
+    +
+    dig 1
+    len
+    ==
+    assert
+    txna ApplicationArgs 2
+    dup
+    len
+    pushint 32
+    ==
+    assert
+
+
+    bytec_0
+    uncover 2
+    concat
+
+
+    dup
+    box_len
+    bury 1
+    assert
+
+
+    dup
+    box_get
+    pop
+
+
+    txn Sender
+
+
+    dig 1
+    extract 0 32
+    ==
+    assert
+
+
+    dup
+    pushint 48
+    getbyte
+    !
+    assert
+
+
+
+
+
+
+
+
+
+    itxn_begin
+
+
+    pushint 32
+    extract_uint64
+    itxn_field AssetAmount
+
+
+    intc_3
+    itxn_field XferAsset
+    swap
+    itxn_field AssetReceiver
+
+
+
+
+
+
+
+
+    pushint 4
+    itxn_field TypeEnum
+
+
+    intc_0
+    itxn_field Fee
+
+
+
+
+
+
+
+
+
+    itxn_submit
+
+
+    box_del
+    pop
+
+
+    bytec_1
+
+
+    txn TxID
+
+
+    concat
+    log
+    intc_1
+    return
+
+
+
+refundBounty:
+
+
+    txna ApplicationArgs 1
+    dup
+    intc_0
+    extract_uint16
+    intc_2
+    +
+    dig 1
+    len
+    ==
+    assert
+
+
+    bytec_0
+    swap
+    concat
+
+
+    dup
+    box_len
+    bury 1
+    assert
+
+
+    dup
+    box_get
+    pop
+
+
+    txn Sender
+
+
+    dig 1
+    extract 0 32
+    ==
+    assert
+
+
+    dup
+    pushint 48
+    getbyte
+    !
+    assert
+
+
+    global LatestTimestamp
+
+
+    dig 1
+    pushint 40
+    extract_uint64
+    >=
+    assert
+
+
+
+
+
+
+
+
+
+    itxn_begin
+
+
+    txn Sender
+
+
+    swap
+    pushint 32
+    extract_uint64
+    itxn_field AssetAmount
+
+
+    intc_3
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+
+
+
+
+
+
+
+
+    pushint 4
+    itxn_field TypeEnum
+
+
+    intc_0
+    itxn_field Fee
+
+
+
+
+
+
+
+
+
+    itxn_submit
+
+
+    box_del
+    pop
+
+
+    bytec_1
+
+
+    txn TxID
+
+
+    concat
+    log
+    intc_1
+    return
+
+
+
+getBountyEscrow:
+
+
+    txna ApplicationArgs 1
+    dup
+    intc_0
+    extract_uint16
+    intc_2
+    +
+    dig 1
+    len
+    ==
+    assert
+
+
+    bytec_0
+    swap
+    concat
+
+
+    dup
+    box_len
+    bury 1
+    assert
+
+
+    box_get
+    pop
+
+
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    intc_1
+    return
+
+
+
+fundContract:
+
+
+    txn Sender
+    global CreatorAddress
+    ==
+    assert
+
+
+    intc_1
+    return

@@ -83,7 +83,7 @@ export class AuthService {
     // Update user opt-in status in DB
     const user = await userRepo.findByWallet(walletAddress);
     if (user) {
-      await userRepo.update(user._id as string, { isUSDCOptedIn: true });
+      await userRepo.update(user._id!.toString(), { isUSDCOptedIn: true });
     }
 
     return returnDataObj({ txId, success: true });

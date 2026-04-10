@@ -259,7 +259,7 @@ export class BountyService {
     // Update winner's totalEarnings
     const winner = await userRepo.findByWallet(submission.sellerWalletAddress);
     if (winner) {
-      await userRepo.update(winner._id as string, {
+      await userRepo.update(winner._id!.toString(), {
         totalEarnings: (winner.totalEarnings || 0) + bounty.rewardUSDC,
       });
     }

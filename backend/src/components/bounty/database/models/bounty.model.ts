@@ -1,5 +1,5 @@
 import { BountiesTable } from "@database/collection-names";
-import { Document, model, Schema, Types } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import { DatasetCategory } from "@components/dataset/database/models";
 
 export type BountyStatus = "open" | "accepted" | "cancelled" | "expired";
@@ -51,4 +51,4 @@ const BountySchema = new Schema<IBounty>(
   { timestamps: true }
 );
 
-export const BountyModel = model<IBounty & Document>(BountiesTable, BountySchema, BountiesTable);
+export const BountyModel = model<IBounty>(BountiesTable, BountySchema, BountiesTable);

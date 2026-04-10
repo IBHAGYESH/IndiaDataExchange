@@ -19,19 +19,16 @@ const baseDir = path.resolve(__dirname);
 
 // function to validate and dynamically import a module
 async function importDeployerIfExists(dir: string) {
-  // Try both AlgoStakeX and BountyEscrow deploy configs
-  const possibleNames = ["bounty-escrow-deploy-config", "deploy-config"];
-  let deployerPath = "";
-  for (const name of possibleNames) {
-    const candidate = path.resolve(dir, name);
-    if (fs.existsSync(candidate + ".ts") || fs.existsSync(candidate + ".js")) {
-      deployerPath = candidate;
-      break;
-    }
+  // const deployerPath = path.resolve(dir, "deploy-config");
+  const deployerPath = path.resolve(dir, "bounty-escrow-deploy-config"); // only deploy the BountyEscrow contract
+  if (
+    fs.existsSync(deployerPath + ".ts") ||
+    fs.existsSync(deployerPath + ".js")
+  ) {
+    const deployer = await import(deployerPath);
+    return { ...deployer, name: path.basename(dir) };
   }
-  if (!deployerPath) return null;
-  const deployer = await import(deployerPath);
-  return { ...deployer, name: path.basename(dir) };
+  return null;
 }
 
 // get a list of all deployers from the subdirectories

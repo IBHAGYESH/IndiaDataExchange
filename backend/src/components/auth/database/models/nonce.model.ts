@@ -1,5 +1,5 @@
 import { NoncesTable } from "@database/collection-names";
-import { Document, model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 
 export interface INonce {
   _id?: string;
@@ -18,4 +18,4 @@ const NonceSchema = new Schema<INonce>(
   { timestamps: true }
 );
 
-export const NonceModel = model<INonce & Document>(NoncesTable, NonceSchema, NoncesTable);
+export const NonceModel = model<INonce>(NoncesTable, NonceSchema, NoncesTable);

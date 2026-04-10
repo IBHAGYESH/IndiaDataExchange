@@ -196,7 +196,7 @@ export class DatasetService {
       // Update seller's totalEarnings
       const seller = await userRepo.findByWallet(dataset.sellerWalletAddress);
       if (seller) {
-        await userRepo.update(seller._id as string, {
+        await userRepo.update(seller._id!.toString(), {
           totalEarnings: (seller.totalEarnings || 0) + dataset.priceUSDC,
         });
       }

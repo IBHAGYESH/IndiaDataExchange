@@ -1,5 +1,5 @@
 import { SubmissionsTable } from "@database/collection-names";
-import { Document, model, Schema, Types } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 export type SubmissionStatus = "pending" | "accepted" | "rejected";
 
@@ -41,7 +41,7 @@ const SubmissionSchema = new Schema<ISubmission>(
   { timestamps: true }
 );
 
-export const SubmissionModel = model<ISubmission & Document>(
+export const SubmissionModel = model<ISubmission>(
   SubmissionsTable,
   SubmissionSchema,
   SubmissionsTable

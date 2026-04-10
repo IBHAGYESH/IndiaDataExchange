@@ -1,5 +1,5 @@
 import { DatasetsTable } from "@database/collection-names";
-import { Document, model, Schema, Types } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 export type DatasetCategory =
   | "agriculture"
@@ -77,4 +77,4 @@ const DatasetSchema = new Schema<IDataset>(
 DatasetSchema.index({ title: "text", description: "text" });
 DatasetSchema.index({ status: 1, category: 1 });
 
-export const DatasetModel = model<IDataset & Document>(DatasetsTable, DatasetSchema, DatasetsTable);
+export const DatasetModel = model<IDataset>(DatasetsTable, DatasetSchema, DatasetsTable);

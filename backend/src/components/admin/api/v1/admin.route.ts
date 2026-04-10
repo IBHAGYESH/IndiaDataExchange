@@ -64,7 +64,7 @@ export class AdminRoute {
     this.router.patch(
       `${this.path}/datasets/:id/status`,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const { status } = req.body;
         if (!["active", "unlisted"].includes(status)) {
           throw new AppError("ValidationError", 400, "Invalid status", true);
@@ -90,7 +90,7 @@ export class AdminRoute {
     this.router.patch(
       `${this.path}/bounties/:id/status`,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const { status } = req.body;
         if (!["open", "accepted", "cancelled", "expired"].includes(status)) {
           throw new AppError("ValidationError", 400, "Invalid status", true);

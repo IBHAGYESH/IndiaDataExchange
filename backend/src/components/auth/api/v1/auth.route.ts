@@ -16,7 +16,7 @@ export class AuthRoute {
     this.router.get(
       `${this.path}/nonce/:walletAddress`,
       tryCatch(async (req: Request, res: Response) => {
-        const { walletAddress } = req.params;
+        const { walletAddress } = req.params as Record<string, string>;
         if (!walletAddress) throw new AppError("ValidationError", 400, "walletAddress required", true);
         const { data, code } = await this.service.generateNonce(walletAddress);
         res.status(code).json(data);
@@ -38,7 +38,7 @@ export class AuthRoute {
     this.router.get(
       `${this.path}/usdc-status/:walletAddress`,
       tryCatch(async (req: Request, res: Response) => {
-        const { walletAddress } = req.params;
+        const { walletAddress } = req.params as Record<string, string>;
         const { data, code } = await this.service.checkUSDCStatus(walletAddress);
         res.status(code).json(data);
       })

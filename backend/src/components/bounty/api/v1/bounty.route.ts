@@ -40,7 +40,7 @@ export class BountyRoute {
       `${this.path}/:id`,
       authMiddleware,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const { data, code } = await this.service.getBounty(id, req.user!.userId);
         res.status(code).json(data);
       })
@@ -76,7 +76,7 @@ export class BountyRoute {
       `${this.path}/:id/confirm`,
       authMiddleware,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const { txId, bountyData } = req.body;
         if (!txId || !bountyData) {
           throw new AppError("ValidationError", 400, "txId and bountyData required", true);
@@ -98,7 +98,7 @@ export class BountyRoute {
       authMiddleware,
       submissionUpload,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const files = req.files as MulterFiles;
         if (!files?.sampleFile?.[0] || !files?.fullDataFile?.[0]) {
           throw new AppError("ValidationError", 400, "Both sampleFile and fullDataFile are required", true);
@@ -124,7 +124,7 @@ export class BountyRoute {
       `${this.path}/:id/accept/:submissionId`,
       authMiddleware,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id, submissionId } = req.params;
+        const { id, submissionId } = req.params as Record<string, string>;
         const { data, code } = await this.service.acceptSubmission(
           req.user!.userId,
           id,
@@ -139,7 +139,7 @@ export class BountyRoute {
       `${this.path}/:id/accept/:submissionId/confirm`,
       authMiddleware,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id, submissionId } = req.params;
+        const { id, submissionId } = req.params as Record<string, string>;
         const { txId } = req.body;
         if (!txId) throw new AppError("ValidationError", 400, "txId required", true);
         const { data, code } = await this.service.confirmAcceptance(
@@ -157,7 +157,7 @@ export class BountyRoute {
       `${this.path}/:id/refund`,
       authMiddleware,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const { data, code } = await this.service.initiateRefund(req.user!.userId, id);
         res.status(code).json(data);
       })
@@ -168,7 +168,7 @@ export class BountyRoute {
       `${this.path}/:id/refund/confirm`,
       authMiddleware,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const { txId } = req.body;
         if (!txId) throw new AppError("ValidationError", 400, "txId required", true);
         const { data, code } = await this.service.confirmRefund(req.user!.userId, id, txId);

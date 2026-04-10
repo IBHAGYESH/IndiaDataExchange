@@ -1,5 +1,5 @@
 import { UsersTable } from "@database/collection-names";
-import { Document, model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 
 export interface IUser {
   _id?: string;
@@ -27,4 +27,4 @@ const UserSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-export const UserModel = model<IUser & Document>(UsersTable, UserSchema, UsersTable);
+export const UserModel = model<IUser>(UsersTable, UserSchema, UsersTable);

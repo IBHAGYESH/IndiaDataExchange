@@ -42,7 +42,7 @@ export class DatasetRoute {
     this.router.get(
       `${this.path}/:id`,
       tryCatch(async (req: Request, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const { data, code } = await this.service.getDataset(id);
         res.status(code).json(data);
       })
@@ -91,7 +91,7 @@ export class DatasetRoute {
       `${this.path}/:id`,
       authMiddleware,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const { title, description, tags, priceUSDC, status } = req.body;
         const { data, code } = await this.service.updateDataset(
           req.user!.userId,
@@ -108,7 +108,7 @@ export class DatasetRoute {
       `${this.path}/:id`,
       authMiddleware,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const { data, code } = await this.service.softDeleteDataset(
           req.user!.userId,
           req.user!.isAdmin,
@@ -123,7 +123,7 @@ export class DatasetRoute {
       `${this.path}/:id/download`,
       optionalAuth,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { id } = req.params;
+        const { id } = req.params as Record<string, string>;
         const paymentHeader = req.headers["x-payment"] as string;
         const payerWallet = req.headers["x-payment-wallet"] as string;
 
@@ -133,7 +133,7 @@ export class DatasetRoute {
           const { data: datasetData } = await datasetService.getDataset(id);
           const dataset = (datasetData as { dataset: { priceUSDC: number; sellerWalletAddress: string } }).dataset;
 
-          return res.status(402).json({
+          res.status(402).json({
             error: "Payment Required",
             accepts: [
               {
@@ -145,6 +145,7 @@ export class DatasetRoute {
               },
             ],
           });
+          return;
         }
 
         const walletAddress = payerWallet || req.user?.walletAddress;

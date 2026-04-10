@@ -25,8 +25,8 @@ export const fromMicroUSDC = (microAmount: bigint | number): number =>
 export async function isOptedIntoUSDC(walletAddress: string): Promise<boolean> {
   try {
     const accountInfo = await algodClient.accountInformation(walletAddress).do();
-    const assets: Array<{ "asset-id": number }> = accountInfo.assets || [];
-    return assets.some((asset) => asset["asset-id"] === USDC_ASSET_ID);
+    const assets = accountInfo.assets || [];
+    return assets.some((asset) => asset.assetId === BigInt(USDC_ASSET_ID));
   } catch {
     return false;
   }
@@ -35,8 +35,8 @@ export async function isOptedIntoUSDC(walletAddress: string): Promise<boolean> {
 export async function getUSDCBalance(walletAddress: string): Promise<number> {
   try {
     const accountInfo = await algodClient.accountInformation(walletAddress).do();
-    const assets: Array<{ "asset-id": number; amount: number }> = accountInfo.assets || [];
-    const usdc = assets.find((asset) => asset["asset-id"] === USDC_ASSET_ID);
+    const assets = accountInfo.assets || [];
+    const usdc = assets.find((asset) => asset.assetId === BigInt(USDC_ASSET_ID));
     return usdc ? Number(usdc.amount) / 10 ** USDC_DECIMALS : 0;
   } catch {
     return 0;
@@ -46,8 +46,8 @@ export async function getUSDCBalance(walletAddress: string): Promise<number> {
 export async function buildOptInTransaction(walletAddress: string): Promise<string> {
   const suggestedParams = await algodClient.getTransactionParams().do();
   const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-    from: walletAddress,
-    to: walletAddress,
+    sender: walletAddress,
+    receiver: walletAddress,
     amount: 0,
     assetIndex: USDC_ASSET_ID,
     suggestedParams,
@@ -57,9 +57,9 @@ export async function buildOptInTransaction(walletAddress: string): Promise<stri
 
 export async function submitSignedTransaction(signedTxnBase64: string): Promise<string> {
   const signedTxnBytes = Buffer.from(signedTxnBase64, "base64");
-  const { txId } = await algodClient.sendRawTransaction(signedTxnBytes).do();
-  await algosdk.waitForConfirmation(algodClient, txId, 4);
-  return txId;
+  const { txid } = await algodClient.sendRawTransaction(signedTxnBytes).do();
+  await algosdk.waitForConfirmation(algodClient, txid, 4);
+  return txid;
 }
 
 export async function submitSignedTransactionGroup(
@@ -67,14 +67,14 @@ export async function submitSignedTransactionGroup(
 ): Promise<string> {
   const signedBytes = signedTxnsBase64.map((t) => Buffer.from(t, "base64"));
   const combined = Buffer.concat(signedBytes);
-  const { txId } = await algodClient.sendRawTransaction(combined).do();
-  await algosdk.waitForConfirmation(algodClient, txId, 4);
-  return txId;
+  const { txid } = await algodClient.sendRawTransaction(combined).do();
+  await algosdk.waitForConfirmation(algodClient, txid, 4);
+  return txid;
 }
 
 export async function verifyTransaction(txId: string): Promise<Record<string, unknown>> {
   const txInfo = await indexerClient.lookupTransactionByID(txId).do();
-  return txInfo.transaction;
+  return txInfo.transaction as unknown as Record<string, unknown>;
 }
 
 export async function verifyWalletSignature(
@@ -85,8 +85,7 @@ export async function verifyWalletSignature(
   try {
     const encodedNonce = new TextEncoder().encode(nonce);
     const signatureBytes = Buffer.from(signature, "base64");
-    const publicKey = algosdk.decodeAddress(walletAddress).publicKey;
-    return algosdk.verifyBytes(encodedNonce, signatureBytes, publicKey);
+    return algosdk.verifyBytes(encodedNonce, signatureBytes, walletAddress);
   } catch {
     return false;
   }
@@ -105,8 +104,8 @@ export async function buildBountyEscrowTxnGroup(
   const contractAddress = algosdk.getApplicationAddress(appId);
 
   const usdcTransferTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-    from: buyerAddress,
-    to: contractAddress,
+    sender: buyerAddress,
+    receiver: contractAddress,
     amount: microAmount,
     assetIndex: USDC_ASSET_ID,
     suggestedParams,
@@ -114,9 +113,9 @@ export async function buildBountyEscrowTxnGroup(
 
   const boxName = new TextEncoder().encode(bountyId);
   const appCallTxn = algosdk.makeApplicationCallTxnFromObject({
-    from: buyerAddress,
+    sender: buyerAddress,
     appIndex: appId,
-    onCompletion: algosdk.OnApplicationComplete.NoOpOC,
+    onComplete: algosdk.OnApplicationComplete.NoOpOC,
     appArgs: [
       algosdk.encodeUint64(BigInt(appId)), // selector placeholder
       new TextEncoder().encode(bountyId),
@@ -148,9 +147,9 @@ export async function buildAcceptSubmissionTxn(
   const boxName = new TextEncoder().encode(bountyId);
 
   const appCallTxn = algosdk.makeApplicationCallTxnFromObject({
-    from: buyerAddress,
+    sender: buyerAddress,
     appIndex: appId,
-    onCompletion: algosdk.OnApplicationComplete.NoOpOC,
+    onComplete: algosdk.OnApplicationComplete.NoOpOC,
     appArgs: [
       new TextEncoder().encode(bountyId),
       algosdk.decodeAddress(winnerAddress).publicKey,
@@ -173,9 +172,9 @@ export async function buildRefundBountyTxn(
   const boxName = new TextEncoder().encode(bountyId);
 
   const appCallTxn = algosdk.makeApplicationCallTxnFromObject({
-    from: buyerAddress,
+    sender: buyerAddress,
     appIndex: appId,
-    onCompletion: algosdk.OnApplicationComplete.NoOpOC,
+    onComplete: algosdk.OnApplicationComplete.NoOpOC,
     appArgs: [new TextEncoder().encode(bountyId)],
     foreignAssets: [USDC_ASSET_ID],
     boxes: [{ appIndex: appId, name: boxName }],

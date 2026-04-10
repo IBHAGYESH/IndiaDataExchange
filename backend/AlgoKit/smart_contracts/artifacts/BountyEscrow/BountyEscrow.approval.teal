@@ -1,0 +1,448 @@
+#pragma version 11
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1 2 10458941
+    bytecblock "bounty_" 0x151f7c750020
+    // smart_contracts/BountyEscrow/contract.algo.ts:28
+    // export class BountyEscrow extends Contract {
+    txn NumAppArgs
+    bz main___algots__.defaultCreate@12
+    txn OnCompletion
+    !
+    assert // OnCompletion must be NoOp
+    txn ApplicationID
+    assert
+    pushbytess 0xd942c875 0xe432ab9f 0xa68c40e1 0x1bc72dd9 0x54254f0a // method "postBounty(string,uint64,uint64)byte[]", method "acceptSubmission(string,address)byte[]", method "refundBounty(string)byte[]", method "getBountyEscrow(string)(address,uint64,uint64,uint8)", method "fundContract()void"
+    txna ApplicationArgs 0
+    match postBounty acceptSubmission refundBounty getBountyEscrow fundContract
+    err
+
+main___algots__.defaultCreate@12:
+    // smart_contracts/BountyEscrow/contract.algo.ts:28
+    // export class BountyEscrow extends Contract {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    assert // OnCompletion must be NoOp && can only call when creating
+    intc_1 // 1
+    return
+
+
+// smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.postBounty[routing]() -> void:
+postBounty:
+    // smart_contracts/BountyEscrow/contract.algo.ts:38
+    // @abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 2
+    dup
+    len
+    pushint 8 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    txna ApplicationArgs 3
+    dup
+    len
+    pushint 8 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    // smart_contracts/BountyEscrow/contract.algo.ts:30
+    // private bounties = BoxMap<bytes, BountyData>({ keyPrefix: "bounty_" });
+    bytec_0 // "bounty_"
+    uncover 3
+    concat
+    // smart_contracts/BountyEscrow/contract.algo.ts:43
+    // assert(!this.bounties(bountyKey).exists, "Bounty already exists");
+    dup
+    box_len
+    bury 1
+    !
+    assert // Bounty already exists
+    // smart_contracts/BountyEscrow/contract.algo.ts:46-53
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: 0,
+    //     fee: 0,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/BountyEscrow/contract.algo.ts:48
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/BountyEscrow/contract.algo.ts:50
+    // assetAmount: 0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    // smart_contracts/BountyEscrow/contract.algo.ts:49
+    // xferAsset: USDC_ASA_ID,
+    intc_3 // 10458941
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+    // smart_contracts/BountyEscrow/contract.algo.ts:46-52
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: 0,
+    //     fee: 0,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/BountyEscrow/contract.algo.ts:51
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/BountyEscrow/contract.algo.ts:46-53
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: 0,
+    //     fee: 0,
+    //   })
+    //   .submit();
+    itxn_submit
+    // smart_contracts/BountyEscrow/contract.algo.ts:57
+    // buyer: new arc4.Address(Txn.sender),
+    txn Sender
+    // smart_contracts/BountyEscrow/contract.algo.ts:56-61
+    // const bountyData = new BountyData({
+    //   buyer: new arc4.Address(Txn.sender),
+    //   amount: new arc4.Uint64(amount),
+    //   deadline: new arc4.Uint64(deadline),
+    //   status: new arc4.Uint8(0), // open
+    // });
+    uncover 3
+    concat
+    uncover 2
+    concat
+    // smart_contracts/BountyEscrow/contract.algo.ts:60
+    // status: new arc4.Uint8(0), // open
+    pushbytes 0x00
+    // smart_contracts/BountyEscrow/contract.algo.ts:56-61
+    // const bountyData = new BountyData({
+    //   buyer: new arc4.Address(Txn.sender),
+    //   amount: new arc4.Uint64(amount),
+    //   deadline: new arc4.Uint64(deadline),
+    //   status: new arc4.Uint8(0), // open
+    // });
+    concat
+    // smart_contracts/BountyEscrow/contract.algo.ts:63
+    // this.bounties(bountyKey).value = clone(bountyData);
+    box_put
+    // smart_contracts/BountyEscrow/contract.algo.ts:38
+    // @abimethod()
+    bytec_1 // 0x151f7c750020
+    // smart_contracts/BountyEscrow/contract.algo.ts:65
+    // return Txn.txId;
+    txn TxID
+    // smart_contracts/BountyEscrow/contract.algo.ts:38
+    // @abimethod()
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.acceptSubmission[routing]() -> void:
+acceptSubmission:
+    // smart_contracts/BountyEscrow/contract.algo.ts:74
+    // @abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 2
+    dup
+    len
+    pushint 32 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // smart_contracts/BountyEscrow/contract.algo.ts:30
+    // private bounties = BoxMap<bytes, BountyData>({ keyPrefix: "bounty_" });
+    bytec_0 // "bounty_"
+    uncover 2
+    concat
+    // smart_contracts/BountyEscrow/contract.algo.ts:78
+    // assert(this.bounties(bountyKey).exists, "Bounty not found");
+    dup
+    box_len
+    bury 1
+    assert // Bounty not found
+    // smart_contracts/BountyEscrow/contract.algo.ts:80
+    // const bountyData = clone(this.bounties(bountyKey).value);
+    dup
+    box_get
+    pop
+    // smart_contracts/BountyEscrow/contract.algo.ts:83
+    // const callerAddr = new arc4.Address(Txn.sender);
+    txn Sender
+    // smart_contracts/BountyEscrow/contract.algo.ts:84
+    // assert(bountyData.buyer.native === callerAddr.native, "Only bounty poster can accept");
+    dig 1
+    extract 0 32
+    ==
+    assert // Only bounty poster can accept
+    // smart_contracts/BountyEscrow/contract.algo.ts:87
+    // assert(bountyData.status.asUint64() === Uint64(0), "Bounty is not open");
+    dup
+    pushint 48 // 48
+    getbyte
+    !
+    assert // Bounty is not open
+    // smart_contracts/BountyEscrow/contract.algo.ts:90-97
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: winnerAddress.native,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: bountyData.amount.asUint64(),
+    //     fee: 0,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/BountyEscrow/contract.algo.ts:94
+    // assetAmount: bountyData.amount.asUint64(),
+    pushint 32 // 32
+    extract_uint64
+    itxn_field AssetAmount
+    // smart_contracts/BountyEscrow/contract.algo.ts:93
+    // xferAsset: USDC_ASA_ID,
+    intc_3 // 10458941
+    itxn_field XferAsset
+    swap
+    itxn_field AssetReceiver
+    // smart_contracts/BountyEscrow/contract.algo.ts:90-96
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: winnerAddress.native,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: bountyData.amount.asUint64(),
+    //     fee: 0,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/BountyEscrow/contract.algo.ts:95
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/BountyEscrow/contract.algo.ts:90-97
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: winnerAddress.native,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: bountyData.amount.asUint64(),
+    //     fee: 0,
+    //   })
+    //   .submit();
+    itxn_submit
+    // smart_contracts/BountyEscrow/contract.algo.ts:100
+    // this.bounties(bountyKey).delete();
+    box_del
+    pop
+    // smart_contracts/BountyEscrow/contract.algo.ts:74
+    // @abimethod()
+    bytec_1 // 0x151f7c750020
+    // smart_contracts/BountyEscrow/contract.algo.ts:102
+    // return Txn.txId;
+    txn TxID
+    // smart_contracts/BountyEscrow/contract.algo.ts:74
+    // @abimethod()
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.refundBounty[routing]() -> void:
+refundBounty:
+    // smart_contracts/BountyEscrow/contract.algo.ts:110
+    // @abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    // smart_contracts/BountyEscrow/contract.algo.ts:30
+    // private bounties = BoxMap<bytes, BountyData>({ keyPrefix: "bounty_" });
+    bytec_0 // "bounty_"
+    swap
+    concat
+    // smart_contracts/BountyEscrow/contract.algo.ts:114
+    // assert(this.bounties(bountyKey).exists, "Bounty not found");
+    dup
+    box_len
+    bury 1
+    assert // Bounty not found
+    // smart_contracts/BountyEscrow/contract.algo.ts:116
+    // const bountyData = clone(this.bounties(bountyKey).value);
+    dup
+    box_get
+    pop
+    // smart_contracts/BountyEscrow/contract.algo.ts:119
+    // const callerAddr = new arc4.Address(Txn.sender);
+    txn Sender
+    // smart_contracts/BountyEscrow/contract.algo.ts:120
+    // assert(bountyData.buyer.native === callerAddr.native, "Only bounty poster can refund");
+    dig 1
+    extract 0 32
+    ==
+    assert // Only bounty poster can refund
+    // smart_contracts/BountyEscrow/contract.algo.ts:123
+    // assert(bountyData.status.asUint64() === Uint64(0), "Bounty is not open");
+    dup
+    pushint 48 // 48
+    getbyte
+    !
+    assert // Bounty is not open
+    // smart_contracts/BountyEscrow/contract.algo.ts:126
+    // const currentTime = Global.latestTimestamp;
+    global LatestTimestamp
+    // smart_contracts/BountyEscrow/contract.algo.ts:127
+    // assert(currentTime >= bountyData.deadline.asUint64(), "Deadline has not passed yet");
+    dig 1
+    pushint 40 // 40
+    extract_uint64
+    >=
+    assert // Deadline has not passed yet
+    // smart_contracts/BountyEscrow/contract.algo.ts:130-137
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Txn.sender,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: bountyData.amount.asUint64(),
+    //     fee: 0,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/BountyEscrow/contract.algo.ts:132
+    // assetReceiver: Txn.sender,
+    txn Sender
+    // smart_contracts/BountyEscrow/contract.algo.ts:134
+    // assetAmount: bountyData.amount.asUint64(),
+    swap
+    pushint 32 // 32
+    extract_uint64
+    itxn_field AssetAmount
+    // smart_contracts/BountyEscrow/contract.algo.ts:133
+    // xferAsset: USDC_ASA_ID,
+    intc_3 // 10458941
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+    // smart_contracts/BountyEscrow/contract.algo.ts:130-136
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Txn.sender,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: bountyData.amount.asUint64(),
+    //     fee: 0,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/BountyEscrow/contract.algo.ts:135
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/BountyEscrow/contract.algo.ts:130-137
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Txn.sender,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: bountyData.amount.asUint64(),
+    //     fee: 0,
+    //   })
+    //   .submit();
+    itxn_submit
+    // smart_contracts/BountyEscrow/contract.algo.ts:140
+    // this.bounties(bountyKey).delete();
+    box_del
+    pop
+    // smart_contracts/BountyEscrow/contract.algo.ts:110
+    // @abimethod()
+    bytec_1 // 0x151f7c750020
+    // smart_contracts/BountyEscrow/contract.algo.ts:142
+    // return Txn.txId;
+    txn TxID
+    // smart_contracts/BountyEscrow/contract.algo.ts:110
+    // @abimethod()
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.getBountyEscrow[routing]() -> void:
+getBountyEscrow:
+    // smart_contracts/BountyEscrow/contract.algo.ts:148
+    // @abimethod({ readonly: true })
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    // smart_contracts/BountyEscrow/contract.algo.ts:30
+    // private bounties = BoxMap<bytes, BountyData>({ keyPrefix: "bounty_" });
+    bytec_0 // "bounty_"
+    swap
+    concat
+    // smart_contracts/BountyEscrow/contract.algo.ts:151
+    // assert(this.bounties(bountyKey).exists, "Bounty not found");
+    dup
+    box_len
+    bury 1
+    assert // Bounty not found
+    // smart_contracts/BountyEscrow/contract.algo.ts:152
+    // return clone(this.bounties(bountyKey).value);
+    box_get
+    pop
+    // smart_contracts/BountyEscrow/contract.algo.ts:148
+    // @abimethod({ readonly: true })
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.fundContract[routing]() -> void:
+fundContract:
+    // smart_contracts/BountyEscrow/contract.algo.ts:160
+    // assert(Txn.sender === Global.creatorAddress, "Only creator can fund");
+    txn Sender
+    global CreatorAddress
+    ==
+    assert // Only creator can fund
+    // smart_contracts/BountyEscrow/contract.algo.ts:158
+    // @abimethod()
+    intc_1 // 1
+    return

@@ -1,5 +1,5 @@
 import { PurchasesTable } from "@database/collection-names";
-import { Document, model, Schema, Types } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 export interface IPurchase {
   _id?: string;
@@ -32,7 +32,7 @@ const PurchaseSchema = new Schema<IPurchase>(
 
 PurchaseSchema.index({ buyerWalletAddress: 1, datasetId: 1 });
 
-export const PurchaseModel = model<IPurchase & Document>(
+export const PurchaseModel = model<IPurchase>(
   PurchasesTable,
   PurchaseSchema,
   PurchasesTable
