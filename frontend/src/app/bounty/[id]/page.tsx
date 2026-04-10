@@ -16,6 +16,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { formatUSDC, truncateAddress, formatDate, isDeadlinePassed } from "@/utils";
 import config from "@/config";
 import algosdk from "algosdk";
+import { submittedTxIdFromAlgodResponse } from "@/utils/algod";
 
 export default function BountyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -102,7 +103,8 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
 
       // Submit to Algorand
       const algodClient = new algosdk.Algodv2("", "https://testnet-api.algonode.cloud", "");
-      const { txId } = await algodClient.sendRawTransaction(signedTxns[0]).do();
+      const submitRes = await algodClient.sendRawTransaction(signedTxns[0]).do();
+      const txId = submittedTxIdFromAlgodResponse(submitRes as { txid?: string; txId?: string });
       await algosdk.waitForConfirmation(algodClient, txId, 4);
 
       // Confirm with backend

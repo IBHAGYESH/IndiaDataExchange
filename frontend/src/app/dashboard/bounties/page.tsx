@@ -13,6 +13,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { useState } from "react";
 import algosdk from "algosdk";
 import config from "@/config";
+import { submittedTxIdFromAlgodResponse } from "@/utils/algod";
 
 export default function DashboardBountiesPage() {
   const { data, isLoading, refetch } = useGetUserBountiesQuery();
@@ -32,7 +33,8 @@ export default function DashboardBountiesPage() {
       const txn = algosdk.decodeUnsignedTransaction(txnBytes);
       const signedTxns = await peraWallet.signTransaction([[{ txn }]]);
       const algodClient = new algosdk.Algodv2("", "https://testnet-api.algonode.cloud", "");
-      const { txId } = await algodClient.sendRawTransaction(signedTxns[0]).do();
+      const submitRes = await algodClient.sendRawTransaction(signedTxns[0]).do();
+      const txId = submittedTxIdFromAlgodResponse(submitRes as { txid?: string; txId?: string });
       await algosdk.waitForConfirmation(algodClient, txId, 4);
       await confirmRefund({ bountyId, txId }).unwrap();
       refetch();

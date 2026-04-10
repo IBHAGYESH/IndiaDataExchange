@@ -8,18 +8,18 @@ main:
 
 
     txn NumAppArgs
-    bz main___algots__.defaultCreate@12
+    bz main___algots__.defaultCreate@13
     txn OnCompletion
     !
     assert
     txn ApplicationID
     assert
-    pushbytess 0xd942c875 0xe432ab9f 0xa68c40e1 0x1bc72dd9 0x54254f0a
+    pushbytess 0xd942c875 0xe432ab9f 0xa68c40e1 0x1bc72dd9 0x54254f0a 0xd9a010ec
     txna ApplicationArgs 0
-    match postBounty acceptSubmission refundBounty getBountyEscrow fundContract
+    match postBounty acceptSubmission refundBounty getBountyEscrow fundContract optInToUSDC
     err
 
-main___algots__.defaultCreate@12:
+main___algots__.defaultCreate@13:
 
 
     txn OnCompletion
@@ -442,6 +442,66 @@ fundContract:
     global CreatorAddress
     ==
     assert
+
+
+    intc_1
+    return
+
+
+
+optInToUSDC:
+
+
+    txn Sender
+    global CreatorAddress
+    ==
+    assert
+
+
+
+
+
+
+
+
+
+    itxn_begin
+
+
+    global CurrentApplicationAddress
+
+
+    intc_0
+    itxn_field AssetAmount
+
+
+    intc_3
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+
+
+
+
+
+
+
+
+    pushint 4
+    itxn_field TypeEnum
+
+
+    intc_0
+    itxn_field Fee
+
+
+
+
+
+
+
+
+
+    itxn_submit
 
 
     intc_1

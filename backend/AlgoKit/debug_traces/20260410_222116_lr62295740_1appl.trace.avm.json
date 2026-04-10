@@ -1,0 +1,136 @@
+{
+  "last-round": 62295740,
+  "txn-groups": [
+    {
+      "txn-results": [
+        {
+          "txn-result": {
+            "txn": {
+              "txn": {
+                "type": "appl",
+                "snd": "YUF5JD4S6T764QQMHYUKZYN2BEWFZMHPPIHHSRXHW64TI3IQHEDVBIUUHQ",
+                "lv": 62295750,
+                "gen": "testnet-v1.0",
+                "gh": "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=",
+                "fee": 1000,
+                "fv": 62295740,
+                "note": "QUxHT0tJVF9ERVBMT1lFUjpqeyJuYW1lIjoiQm91bnR5RXNjcm93IiwidmVyc2lvbiI6IjEuMCJ9",
+                "apap": "CyAEAAECva7+BCYCB2JvdW50eV8GFR98dQAgMRtBADkxGRREMRhEggYE2ULIdQTkMqufBKaMQOEEG8ct2QRUJU8KBNmgEOw2GgCOBgALAFsAqQD4ARoBIgAxGRQxGBQQRCNDNhoBSSJZJAhLARUSRDYaAkkVgQgSRDYaA0kVgQgSRChPA1BJvUUBFESxMgoishIlshGyFIEEshAisgGzMQBPA1BPAlCAAQBQvykxF1CwI0M2GgFJIlkkCEsBFRJENhoCSRWBIBJEKE8CUEm9RQFESb5IMQBLAVcAIBJESYEwVRREsYEgW7ISJbIRTLIUgQSyECKyAbO8SCkxF1CwI0M2GgFJIlkkCEsBFRJEKExQSb1FAURJvkgxAEsBVwAgEkRJgTBVFEQyB0sBgShbD0SxMQBMgSBbshIlshGyFIEEshAisgGzvEgpMRdQsCNDNhoBSSJZJAhLARUSRChMUEm9RQFEvkiABBUffHVMULAjQzEAMgkSRCNDMQAyCRJEsTIKIrISJbIRshSBBLIQIrIBsyND",
+                "apsu": "C4EBQw=="
+              }
+            },
+            "application-index": 758639416
+          },
+          "app-budget-consumed": 12,
+          "exec-trace": {
+            "approval-program-hash": "+XvxyeYjjmJa//Ub98qYgLkd6vmhkRObV2UQaSIV+fo=",
+            "approval-program-trace": [
+              {
+                "pc": 1
+              },
+              {
+                "pc": 10
+              },
+              {
+                "pc": 27,
+                "stack-additions": [
+                  {
+                    "type": 2
+                  }
+                ]
+              },
+              {
+                "pc": 29,
+                "stack-pop-count": 1
+              },
+              {
+                "pc": 89,
+                "stack-additions": [
+                  {
+                    "type": 2
+                  }
+                ]
+              },
+              {
+                "pc": 91,
+                "stack-additions": [
+                  {
+                    "type": 2,
+                    "uint": 1
+                  }
+                ],
+                "stack-pop-count": 1
+              },
+              {
+                "pc": 92,
+                "stack-additions": [
+                  {
+                    "type": 2
+                  }
+                ]
+              },
+              {
+                "pc": 94,
+                "stack-additions": [
+                  {
+                    "type": 2,
+                    "uint": 1
+                  }
+                ],
+                "stack-pop-count": 1
+              },
+              {
+                "pc": 95,
+                "stack-additions": [
+                  {
+                    "type": 2,
+                    "uint": 1
+                  }
+                ],
+                "stack-pop-count": 2
+              },
+              {
+                "pc": 96,
+                "stack-pop-count": 1
+              },
+              {
+                "pc": 97,
+                "stack-additions": [
+                  {
+                    "type": 2,
+                    "uint": 1
+                  }
+                ]
+              },
+              {
+                "pc": 98,
+                "stack-additions": [
+                  {
+                    "type": 2,
+                    "uint": 1
+                  }
+                ],
+                "stack-pop-count": 1
+              }
+            ]
+          }
+        }
+      ],
+      "app-budget-added": 700,
+      "app-budget-consumed": 12
+    }
+  ],
+  "version": 2,
+  "eval-overrides": {
+    "allow-empty-signatures": true,
+    "fix-signers": true,
+    "max-log-calls": 2048,
+    "max-log-size": 65536
+  },
+  "exec-trace-config": {
+    "enable": true,
+    "scratch-change": true,
+    "stack-change": true,
+    "state-change": true
+  }
+}

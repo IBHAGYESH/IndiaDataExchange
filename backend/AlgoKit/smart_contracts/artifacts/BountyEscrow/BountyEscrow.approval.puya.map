@@ -3,7 +3,7 @@
   "sources": [
     "../../BountyEscrow/contract.algo.ts"
   ],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;AA2BA;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAUG;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AARkB;AAAA;;AAAA;AAaT;AAAA;AAAA;;AAAD;AAAP;AAGA;AAEmB;;AAEF;;;AADF;;;;;AAHf;;;;AAKS;;;AALT;AAW0B;;AADP;;AAAA;AAAA;;AAAA;AAIT;;;AAJS;AAOnB;AAzBD;AA2BQ;;AA3BR;AAAA;AAAA;AAAA;AAoCA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AA5CkB;AAAA;;AAAA;AAgDV;AAAA;AAAA;;AAAP;AAEyB;AAAA;AAAA;AAGW;;AAC7B;;AAAA;;;AAAA;AAAP;AAGO;AAAA;;AAAA;AAAA;AAAP;AAGA;AAIiB;;AAAA;;;AADF;;;;;;AAHf;;;;AAKS;;;AALT;AAUA;;AA1BD;AA4BQ;;AA5BR;AAAA;AAAA;AAAA;AAoCA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAhFkB;AAAA;AAAA;AAoFV;AAAA;AAAA;;AAAP;AAEyB;AAAA;AAAA;AAGW;;AAC7B;;AAAA;;;AAAA;AAAP;AAGO;AAAA;;AAAA;AAAA;AAAP;AAGoB;;AACE;;AAAA;;AAAA;AAAf;AAAP;AAGA;AAEmB;;AAEF;AAAA;;AAAA;;;AADF;;;;;AAHf;;;;AAKS;;;AALT;AAUA;;AA9BD;AAgCQ;;AAhCR;AAAA;AAAA;AAAA;AAsCA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAtHkB;AAAA;AAAA;AAyHV;AAAA;AAAA;;AAAP;AACa;AAAA;AAJd;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAYQ;;AAAe;;AAAf;AAAP;AAFD;AAAA",
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;AA2BA;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;AAAA;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAUG;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AARkB;AAAA;;AAAA;AAaT;AAAA;AAAA;;AAAD;AAAP;AAGA;AAEmB;;AAEF;;;AADF;;;;;AAHf;;;;AAKS;;;AALT;AAW0B;;AADP;;AAAA;AAAA;;AAAA;AAIT;;;AAJS;AAOnB;AAzBD;AA2BQ;;AA3BR;AAAA;AAAA;AAAA;AAoCA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AA5CkB;AAAA;;AAAA;AAgDV;AAAA;AAAA;;AAAP;AAEyB;AAAA;AAAA;AAGW;;AAC7B;;AAAA;;;AAAA;AAAP;AAGO;AAAA;;AAAA;AAAA;AAAP;AAGA;AAIiB;;AAAA;;;AADF;;;;;;AAHf;;;;AAKS;;;AALT;AAUA;;AA1BD;AA4BQ;;AA5BR;AAAA;AAAA;AAAA;AAoCA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAhFkB;AAAA;AAAA;AAoFV;AAAA;AAAA;;AAAP;AAEyB;AAAA;AAAA;AAGW;;AAC7B;;AAAA;;;AAAA;AAAP;AAGO;AAAA;;AAAA;AAAA;AAAP;AAGoB;;AACE;;AAAA;;AAAA;AAAf;AAAP;AAGA;AAEmB;;AAEF;AAAA;;AAAA;;;AADF;;;;;AAHf;;;;AAKS;;;AALT;AAUA;;AA9BD;AAgCQ;;AAhCR;AAAA;AAAA;AAAA;AAsCA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAtHkB;AAAA;AAAA;AAyHV;AAAA;AAAA;;AAAP;AACa;AAAA;AAJd;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAYQ;;AAAe;;AAAf;AAAP;AAFD;AAAA;AAYQ;;AAAe;;AAAf;AAAP;AACA;AAEmB;;AAEF;;;AADF;;;;;AAHf;;;;AAKS;;;AALT;AAHD;AAAA",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -26,7 +26,7 @@
       ]
     },
     "29": {
-      "op": "bz main___algots__.defaultCreate@12",
+      "op": "bz main___algots__.defaultCreate@13",
       "stack_out": []
     },
     "32": {
@@ -66,11 +66,12 @@
       "stack_out": []
     },
     "39": {
-      "op": "pushbytess 0xd942c875 0xe432ab9f 0xa68c40e1 0x1bc72dd9 0x54254f0a // method \"postBounty(string,uint64,uint64)byte[]\", method \"acceptSubmission(string,address)byte[]\", method \"refundBounty(string)byte[]\", method \"getBountyEscrow(string)(address,uint64,uint64,uint8)\", method \"fundContract()void\"",
+      "op": "pushbytess 0xd942c875 0xe432ab9f 0xa68c40e1 0x1bc72dd9 0x54254f0a 0xd9a010ec // method \"postBounty(string,uint64,uint64)byte[]\", method \"acceptSubmission(string,address)byte[]\", method \"refundBounty(string)byte[]\", method \"getBountyEscrow(string)(address,uint64,uint64,uint8)\", method \"fundContract()void\", method \"optInToUSDC()void\"",
       "defined_out": [
         "Method(acceptSubmission(string,address)byte[])",
         "Method(fundContract()void)",
         "Method(getBountyEscrow(string)(address,uint64,uint64,uint8))",
+        "Method(optInToUSDC()void)",
         "Method(postBounty(string,uint64,uint64)byte[])",
         "Method(refundBounty(string)byte[])"
       ],
@@ -79,15 +80,17 @@
         "Method(acceptSubmission(string,address)byte[])",
         "Method(refundBounty(string)byte[])",
         "Method(getBountyEscrow(string)(address,uint64,uint64,uint8))",
-        "Method(fundContract()void)"
+        "Method(fundContract()void)",
+        "Method(optInToUSDC()void)"
       ]
     },
-    "66": {
+    "71": {
       "op": "txna ApplicationArgs 0",
       "defined_out": [
         "Method(acceptSubmission(string,address)byte[])",
         "Method(fundContract()void)",
         "Method(getBountyEscrow(string)(address,uint64,uint64,uint8))",
+        "Method(optInToUSDC()void)",
         "Method(postBounty(string,uint64,uint64)byte[])",
         "Method(refundBounty(string)byte[])",
         "tmp%6#0"
@@ -98,18 +101,19 @@
         "Method(refundBounty(string)byte[])",
         "Method(getBountyEscrow(string)(address,uint64,uint64,uint8))",
         "Method(fundContract()void)",
+        "Method(optInToUSDC()void)",
         "tmp%6#0"
       ]
     },
-    "69": {
-      "op": "match postBounty acceptSubmission refundBounty getBountyEscrow fundContract",
+    "74": {
+      "op": "match postBounty acceptSubmission refundBounty getBountyEscrow fundContract optInToUSDC",
       "stack_out": []
     },
-    "81": {
+    "88": {
       "op": "err"
     },
-    "82": {
-      "block": "main___algots__.defaultCreate@12",
+    "89": {
+      "block": "main___algots__.defaultCreate@13",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
@@ -119,7 +123,7 @@
         "tmp%7#0"
       ]
     },
-    "84": {
+    "91": {
       "op": "!",
       "defined_out": [
         "tmp%8#0"
@@ -128,7 +132,7 @@
         "tmp%8#0"
       ]
     },
-    "85": {
+    "92": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%8#0",
@@ -139,7 +143,7 @@
         "tmp%9#0"
       ]
     },
-    "87": {
+    "94": {
       "op": "!",
       "defined_out": [
         "tmp%10#0",
@@ -150,7 +154,7 @@
         "tmp%10#0"
       ]
     },
-    "88": {
+    "95": {
       "op": "&&",
       "defined_out": [
         "tmp%11#0"
@@ -159,12 +163,12 @@
         "tmp%11#0"
       ]
     },
-    "89": {
+    "96": {
       "error": "OnCompletion must be NoOp && can only call when creating",
       "op": "assert // OnCompletion must be NoOp && can only call when creating",
       "stack_out": []
     },
-    "90": {
+    "97": {
       "op": "intc_1 // 1",
       "defined_out": [
         "1"
@@ -173,11 +177,11 @@
         "1"
       ]
     },
-    "91": {
+    "98": {
       "op": "return",
       "stack_out": []
     },
-    "92": {
+    "99": {
       "subroutine": "smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.postBounty[routing]",
       "params": {},
       "block": "postBounty",
@@ -190,7 +194,7 @@
         "bountyKey#0"
       ]
     },
-    "95": {
+    "102": {
       "op": "dup",
       "defined_out": [
         "bountyKey#0",
@@ -201,7 +205,7 @@
         "bountyKey#0 (copy)"
       ]
     },
-    "96": {
+    "103": {
       "op": "intc_0 // 0",
       "defined_out": [
         "0",
@@ -214,7 +218,7 @@
         "0"
       ]
     },
-    "97": {
+    "104": {
       "error": "invalid array length header",
       "op": "extract_uint16 // on error: invalid array length header",
       "defined_out": [
@@ -226,7 +230,7 @@
         "aggregate%array_length%0#0"
       ]
     },
-    "98": {
+    "105": {
       "op": "intc_2 // 2",
       "defined_out": [
         "2",
@@ -239,7 +243,7 @@
         "2"
       ]
     },
-    "99": {
+    "106": {
       "op": "+",
       "defined_out": [
         "add%0#0",
@@ -250,7 +254,7 @@
         "add%0#0"
       ]
     },
-    "100": {
+    "107": {
       "op": "dig 1",
       "stack_out": [
         "bountyKey#0",
@@ -258,7 +262,7 @@
         "bountyKey#0 (copy)"
       ]
     },
-    "102": {
+    "109": {
       "op": "len",
       "defined_out": [
         "add%0#0",
@@ -271,7 +275,7 @@
         "len%0#0"
       ]
     },
-    "103": {
+    "110": {
       "op": "==",
       "defined_out": [
         "bountyKey#0",
@@ -282,14 +286,14 @@
         "eq%0#0"
       ]
     },
-    "104": {
+    "111": {
       "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "stack_out": [
         "bountyKey#0"
       ]
     },
-    "105": {
+    "112": {
       "op": "txna ApplicationArgs 2",
       "defined_out": [
         "bountyKey#0",
@@ -300,7 +304,7 @@
         "tmp%2#0"
       ]
     },
-    "108": {
+    "115": {
       "op": "dup",
       "defined_out": [
         "bountyKey#0",
@@ -313,7 +317,7 @@
         "tmp%2#0 (copy)"
       ]
     },
-    "109": {
+    "116": {
       "op": "len",
       "defined_out": [
         "bountyKey#0",
@@ -326,7 +330,7 @@
         "len%1#0"
       ]
     },
-    "110": {
+    "117": {
       "op": "pushint 8 // 8",
       "defined_out": [
         "8",
@@ -341,7 +345,7 @@
         "8"
       ]
     },
-    "112": {
+    "119": {
       "op": "==",
       "defined_out": [
         "bountyKey#0",
@@ -354,7 +358,7 @@
         "eq%1#0"
       ]
     },
-    "113": {
+    "120": {
       "error": "invalid number of bytes for arc4.uint64",
       "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
@@ -362,7 +366,7 @@
         "tmp%2#0"
       ]
     },
-    "114": {
+    "121": {
       "op": "txna ApplicationArgs 3",
       "defined_out": [
         "bountyKey#0",
@@ -375,7 +379,7 @@
         "tmp%4#0"
       ]
     },
-    "117": {
+    "124": {
       "op": "dup",
       "defined_out": [
         "bountyKey#0",
@@ -390,7 +394,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "118": {
+    "125": {
       "op": "len",
       "defined_out": [
         "bountyKey#0",
@@ -405,7 +409,7 @@
         "len%2#0"
       ]
     },
-    "119": {
+    "126": {
       "op": "pushint 8 // 8",
       "stack_out": [
         "bountyKey#0",
@@ -415,7 +419,7 @@
         "8"
       ]
     },
-    "121": {
+    "128": {
       "op": "==",
       "defined_out": [
         "bountyKey#0",
@@ -430,7 +434,7 @@
         "eq%2#0"
       ]
     },
-    "122": {
+    "129": {
       "error": "invalid number of bytes for arc4.uint64",
       "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
@@ -439,7 +443,7 @@
         "tmp%4#0"
       ]
     },
-    "123": {
+    "130": {
       "op": "bytec_0 // \"bounty_\"",
       "defined_out": [
         "\"bounty_\"",
@@ -454,7 +458,7 @@
         "\"bounty_\""
       ]
     },
-    "124": {
+    "131": {
       "op": "uncover 3",
       "stack_out": [
         "tmp%2#0",
@@ -463,7 +467,7 @@
         "bountyKey#0"
       ]
     },
-    "126": {
+    "133": {
       "op": "concat",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -476,7 +480,7 @@
         "box_prefixed_key%0#0"
       ]
     },
-    "127": {
+    "134": {
       "op": "dup",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -491,7 +495,7 @@
         "box_prefixed_key%0#0 (copy)"
       ]
     },
-    "128": {
+    "135": {
       "op": "box_len",
       "defined_out": [
         "_%0#0",
@@ -508,7 +512,7 @@
         "maybe_exists%0#0"
       ]
     },
-    "129": {
+    "136": {
       "op": "bury 1",
       "stack_out": [
         "tmp%2#0",
@@ -517,7 +521,7 @@
         "maybe_exists%0#0"
       ]
     },
-    "131": {
+    "138": {
       "op": "!",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -532,7 +536,7 @@
         "tmp%1#1"
       ]
     },
-    "132": {
+    "139": {
       "error": "Bounty already exists",
       "op": "assert // Bounty already exists",
       "stack_out": [
@@ -541,10 +545,10 @@
         "box_prefixed_key%0#0"
       ]
     },
-    "133": {
+    "140": {
       "op": "itxn_begin"
     },
-    "134": {
+    "141": {
       "op": "global CurrentApplicationAddress",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -559,7 +563,7 @@
         "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
       ]
     },
-    "136": {
+    "143": {
       "op": "intc_0 // 0",
       "stack_out": [
         "tmp%2#0",
@@ -569,7 +573,7 @@
         "0"
       ]
     },
-    "137": {
+    "144": {
       "op": "itxn_field AssetAmount",
       "stack_out": [
         "tmp%2#0",
@@ -578,7 +582,7 @@
         "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
       ]
     },
-    "139": {
+    "146": {
       "op": "intc_3 // 10458941",
       "defined_out": [
         "10458941",
@@ -595,7 +599,7 @@
         "10458941"
       ]
     },
-    "140": {
+    "147": {
       "op": "itxn_field XferAsset",
       "stack_out": [
         "tmp%2#0",
@@ -604,7 +608,7 @@
         "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
       ]
     },
-    "142": {
+    "149": {
       "op": "itxn_field AssetReceiver",
       "stack_out": [
         "tmp%2#0",
@@ -612,7 +616,7 @@
         "box_prefixed_key%0#0"
       ]
     },
-    "144": {
+    "151": {
       "op": "pushint 4 // 4",
       "defined_out": [
         "4",
@@ -627,7 +631,7 @@
         "4"
       ]
     },
-    "146": {
+    "153": {
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "tmp%2#0",
@@ -635,7 +639,7 @@
         "box_prefixed_key%0#0"
       ]
     },
-    "148": {
+    "155": {
       "op": "intc_0 // 0",
       "stack_out": [
         "tmp%2#0",
@@ -644,7 +648,7 @@
         "0"
       ]
     },
-    "149": {
+    "156": {
       "op": "itxn_field Fee",
       "stack_out": [
         "tmp%2#0",
@@ -652,10 +656,10 @@
         "box_prefixed_key%0#0"
       ]
     },
-    "151": {
+    "158": {
       "op": "itxn_submit"
     },
-    "152": {
+    "159": {
       "op": "txn Sender",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -670,7 +674,7 @@
         "reinterpret_Encoded(uint8[32])%0#0"
       ]
     },
-    "154": {
+    "161": {
       "op": "uncover 3",
       "stack_out": [
         "tmp%4#0",
@@ -679,7 +683,7 @@
         "tmp%2#0"
       ]
     },
-    "156": {
+    "163": {
       "op": "concat",
       "defined_out": [
         "aggregate%head%1#0",
@@ -692,7 +696,7 @@
         "aggregate%head%1#0"
       ]
     },
-    "157": {
+    "164": {
       "op": "uncover 2",
       "stack_out": [
         "box_prefixed_key%0#0",
@@ -700,7 +704,7 @@
         "tmp%4#0"
       ]
     },
-    "159": {
+    "166": {
       "op": "concat",
       "defined_out": [
         "aggregate%head%2#0",
@@ -711,7 +715,7 @@
         "aggregate%head%2#0"
       ]
     },
-    "160": {
+    "167": {
       "op": "pushbytes 0x00",
       "defined_out": [
         "0x00",
@@ -724,7 +728,7 @@
         "0x00"
       ]
     },
-    "163": {
+    "170": {
       "op": "concat",
       "defined_out": [
         "bountyData#0",
@@ -735,11 +739,11 @@
         "bountyData#0"
       ]
     },
-    "164": {
+    "171": {
       "op": "box_put",
       "stack_out": []
     },
-    "165": {
+    "172": {
       "op": "bytec_1 // 0x151f7c750020",
       "defined_out": [
         "0x151f7c750020"
@@ -748,7 +752,7 @@
         "0x151f7c750020"
       ]
     },
-    "166": {
+    "173": {
       "op": "txn TxID",
       "defined_out": [
         "0x151f7c750020",
@@ -759,7 +763,7 @@
         "tmp%5#1"
       ]
     },
-    "168": {
+    "175": {
       "op": "concat",
       "defined_out": [
         "tmp%8#0"
@@ -768,11 +772,11 @@
         "tmp%8#0"
       ]
     },
-    "169": {
+    "176": {
       "op": "log",
       "stack_out": []
     },
-    "170": {
+    "177": {
       "op": "intc_1 // 1",
       "defined_out": [
         "1"
@@ -781,11 +785,11 @@
         "1"
       ]
     },
-    "171": {
+    "178": {
       "op": "return",
       "stack_out": []
     },
-    "172": {
+    "179": {
       "subroutine": "smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.acceptSubmission[routing]",
       "params": {},
       "block": "acceptSubmission",
@@ -798,7 +802,7 @@
         "bountyKey#0"
       ]
     },
-    "175": {
+    "182": {
       "op": "dup",
       "defined_out": [
         "bountyKey#0",
@@ -809,7 +813,7 @@
         "bountyKey#0 (copy)"
       ]
     },
-    "176": {
+    "183": {
       "op": "intc_0 // 0",
       "defined_out": [
         "0",
@@ -822,7 +826,7 @@
         "0"
       ]
     },
-    "177": {
+    "184": {
       "error": "invalid array length header",
       "op": "extract_uint16 // on error: invalid array length header",
       "defined_out": [
@@ -834,7 +838,7 @@
         "aggregate%array_length%0#0"
       ]
     },
-    "178": {
+    "185": {
       "op": "intc_2 // 2",
       "defined_out": [
         "2",
@@ -847,7 +851,7 @@
         "2"
       ]
     },
-    "179": {
+    "186": {
       "op": "+",
       "defined_out": [
         "add%0#0",
@@ -858,7 +862,7 @@
         "add%0#0"
       ]
     },
-    "180": {
+    "187": {
       "op": "dig 1",
       "stack_out": [
         "bountyKey#0",
@@ -866,7 +870,7 @@
         "bountyKey#0 (copy)"
       ]
     },
-    "182": {
+    "189": {
       "op": "len",
       "defined_out": [
         "add%0#0",
@@ -879,7 +883,7 @@
         "len%0#0"
       ]
     },
-    "183": {
+    "190": {
       "op": "==",
       "defined_out": [
         "bountyKey#0",
@@ -890,14 +894,14 @@
         "eq%0#0"
       ]
     },
-    "184": {
+    "191": {
       "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "stack_out": [
         "bountyKey#0"
       ]
     },
-    "185": {
+    "192": {
       "op": "txna ApplicationArgs 2",
       "defined_out": [
         "bountyKey#0",
@@ -908,7 +912,7 @@
         "winnerAddress#0"
       ]
     },
-    "188": {
+    "195": {
       "op": "dup",
       "defined_out": [
         "bountyKey#0",
@@ -921,7 +925,7 @@
         "winnerAddress#0 (copy)"
       ]
     },
-    "189": {
+    "196": {
       "op": "len",
       "defined_out": [
         "bountyKey#0",
@@ -934,7 +938,7 @@
         "len%1#0"
       ]
     },
-    "190": {
+    "197": {
       "op": "pushint 32 // 32",
       "defined_out": [
         "32",
@@ -949,7 +953,7 @@
         "32"
       ]
     },
-    "192": {
+    "199": {
       "op": "==",
       "defined_out": [
         "bountyKey#0",
@@ -962,7 +966,7 @@
         "eq%1#0"
       ]
     },
-    "193": {
+    "200": {
       "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
       "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
       "stack_out": [
@@ -970,7 +974,7 @@
         "winnerAddress#0"
       ]
     },
-    "194": {
+    "201": {
       "op": "bytec_0 // \"bounty_\"",
       "defined_out": [
         "\"bounty_\"",
@@ -983,7 +987,7 @@
         "\"bounty_\""
       ]
     },
-    "195": {
+    "202": {
       "op": "uncover 2",
       "stack_out": [
         "winnerAddress#0",
@@ -991,7 +995,7 @@
         "bountyKey#0"
       ]
     },
-    "197": {
+    "204": {
       "op": "concat",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -1002,7 +1006,7 @@
         "box_prefixed_key%0#0"
       ]
     },
-    "198": {
+    "205": {
       "op": "dup",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -1015,7 +1019,7 @@
         "box_prefixed_key%0#0 (copy)"
       ]
     },
-    "199": {
+    "206": {
       "op": "box_len",
       "defined_out": [
         "_%0#0",
@@ -1030,7 +1034,7 @@
         "maybe_exists%0#0"
       ]
     },
-    "200": {
+    "207": {
       "op": "bury 1",
       "stack_out": [
         "winnerAddress#0",
@@ -1038,7 +1042,7 @@
         "maybe_exists%0#0"
       ]
     },
-    "202": {
+    "209": {
       "error": "Bounty not found",
       "op": "assert // Bounty not found",
       "stack_out": [
@@ -1046,7 +1050,7 @@
         "box_prefixed_key%0#0"
       ]
     },
-    "203": {
+    "210": {
       "op": "dup",
       "stack_out": [
         "winnerAddress#0",
@@ -1054,7 +1058,7 @@
         "box_prefixed_key%0#0 (copy)"
       ]
     },
-    "204": {
+    "211": {
       "op": "box_get",
       "defined_out": [
         "aggregate%box_get%1#0",
@@ -1069,7 +1073,7 @@
         "aggregate%box_get%1#0"
       ]
     },
-    "205": {
+    "212": {
       "op": "pop",
       "stack_out": [
         "winnerAddress#0",
@@ -1077,7 +1081,7 @@
         "bountyData#0"
       ]
     },
-    "206": {
+    "213": {
       "op": "txn Sender",
       "defined_out": [
         "bountyData#0",
@@ -1092,7 +1096,7 @@
         "callerAddr#0"
       ]
     },
-    "208": {
+    "215": {
       "op": "dig 1",
       "defined_out": [
         "bountyData#0",
@@ -1109,7 +1113,7 @@
         "bountyData#0 (copy)"
       ]
     },
-    "210": {
+    "217": {
       "op": "extract 0 32",
       "defined_out": [
         "aggregate%extract%0#0",
@@ -1126,7 +1130,7 @@
         "aggregate%extract%0#0"
       ]
     },
-    "213": {
+    "220": {
       "op": "==",
       "defined_out": [
         "bountyData#0",
@@ -1141,7 +1145,7 @@
         "tmp%3#1"
       ]
     },
-    "214": {
+    "221": {
       "error": "Only bounty poster can accept",
       "op": "assert // Only bounty poster can accept",
       "stack_out": [
@@ -1150,7 +1154,7 @@
         "bountyData#0"
       ]
     },
-    "215": {
+    "222": {
       "op": "dup",
       "stack_out": [
         "winnerAddress#0",
@@ -1159,7 +1163,7 @@
         "bountyData#0 (copy)"
       ]
     },
-    "216": {
+    "223": {
       "op": "pushint 48 // 48",
       "defined_out": [
         "48",
@@ -1176,7 +1180,7 @@
         "48"
       ]
     },
-    "218": {
+    "225": {
       "op": "getbyte",
       "defined_out": [
         "bountyData#0",
@@ -1191,7 +1195,7 @@
         "tmp%4#1"
       ]
     },
-    "219": {
+    "226": {
       "op": "!",
       "defined_out": [
         "bountyData#0",
@@ -1206,7 +1210,7 @@
         "tmp%5#1"
       ]
     },
-    "220": {
+    "227": {
       "error": "Bounty is not open",
       "op": "assert // Bounty is not open",
       "stack_out": [
@@ -1215,10 +1219,10 @@
         "bountyData#0"
       ]
     },
-    "221": {
+    "228": {
       "op": "itxn_begin"
     },
-    "222": {
+    "229": {
       "op": "pushint 32 // 32",
       "stack_out": [
         "winnerAddress#0",
@@ -1227,7 +1231,7 @@
         "32"
       ]
     },
-    "224": {
+    "231": {
       "op": "extract_uint64",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -1240,14 +1244,14 @@
         "inner_txn_params%0%%param_AssetAmount_idx_0#0"
       ]
     },
-    "225": {
+    "232": {
       "op": "itxn_field AssetAmount",
       "stack_out": [
         "winnerAddress#0",
         "box_prefixed_key%0#0"
       ]
     },
-    "227": {
+    "234": {
       "op": "intc_3 // 10458941",
       "defined_out": [
         "10458941",
@@ -1260,27 +1264,27 @@
         "10458941"
       ]
     },
-    "228": {
+    "235": {
       "op": "itxn_field XferAsset",
       "stack_out": [
         "winnerAddress#0",
         "box_prefixed_key%0#0"
       ]
     },
-    "230": {
+    "237": {
       "op": "swap",
       "stack_out": [
         "box_prefixed_key%0#0",
         "winnerAddress#0"
       ]
     },
-    "231": {
+    "238": {
       "op": "itxn_field AssetReceiver",
       "stack_out": [
         "box_prefixed_key%0#0"
       ]
     },
-    "233": {
+    "240": {
       "op": "pushint 4 // 4",
       "defined_out": [
         "4",
@@ -1291,29 +1295,29 @@
         "4"
       ]
     },
-    "235": {
+    "242": {
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "box_prefixed_key%0#0"
       ]
     },
-    "237": {
+    "244": {
       "op": "intc_0 // 0",
       "stack_out": [
         "box_prefixed_key%0#0",
         "0"
       ]
     },
-    "238": {
+    "245": {
       "op": "itxn_field Fee",
       "stack_out": [
         "box_prefixed_key%0#0"
       ]
     },
-    "240": {
+    "247": {
       "op": "itxn_submit"
     },
-    "241": {
+    "248": {
       "op": "box_del",
       "defined_out": [
         "{box_del}"
@@ -1322,11 +1326,11 @@
         "{box_del}"
       ]
     },
-    "242": {
+    "249": {
       "op": "pop",
       "stack_out": []
     },
-    "243": {
+    "250": {
       "op": "bytec_1 // 0x151f7c750020",
       "defined_out": [
         "0x151f7c750020"
@@ -1335,7 +1339,7 @@
         "0x151f7c750020"
       ]
     },
-    "244": {
+    "251": {
       "op": "txn TxID",
       "defined_out": [
         "0x151f7c750020",
@@ -1346,7 +1350,7 @@
         "tmp%6#0"
       ]
     },
-    "246": {
+    "253": {
       "op": "concat",
       "defined_out": [
         "tmp%5#0"
@@ -1355,11 +1359,11 @@
         "tmp%5#0"
       ]
     },
-    "247": {
+    "254": {
       "op": "log",
       "stack_out": []
     },
-    "248": {
+    "255": {
       "op": "intc_1 // 1",
       "defined_out": [
         "1"
@@ -1368,11 +1372,11 @@
         "1"
       ]
     },
-    "249": {
+    "256": {
       "op": "return",
       "stack_out": []
     },
-    "250": {
+    "257": {
       "subroutine": "smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.refundBounty[routing]",
       "params": {},
       "block": "refundBounty",
@@ -1385,7 +1389,7 @@
         "bountyKey#0"
       ]
     },
-    "253": {
+    "260": {
       "op": "dup",
       "defined_out": [
         "bountyKey#0",
@@ -1396,7 +1400,7 @@
         "bountyKey#0 (copy)"
       ]
     },
-    "254": {
+    "261": {
       "op": "intc_0 // 0",
       "defined_out": [
         "0",
@@ -1409,7 +1413,7 @@
         "0"
       ]
     },
-    "255": {
+    "262": {
       "error": "invalid array length header",
       "op": "extract_uint16 // on error: invalid array length header",
       "defined_out": [
@@ -1421,7 +1425,7 @@
         "aggregate%array_length%0#0"
       ]
     },
-    "256": {
+    "263": {
       "op": "intc_2 // 2",
       "defined_out": [
         "2",
@@ -1434,7 +1438,7 @@
         "2"
       ]
     },
-    "257": {
+    "264": {
       "op": "+",
       "defined_out": [
         "add%0#0",
@@ -1445,7 +1449,7 @@
         "add%0#0"
       ]
     },
-    "258": {
+    "265": {
       "op": "dig 1",
       "stack_out": [
         "bountyKey#0",
@@ -1453,7 +1457,7 @@
         "bountyKey#0 (copy)"
       ]
     },
-    "260": {
+    "267": {
       "op": "len",
       "defined_out": [
         "add%0#0",
@@ -1466,7 +1470,7 @@
         "len%0#0"
       ]
     },
-    "261": {
+    "268": {
       "op": "==",
       "defined_out": [
         "bountyKey#0",
@@ -1477,14 +1481,14 @@
         "eq%0#0"
       ]
     },
-    "262": {
+    "269": {
       "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "stack_out": [
         "bountyKey#0"
       ]
     },
-    "263": {
+    "270": {
       "op": "bytec_0 // \"bounty_\"",
       "defined_out": [
         "\"bounty_\"",
@@ -1495,14 +1499,14 @@
         "\"bounty_\""
       ]
     },
-    "264": {
+    "271": {
       "op": "swap",
       "stack_out": [
         "\"bounty_\"",
         "bountyKey#0"
       ]
     },
-    "265": {
+    "272": {
       "op": "concat",
       "defined_out": [
         "box_prefixed_key%0#0"
@@ -1511,7 +1515,7 @@
         "box_prefixed_key%0#0"
       ]
     },
-    "266": {
+    "273": {
       "op": "dup",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -1522,7 +1526,7 @@
         "box_prefixed_key%0#0 (copy)"
       ]
     },
-    "267": {
+    "274": {
       "op": "box_len",
       "defined_out": [
         "_%0#0",
@@ -1535,28 +1539,28 @@
         "maybe_exists%0#0"
       ]
     },
-    "268": {
+    "275": {
       "op": "bury 1",
       "stack_out": [
         "box_prefixed_key%0#0",
         "maybe_exists%0#0"
       ]
     },
-    "270": {
+    "277": {
       "error": "Bounty not found",
       "op": "assert // Bounty not found",
       "stack_out": [
         "box_prefixed_key%0#0"
       ]
     },
-    "271": {
+    "278": {
       "op": "dup",
       "stack_out": [
         "box_prefixed_key%0#0",
         "box_prefixed_key%0#0 (copy)"
       ]
     },
-    "272": {
+    "279": {
       "op": "box_get",
       "defined_out": [
         "aggregate%box_get%1#0",
@@ -1569,14 +1573,14 @@
         "aggregate%box_get%1#0"
       ]
     },
-    "273": {
+    "280": {
       "op": "pop",
       "stack_out": [
         "box_prefixed_key%0#0",
         "bountyData#0"
       ]
     },
-    "274": {
+    "281": {
       "op": "txn Sender",
       "defined_out": [
         "bountyData#0",
@@ -1589,7 +1593,7 @@
         "callerAddr#0"
       ]
     },
-    "276": {
+    "283": {
       "op": "dig 1",
       "defined_out": [
         "bountyData#0",
@@ -1604,7 +1608,7 @@
         "bountyData#0 (copy)"
       ]
     },
-    "278": {
+    "285": {
       "op": "extract 0 32",
       "defined_out": [
         "aggregate%extract%0#0",
@@ -1619,7 +1623,7 @@
         "aggregate%extract%0#0"
       ]
     },
-    "281": {
+    "288": {
       "op": "==",
       "defined_out": [
         "bountyData#0",
@@ -1632,7 +1636,7 @@
         "tmp%3#1"
       ]
     },
-    "282": {
+    "289": {
       "error": "Only bounty poster can refund",
       "op": "assert // Only bounty poster can refund",
       "stack_out": [
@@ -1640,7 +1644,7 @@
         "bountyData#0"
       ]
     },
-    "283": {
+    "290": {
       "op": "dup",
       "stack_out": [
         "box_prefixed_key%0#0",
@@ -1648,7 +1652,7 @@
         "bountyData#0 (copy)"
       ]
     },
-    "284": {
+    "291": {
       "op": "pushint 48 // 48",
       "defined_out": [
         "48",
@@ -1663,7 +1667,7 @@
         "48"
       ]
     },
-    "286": {
+    "293": {
       "op": "getbyte",
       "defined_out": [
         "bountyData#0",
@@ -1676,7 +1680,7 @@
         "tmp%4#1"
       ]
     },
-    "287": {
+    "294": {
       "op": "!",
       "defined_out": [
         "bountyData#0",
@@ -1689,7 +1693,7 @@
         "tmp%5#0"
       ]
     },
-    "288": {
+    "295": {
       "error": "Bounty is not open",
       "op": "assert // Bounty is not open",
       "stack_out": [
@@ -1697,7 +1701,7 @@
         "bountyData#0"
       ]
     },
-    "289": {
+    "296": {
       "op": "global LatestTimestamp",
       "defined_out": [
         "bountyData#0",
@@ -1710,7 +1714,7 @@
         "currentTime#0"
       ]
     },
-    "291": {
+    "298": {
       "op": "dig 1",
       "stack_out": [
         "box_prefixed_key%0#0",
@@ -1719,7 +1723,7 @@
         "bountyData#0 (copy)"
       ]
     },
-    "293": {
+    "300": {
       "op": "pushint 40 // 40",
       "defined_out": [
         "40",
@@ -1736,7 +1740,7 @@
         "40"
       ]
     },
-    "295": {
+    "302": {
       "op": "extract_uint64",
       "defined_out": [
         "bountyData#0",
@@ -1751,7 +1755,7 @@
         "tmp%7#0"
       ]
     },
-    "296": {
+    "303": {
       "op": ">=",
       "defined_out": [
         "bountyData#0",
@@ -1764,7 +1768,7 @@
         "tmp%8#0"
       ]
     },
-    "297": {
+    "304": {
       "error": "Deadline has not passed yet",
       "op": "assert // Deadline has not passed yet",
       "stack_out": [
@@ -1772,10 +1776,10 @@
         "bountyData#0"
       ]
     },
-    "298": {
+    "305": {
       "op": "itxn_begin"
     },
-    "299": {
+    "306": {
       "op": "txn Sender",
       "defined_out": [
         "bountyData#0",
@@ -1788,7 +1792,7 @@
         "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
       ]
     },
-    "301": {
+    "308": {
       "op": "swap",
       "stack_out": [
         "box_prefixed_key%0#0",
@@ -1796,7 +1800,7 @@
         "bountyData#0"
       ]
     },
-    "302": {
+    "309": {
       "op": "pushint 32 // 32",
       "defined_out": [
         "32",
@@ -1811,7 +1815,7 @@
         "32"
       ]
     },
-    "304": {
+    "311": {
       "op": "extract_uint64",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -1824,14 +1828,14 @@
         "inner_txn_params%0%%param_AssetAmount_idx_0#0"
       ]
     },
-    "305": {
+    "312": {
       "op": "itxn_field AssetAmount",
       "stack_out": [
         "box_prefixed_key%0#0",
         "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
       ]
     },
-    "307": {
+    "314": {
       "op": "intc_3 // 10458941",
       "defined_out": [
         "10458941",
@@ -1844,20 +1848,20 @@
         "10458941"
       ]
     },
-    "308": {
+    "315": {
       "op": "itxn_field XferAsset",
       "stack_out": [
         "box_prefixed_key%0#0",
         "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
       ]
     },
-    "310": {
+    "317": {
       "op": "itxn_field AssetReceiver",
       "stack_out": [
         "box_prefixed_key%0#0"
       ]
     },
-    "312": {
+    "319": {
       "op": "pushint 4 // 4",
       "defined_out": [
         "4",
@@ -1868,29 +1872,29 @@
         "4"
       ]
     },
-    "314": {
+    "321": {
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "box_prefixed_key%0#0"
       ]
     },
-    "316": {
+    "323": {
       "op": "intc_0 // 0",
       "stack_out": [
         "box_prefixed_key%0#0",
         "0"
       ]
     },
-    "317": {
+    "324": {
       "op": "itxn_field Fee",
       "stack_out": [
         "box_prefixed_key%0#0"
       ]
     },
-    "319": {
+    "326": {
       "op": "itxn_submit"
     },
-    "320": {
+    "327": {
       "op": "box_del",
       "defined_out": [
         "{box_del}"
@@ -1899,11 +1903,11 @@
         "{box_del}"
       ]
     },
-    "321": {
+    "328": {
       "op": "pop",
       "stack_out": []
     },
-    "322": {
+    "329": {
       "op": "bytec_1 // 0x151f7c750020",
       "defined_out": [
         "0x151f7c750020"
@@ -1912,7 +1916,7 @@
         "0x151f7c750020"
       ]
     },
-    "323": {
+    "330": {
       "op": "txn TxID",
       "defined_out": [
         "0x151f7c750020",
@@ -1923,7 +1927,7 @@
         "tmp%9#0"
       ]
     },
-    "325": {
+    "332": {
       "op": "concat",
       "defined_out": [
         "tmp%4#0"
@@ -1932,11 +1936,11 @@
         "tmp%4#0"
       ]
     },
-    "326": {
+    "333": {
       "op": "log",
       "stack_out": []
     },
-    "327": {
+    "334": {
       "op": "intc_1 // 1",
       "defined_out": [
         "1"
@@ -1945,11 +1949,11 @@
         "1"
       ]
     },
-    "328": {
+    "335": {
       "op": "return",
       "stack_out": []
     },
-    "329": {
+    "336": {
       "subroutine": "smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.getBountyEscrow[routing]",
       "params": {},
       "block": "getBountyEscrow",
@@ -1962,7 +1966,7 @@
         "bountyKey#0"
       ]
     },
-    "332": {
+    "339": {
       "op": "dup",
       "defined_out": [
         "bountyKey#0",
@@ -1973,7 +1977,7 @@
         "bountyKey#0 (copy)"
       ]
     },
-    "333": {
+    "340": {
       "op": "intc_0 // 0",
       "defined_out": [
         "0",
@@ -1986,7 +1990,7 @@
         "0"
       ]
     },
-    "334": {
+    "341": {
       "error": "invalid array length header",
       "op": "extract_uint16 // on error: invalid array length header",
       "defined_out": [
@@ -1998,7 +2002,7 @@
         "aggregate%array_length%0#0"
       ]
     },
-    "335": {
+    "342": {
       "op": "intc_2 // 2",
       "defined_out": [
         "2",
@@ -2011,7 +2015,7 @@
         "2"
       ]
     },
-    "336": {
+    "343": {
       "op": "+",
       "defined_out": [
         "add%0#0",
@@ -2022,7 +2026,7 @@
         "add%0#0"
       ]
     },
-    "337": {
+    "344": {
       "op": "dig 1",
       "stack_out": [
         "bountyKey#0",
@@ -2030,7 +2034,7 @@
         "bountyKey#0 (copy)"
       ]
     },
-    "339": {
+    "346": {
       "op": "len",
       "defined_out": [
         "add%0#0",
@@ -2043,7 +2047,7 @@
         "len%0#0"
       ]
     },
-    "340": {
+    "347": {
       "op": "==",
       "defined_out": [
         "bountyKey#0",
@@ -2054,14 +2058,14 @@
         "eq%0#0"
       ]
     },
-    "341": {
+    "348": {
       "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "stack_out": [
         "bountyKey#0"
       ]
     },
-    "342": {
+    "349": {
       "op": "bytec_0 // \"bounty_\"",
       "defined_out": [
         "\"bounty_\"",
@@ -2072,14 +2076,14 @@
         "\"bounty_\""
       ]
     },
-    "343": {
+    "350": {
       "op": "swap",
       "stack_out": [
         "\"bounty_\"",
         "bountyKey#0"
       ]
     },
-    "344": {
+    "351": {
       "op": "concat",
       "defined_out": [
         "box_prefixed_key%0#0"
@@ -2088,7 +2092,7 @@
         "box_prefixed_key%0#0"
       ]
     },
-    "345": {
+    "352": {
       "op": "dup",
       "defined_out": [
         "box_prefixed_key%0#0",
@@ -2099,7 +2103,7 @@
         "box_prefixed_key%0#0 (copy)"
       ]
     },
-    "346": {
+    "353": {
       "op": "box_len",
       "defined_out": [
         "_%0#0",
@@ -2112,21 +2116,21 @@
         "maybe_exists%0#0"
       ]
     },
-    "347": {
+    "354": {
       "op": "bury 1",
       "stack_out": [
         "box_prefixed_key%0#0",
         "maybe_exists%0#0"
       ]
     },
-    "349": {
+    "356": {
       "error": "Bounty not found",
       "op": "assert // Bounty not found",
       "stack_out": [
         "box_prefixed_key%0#0"
       ]
     },
-    "350": {
+    "357": {
       "op": "box_get",
       "defined_out": [
         "aggregate%box_get%0#0",
@@ -2137,13 +2141,13 @@
         "aggregate%box_get%1#0"
       ]
     },
-    "351": {
+    "358": {
       "op": "pop",
       "stack_out": [
         "aggregate%box_get%0#0"
       ]
     },
-    "352": {
+    "359": {
       "op": "pushbytes 0x151f7c75",
       "defined_out": [
         "0x151f7c75",
@@ -2154,14 +2158,14 @@
         "0x151f7c75"
       ]
     },
-    "358": {
+    "365": {
       "op": "swap",
       "stack_out": [
         "0x151f7c75",
         "aggregate%box_get%0#0"
       ]
     },
-    "359": {
+    "366": {
       "op": "concat",
       "defined_out": [
         "tmp%3#0"
@@ -2170,11 +2174,11 @@
         "tmp%3#0"
       ]
     },
-    "360": {
+    "367": {
       "op": "log",
       "stack_out": []
     },
-    "361": {
+    "368": {
       "op": "intc_1 // 1",
       "defined_out": [
         "1"
@@ -2183,11 +2187,11 @@
         "1"
       ]
     },
-    "362": {
+    "369": {
       "op": "return",
       "stack_out": []
     },
-    "363": {
+    "370": {
       "subroutine": "smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.fundContract[routing]",
       "params": {},
       "block": "fundContract",
@@ -2200,7 +2204,7 @@
         "tmp%0#0"
       ]
     },
-    "365": {
+    "372": {
       "op": "global CreatorAddress",
       "defined_out": [
         "tmp%0#0",
@@ -2211,7 +2215,7 @@
         "tmp%1#0"
       ]
     },
-    "367": {
+    "374": {
       "op": "==",
       "defined_out": [
         "tmp%2#0"
@@ -2220,12 +2224,12 @@
         "tmp%2#0"
       ]
     },
-    "368": {
+    "375": {
       "error": "Only creator can fund",
       "op": "assert // Only creator can fund",
       "stack_out": []
     },
-    "369": {
+    "376": {
       "op": "intc_1 // 1",
       "defined_out": [
         "1"
@@ -2234,7 +2238,134 @@
         "1"
       ]
     },
-    "370": {
+    "377": {
+      "op": "return",
+      "stack_out": []
+    },
+    "378": {
+      "subroutine": "smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.optInToUSDC[routing]",
+      "params": {},
+      "block": "optInToUSDC",
+      "stack_in": [],
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "380": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ]
+    },
+    "382": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "383": {
+      "error": "Only creator can opt-in",
+      "op": "assert // Only creator can opt-in",
+      "stack_out": []
+    },
+    "384": {
+      "op": "itxn_begin"
+    },
+    "385": {
+      "op": "global CurrentApplicationAddress",
+      "defined_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ]
+    },
+    "387": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0",
+        "0"
+      ]
+    },
+    "388": {
+      "op": "itxn_field AssetAmount",
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ]
+    },
+    "390": {
+      "op": "intc_3 // 10458941",
+      "defined_out": [
+        "10458941",
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0",
+        "10458941"
+      ]
+    },
+    "391": {
+      "op": "itxn_field XferAsset",
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ]
+    },
+    "393": {
+      "op": "itxn_field AssetReceiver",
+      "stack_out": []
+    },
+    "395": {
+      "op": "pushint 4 // 4",
+      "defined_out": [
+        "4"
+      ],
+      "stack_out": [
+        "4"
+      ]
+    },
+    "397": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "399": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "400": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "402": {
+      "op": "itxn_submit"
+    },
+    "403": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "404": {
       "op": "return",
       "stack_out": []
     }

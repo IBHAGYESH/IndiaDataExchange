@@ -17,6 +17,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { useInitiateBountyMutation, useConfirmBountyMutation } from "@/redux/api/bountyApi";
 import { DatasetCategory } from "@/types";
 import algosdk from "algosdk";
+import { submittedTxIdFromAlgodResponse } from "@/utils/algod";
 
 const categories: DatasetCategory[] = ["agriculture", "language", "traffic", "healthcare", "cultural", "financial", "other"];
 
@@ -103,7 +104,8 @@ export default function PostBountyPage() {
       setSigningStep("confirming");
       const combined = Buffer.concat(signedTxns.map((t: Uint8Array) => Buffer.from(t)));
       const algodClient = new algosdk.Algodv2("", "https://testnet-api.algonode.cloud", "");
-      const { txId } = await algodClient.sendRawTransaction(combined).do();
+      const submitRes = await algodClient.sendRawTransaction(combined).do();
+      const txId = submittedTxIdFromAlgodResponse(submitRes as { txid?: string; txId?: string });
       await algosdk.waitForConfirmation(algodClient, txId, 4);
 
       await confirmBounty({ bountyId, txId, bountyData }).unwrap();

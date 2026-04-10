@@ -8,18 +8,18 @@ main:
     // smart_contracts/BountyEscrow/contract.algo.ts:28
     // export class BountyEscrow extends Contract {
     txn NumAppArgs
-    bz main___algots__.defaultCreate@12
+    bz main___algots__.defaultCreate@13
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
     assert
-    pushbytess 0xd942c875 0xe432ab9f 0xa68c40e1 0x1bc72dd9 0x54254f0a // method "postBounty(string,uint64,uint64)byte[]", method "acceptSubmission(string,address)byte[]", method "refundBounty(string)byte[]", method "getBountyEscrow(string)(address,uint64,uint64,uint8)", method "fundContract()void"
+    pushbytess 0xd942c875 0xe432ab9f 0xa68c40e1 0x1bc72dd9 0x54254f0a 0xd9a010ec // method "postBounty(string,uint64,uint64)byte[]", method "acceptSubmission(string,address)byte[]", method "refundBounty(string)byte[]", method "getBountyEscrow(string)(address,uint64,uint64,uint8)", method "fundContract()void", method "optInToUSDC()void"
     txna ApplicationArgs 0
-    match postBounty acceptSubmission refundBounty getBountyEscrow fundContract
+    match postBounty acceptSubmission refundBounty getBountyEscrow fundContract optInToUSDC
     err
 
-main___algots__.defaultCreate@12:
+main___algots__.defaultCreate@13:
     // smart_contracts/BountyEscrow/contract.algo.ts:28
     // export class BountyEscrow extends Contract {
     txn OnCompletion
@@ -443,6 +443,66 @@ fundContract:
     ==
     assert // Only creator can fund
     // smart_contracts/BountyEscrow/contract.algo.ts:158
+    // @abimethod()
+    intc_1 // 1
+    return
+
+
+// smart_contracts/BountyEscrow/contract.algo.ts::BountyEscrow.optInToUSDC[routing]() -> void:
+optInToUSDC:
+    // smart_contracts/BountyEscrow/contract.algo.ts:170
+    // assert(Txn.sender === Global.creatorAddress, "Only creator can opt-in");
+    txn Sender
+    global CreatorAddress
+    ==
+    assert // Only creator can opt-in
+    // smart_contracts/BountyEscrow/contract.algo.ts:171-178
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: 0,
+    //     fee: 0,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/BountyEscrow/contract.algo.ts:173
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/BountyEscrow/contract.algo.ts:175
+    // assetAmount: 0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    // smart_contracts/BountyEscrow/contract.algo.ts:174
+    // xferAsset: USDC_ASA_ID,
+    intc_3 // 10458941
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+    // smart_contracts/BountyEscrow/contract.algo.ts:171-177
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: 0,
+    //     fee: 0,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/BountyEscrow/contract.algo.ts:176
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/BountyEscrow/contract.algo.ts:171-178
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: USDC_ASA_ID,
+    //     assetAmount: 0,
+    //     fee: 0,
+    //   })
+    //   .submit();
+    itxn_submit
+    // smart_contracts/BountyEscrow/contract.algo.ts:168
     // @abimethod()
     intc_1 // 1
     return

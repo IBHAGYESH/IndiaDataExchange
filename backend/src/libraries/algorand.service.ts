@@ -182,6 +182,29 @@ export function verifySignedAuthTransaction(
   }
 }
 
+function abiEncodeString(value: string): Uint8Array {
+  const encoded = new TextEncoder().encode(value);
+  const result = new Uint8Array(2 + encoded.length);
+  result[0] = (encoded.length >> 8) & 0xff;
+  result[1] = encoded.length & 0xff;
+  result.set(encoded, 2);
+  return result;
+}
+
+function abiMethodSelector(signature: string): Uint8Array {
+  const method = algosdk.ABIMethod.fromSignature(signature);
+  return method.getSelector();
+}
+
+function bountyBoxName(bountyId: string): Uint8Array {
+  const prefix = new TextEncoder().encode("bounty_");
+  const abiStr = abiEncodeString(bountyId);
+  const result = new Uint8Array(prefix.length + abiStr.length);
+  result.set(prefix, 0);
+  result.set(abiStr, prefix.length);
+  return result;
+}
+
 export async function buildBountyEscrowTxnGroup(
   buyerAddress: string,
   bountyId: string,
@@ -193,6 +216,22 @@ export async function buildBountyEscrowTxnGroup(
   const microAmount = toMicroUSDC(rewardUSDC);
 
   const contractAddress = algosdk.getApplicationAddress(appId);
+  const boxRef = bountyBoxName(bountyId);
+
+  const appCallTxn = algosdk.makeApplicationCallTxnFromObject({
+    sender: buyerAddress,
+    appIndex: appId,
+    onComplete: algosdk.OnApplicationComplete.NoOpOC,
+    appArgs: [
+      abiMethodSelector("postBounty(string,uint64,uint64)byte[]"),
+      abiEncodeString(bountyId),
+      algosdk.encodeUint64(microAmount),
+      algosdk.encodeUint64(BigInt(deadline)),
+    ],
+    foreignAssets: [USDC_ASSET_ID],
+    boxes: [{ appIndex: appId, name: boxRef }],
+    suggestedParams: { ...suggestedParams, fee: 2000, flatFee: true },
+  });
 
   const usdcTransferTxn =
     algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
@@ -203,30 +242,14 @@ export async function buildBountyEscrowTxnGroup(
       suggestedParams,
     });
 
-  const boxName = new TextEncoder().encode(bountyId);
-  const appCallTxn = algosdk.makeApplicationCallTxnFromObject({
-    sender: buyerAddress,
-    appIndex: appId,
-    onComplete: algosdk.OnApplicationComplete.NoOpOC,
-    appArgs: [
-      algosdk.encodeUint64(BigInt(appId)),
-      new TextEncoder().encode(bountyId),
-      algosdk.encodeUint64(microAmount),
-      algosdk.encodeUint64(BigInt(deadline)),
-    ],
-    foreignAssets: [USDC_ASSET_ID],
-    boxes: [{ appIndex: appId, name: boxName }],
-    suggestedParams,
-  });
-
-  algosdk.assignGroupID([usdcTransferTxn, appCallTxn]);
+  algosdk.assignGroupID([appCallTxn, usdcTransferTxn]);
 
   return {
     unsignedTxnGroupBase64: [
-      Buffer.from(algosdk.encodeUnsignedTransaction(usdcTransferTxn)).toString(
+      Buffer.from(algosdk.encodeUnsignedTransaction(appCallTxn)).toString(
         "base64"
       ),
-      Buffer.from(algosdk.encodeUnsignedTransaction(appCallTxn)).toString(
+      Buffer.from(algosdk.encodeUnsignedTransaction(usdcTransferTxn)).toString(
         "base64"
       ),
     ],
@@ -240,19 +263,20 @@ export async function buildAcceptSubmissionTxn(
 ): Promise<string> {
   const appId = appConfig.contract.bountyAppId;
   const suggestedParams = await algodClient.getTransactionParams().do();
-  const boxName = new TextEncoder().encode(bountyId);
+  const boxRef = bountyBoxName(bountyId);
 
   const appCallTxn = algosdk.makeApplicationCallTxnFromObject({
     sender: buyerAddress,
     appIndex: appId,
     onComplete: algosdk.OnApplicationComplete.NoOpOC,
     appArgs: [
-      new TextEncoder().encode(bountyId),
+      abiMethodSelector("acceptSubmission(string,address)byte[]"),
+      abiEncodeString(bountyId),
       algosdk.decodeAddress(winnerAddress).publicKey,
     ],
     foreignAssets: [USDC_ASSET_ID],
     accounts: [winnerAddress],
-    boxes: [{ appIndex: appId, name: boxName }],
+    boxes: [{ appIndex: appId, name: boxRef }],
     suggestedParams: { ...suggestedParams, fee: 3000, flatFee: true },
   });
 
@@ -267,15 +291,18 @@ export async function buildRefundBountyTxn(
 ): Promise<string> {
   const appId = appConfig.contract.bountyAppId;
   const suggestedParams = await algodClient.getTransactionParams().do();
-  const boxName = new TextEncoder().encode(bountyId);
+  const boxRef = bountyBoxName(bountyId);
 
   const appCallTxn = algosdk.makeApplicationCallTxnFromObject({
     sender: buyerAddress,
     appIndex: appId,
     onComplete: algosdk.OnApplicationComplete.NoOpOC,
-    appArgs: [new TextEncoder().encode(bountyId)],
+    appArgs: [
+      abiMethodSelector("refundBounty(string)byte[]"),
+      abiEncodeString(bountyId),
+    ],
     foreignAssets: [USDC_ASSET_ID],
-    boxes: [{ appIndex: appId, name: boxName }],
+    boxes: [{ appIndex: appId, name: boxRef }],
     suggestedParams: { ...suggestedParams, fee: 2000, flatFee: true },
   });
 

@@ -159,4 +159,22 @@ export class BountyEscrow extends Contract {
   public fundContract(): void {
     assert(Txn.sender === Global.creatorAddress, "Only creator can fund");
   }
+
+  /**
+   * Opt the contract into USDC ASA (admin only).
+   * Call once after deployment so the contract can receive USDC.
+   * Subsequent calls are harmless (0-amount self-transfer is a no-op if already opted in).
+   */
+  @abimethod()
+  public optInToUSDC(): void {
+    assert(Txn.sender === Global.creatorAddress, "Only creator can opt-in");
+    itxn
+      .assetTransfer({
+        assetReceiver: Global.currentApplicationAddress,
+        xferAsset: USDC_ASA_ID,
+        assetAmount: 0,
+        fee: 0,
+      })
+      .submit();
+  }
 }
