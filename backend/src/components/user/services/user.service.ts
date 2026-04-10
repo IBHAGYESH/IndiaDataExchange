@@ -46,13 +46,17 @@ export class UserService {
     const purchases = await purchaseRepo.findByBuyerWallet(user.walletAddress);
 
     const purchasesWithUrls = await Promise.all(
-      purchases.map(async (p: any) => {
-        const dataset = p.datasetId;
-        let downloadUrl = null;
-        if (dataset?.fullDataIpfsCid) {
-          downloadUrl = getSignedUrl(dataset.fullDataIpfsCid);
+      purchases.map(async (p: Record<string, unknown>) => {
+        const dataset = p.datasetId as Record<string, unknown> | null | undefined;
+        let downloadUrl: string | null = null;
+        let datasetPublic = dataset;
+        if (dataset && typeof dataset === "object" && "title" in dataset) {
+          const cid = dataset.fullDataIpfsCid as string | undefined;
+          if (cid) downloadUrl = getSignedUrl(cid);
+          const { fullDataIpfsCid: _cid, fullDataFileName: _fn, ...pub } = dataset;
+          datasetPublic = pub;
         }
-        return { ...p, downloadUrl };
+        return { ...p, datasetId: datasetPublic, downloadUrl };
       })
     );
 

@@ -42,6 +42,20 @@ export interface Dataset {
   updatedAt: string;
 }
 
+/** Populated dataset on a purchase (no full-data IPFS fields). */
+export type PurchasedDataset = Omit<Dataset, "sellerId"> & { sellerId?: string };
+
+export interface Purchase {
+  _id: string;
+  paymentTxId: string;
+  amountPaidUSDC: number;
+  downloadCount: number;
+  lastDownloadAt?: string;
+  createdAt: string;
+  downloadUrl?: string | null;
+  datasetId: PurchasedDataset | null;
+}
+
 export type BountyStatus = "open" | "accepted" | "cancelled" | "expired";
 
 export interface Bounty {
