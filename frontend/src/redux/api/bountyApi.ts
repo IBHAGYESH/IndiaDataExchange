@@ -69,7 +69,7 @@ export const bountyApi = apiInstance.injectEndpoints({
         method: "POST",
         body: { txId },
       }),
-      invalidatesTags: ["bounties"],
+      invalidatesTags: (_r, _e, { bountyId }) => ["bounties", { type: "bounty", id: bountyId }],
     }),
 
     initiateRefund: builder.mutation<{ unsignedTxnBase64: string }, string>({

@@ -62,13 +62,26 @@ export class BountyService {
 
     const bountyObj = bounty.toObject ? bounty.toObject() : bounty;
 
-    // If requester is the bounty poster, include submissions (sample only)
-    let submissions = null;
-    if (requesterId && bounty.buyerId.toString() === requesterId) {
-      submissions = await submissionRepo.findByBountyId(bountyId);
+    let submissions: unknown = null;
+    let hasSubmitted = false;
+    if (requesterId) {
+      if (bounty.buyerId.toString() === requesterId) {
+        const rawSubs = await submissionRepo.findByBountyIdWithFullData(bountyId);
+        submissions = rawSubs.map((s: Record<string, unknown>) => {
+          const { fullDataIpfsCid, ...rest } = s;
+          const cid = fullDataIpfsCid as string | undefined;
+          return {
+            ...rest,
+            ...(s.status === "accepted" && cid ? { downloadUrl: getSignedUrl(cid) } : {}),
+          };
+        });
+      } else {
+        const existing = await submissionRepo.findBySellerAndBounty(requesterId, bountyId);
+        hasSubmitted = !!existing;
+      }
     }
 
-    return returnDataObj({ bounty: { ...bountyObj, submissions } });
+    return returnDataObj({ bounty: { ...bountyObj, submissions, hasSubmitted } });
   }
 
   async initiateBounty(

@@ -64,7 +64,15 @@ export class UserService {
 
     const bountiesWithSubmissions = await Promise.all(
       bounties.map(async (b: any) => {
-        const submissions = await submissionRepo.findByBountyId(b._id.toString());
+        const rawSubs = await submissionRepo.findByBountyIdWithFullData(b._id.toString());
+        const submissions = rawSubs.map((s: Record<string, unknown>) => {
+          const { fullDataIpfsCid, ...rest } = s;
+          const cid = fullDataIpfsCid as string | undefined;
+          return {
+            ...rest,
+            ...(s.status === "accepted" && cid ? { downloadUrl: getSignedUrl(cid) } : {}),
+          };
+        });
         return { ...b, submissions };
       })
     );
@@ -73,7 +81,15 @@ export class UserService {
   }
 
   async getSubmissions(userId: string) {
-    const submissions = await submissionRepo.findBySellerId(userId);
+    const raw = await submissionRepo.findBySellerIdWithFullData(userId);
+    const submissions = raw.map((s: Record<string, unknown>) => {
+      const { fullDataIpfsCid, ...rest } = s;
+      const cid = fullDataIpfsCid as string | undefined;
+      return {
+        ...rest,
+        ...(s.status === "accepted" && cid ? { downloadUrl: getSignedUrl(cid) } : {}),
+      };
+    });
     return returnDataObj({ submissions, total: submissions.length });
   }
 }

@@ -61,6 +61,8 @@ export interface Bounty {
   winnerSubmissionId?: string;
   createdAt: string;
   updatedAt: string;
+  /** Present on GET /bounties/:id when viewer is not the buyer */
+  hasSubmitted?: boolean;
 }
 
 export type SubmissionStatus = "pending" | "accepted" | "rejected";
@@ -78,6 +80,8 @@ export interface Submission {
   paymentTxId?: string;
   createdAt: string;
   updatedAt: string;
+  /** Signed URL for buyer after acceptance (from API, short-lived) */
+  downloadUrl?: string;
 }
 
 export interface AuthState {

@@ -1,14 +1,17 @@
 "use client";
 
 import { use, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Container, Grid, Typography, Box, Chip, Button, Card, CardContent,
   CircularProgress, Divider, Alert, Dialog, DialogTitle, DialogContent,
   DialogActions, TextField, Stack, Link as MuiLink
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import UploadIcon from "@mui/icons-material/Upload";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import DownloadIcon from "@mui/icons-material/Download";
 import MainLayout from "@/components/layouts/MainLayout";
 import ProtectedRoute from "@/components/shared/ProtectedRoute";
 import { useGetBountyQuery, useSubmitToBountyMutation, useAcceptSubmissionMutation, useConfirmAcceptanceMutation } from "@/redux/api/bountyApi";
@@ -20,6 +23,7 @@ import { submittedTxIdFromAlgodResponse } from "@/utils/algod";
 
 export default function BountyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const router = useRouter();
   const { data, isLoading, isError, refetch } = useGetBountyQuery(id);
   const { user, peraWallet, walletAddress } = useAuth();
   const [submitToBounty] = useSubmitToBountyMutation();
@@ -34,7 +38,6 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [acceptLoading, setAcceptLoading] = useState<string | null>(null);
   const [acceptError, setAcceptError] = useState<string | null>(null);
-  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -61,6 +64,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
   const { bounty } = data;
   const isBuyer = user?._id === bounty.buyerId;
   const deadlinePassed = isDeadlinePassed(bounty.deadline);
+  const hasSubmitted = bounty.hasSubmitted === true;
 
   const handleSubmit = async () => {
     if (!sampleFile || !fullDataFile) {
@@ -108,9 +112,8 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
       await algosdk.waitForConfirmation(algodClient, txId, 4);
 
       // Confirm with backend
-      const result = await confirmAcceptance({ bountyId: id, submissionId, txId }).unwrap();
-      setDownloadUrl(result.downloadUrl);
-      refetch();
+      await confirmAcceptance({ bountyId: id, submissionId, txId }).unwrap();
+      await refetch();
     } catch (err: unknown) {
       setAcceptError(err instanceof Error ? err.message : "Failed to accept submission");
     } finally {
@@ -122,6 +125,13 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
     <ProtectedRoute>
       <MainLayout>
         <Container maxWidth="lg" sx={{ py: 4 }}>
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => router.push("/bounties")}
+            sx={{ mb: 3, fontWeight: 600 }}
+          >
+            Back to Bounties
+          </Button>
           <Grid container spacing={4}>
             <Grid item xs={12} md={8}>
               <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap" }}>
@@ -182,11 +192,6 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                     Submissions ({bounty.submissions.length})
                   </Typography>
                   {acceptError && <Alert severity="error" sx={{ mb: 2 }}>{acceptError}</Alert>}
-                  {downloadUrl && (
-                    <Alert severity="success" sx={{ mb: 2 }}>
-                      Submission accepted! <MuiLink href={downloadUrl} target="_blank">Download full data ↗</MuiLink>
-                    </Alert>
-                  )}
                   {bounty.submissions.map((sub) => (
                     <Card key={sub._id} elevation={0} sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2, mb: 2 }}>
                       <CardContent>
@@ -199,25 +204,39 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                           />
                         </Box>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>{sub.description}</Typography>
-                        <Stack direction="row" spacing={1}>
+                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                           <Button
                             size="small"
                             variant="outlined"
                             href={`${config.pinataGateway}/${sub.sampleIpfsCid}`}
                             target="_blank"
+                            rel="noopener noreferrer"
                           >
-                            View Sample
+                            Preview sample
                           </Button>
                           {sub.status === "pending" && bounty.status === "open" && !deadlinePassed && (
                             <Button
                               size="small"
                               variant="contained"
                               color="success"
-                              startIcon={acceptLoading === sub._id ? <CircularProgress size={16} /> : <CheckCircleIcon />}
+                              startIcon={acceptLoading === sub._id ? <CircularProgress size={16} color="inherit" /> : <CheckCircleIcon />}
                               disabled={!!acceptLoading}
                               onClick={() => handleAccept(sub._id, sub.sellerWalletAddress)}
                             >
-                              Accept & Pay {formatUSDC(bounty.rewardUSDC)}
+                              Accept submission
+                            </Button>
+                          )}
+                          {sub.status === "accepted" && sub.downloadUrl && (
+                            <Button
+                              size="small"
+                              variant="contained"
+                              color="primary"
+                              startIcon={<DownloadIcon />}
+                              href={sub.downloadUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Download full file
                             </Button>
                           )}
                         </Stack>
@@ -243,7 +262,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                   </Typography>
                   <Divider sx={{ mb: 2 }} />
 
-                  {bounty.status === "open" && !deadlinePassed && !isBuyer && (
+                  {bounty.status === "open" && !deadlinePassed && !isBuyer && !hasSubmitted && (
                     <Button
                       variant="contained"
                       color="secondary"
@@ -256,7 +275,16 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                       Submit Your Data
                     </Button>
                   )}
-                  {isBuyer && <Chip label="You posted this bounty" color="primary" fullWidth />}
+                  {bounty.status === "open" && !deadlinePassed && !isBuyer && hasSubmitted && (
+                    <Alert severity="info" sx={{ fontWeight: 600 }}>
+                      You have already submitted to this bounty.
+                    </Alert>
+                  )}
+                  {isBuyer && (
+                    <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                      <Chip label="You posted this bounty" color="primary" />
+                    </Box>
+                  )}
                   {deadlinePassed && bounty.status === "open" && (
                     <Alert severity="warning" sx={{ mt: 1 }}>Deadline has passed. Only the bounty poster can refund.</Alert>
                   )}

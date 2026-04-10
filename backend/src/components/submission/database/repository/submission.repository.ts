@@ -23,6 +23,10 @@ export class SubmissionRepository {
       .lean();
   }
 
+  async findBySellerAndBounty(sellerId: string, bountyId: string) {
+    return await this.model.findOne({ sellerId, bountyId }).lean();
+  }
+
   async findByBountyIdWithFullData(bountyId: string) {
     return await this.model.find({ bountyId }).sort("-createdAt").lean();
   }
@@ -31,6 +35,15 @@ export class SubmissionRepository {
     return await this.model
       .find({ sellerId })
       .select("-fullDataIpfsCid")
+      .populate("bountyId", "title rewardUSDC status deadline")
+      .sort("-createdAt")
+      .lean();
+  }
+
+  /** Includes fullDataIpfsCid for server-side signed URLs (not sent to client raw). */
+  async findBySellerIdWithFullData(sellerId: string) {
+    return await this.model
+      .find({ sellerId })
       .populate("bountyId", "title rewardUSDC status deadline")
       .sort("-createdAt")
       .lean();

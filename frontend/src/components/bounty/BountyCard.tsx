@@ -146,26 +146,39 @@ export default function BountyCard({ bounty }: Props) {
             alignItems: "center",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-            <AccessTimeIcon
-              sx={{
-                fontSize: 14,
-                color: deadlinePassed ? "error.main" : "text.disabled",
-              }}
-            />
-            <Typography
-              variant="caption"
-              color={deadlinePassed ? "error" : "text.disabled"}
-            >
-              {deadlinePassed ? "Expired" : `Due ${formatDate(bounty.deadline)}`}
-            </Typography>
-          </Box>
+          <Typography variant="caption" color="text.disabled">
+            {truncateAddress(bounty.buyerWalletAddress)}
+          </Typography>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             <PeopleIcon sx={{ fontSize: 14, color: "text.disabled" }} />
             <Typography variant="caption" color="text.disabled">
               {bounty.submissionCount}
             </Typography>
           </Box>
+        </Box>
+
+        <Box
+          sx={{
+            mt: 1.5,
+            pt: 1.5,
+            borderTop: `1px solid ${alpha(theme.palette.divider, 0.06)}`,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+          }}
+        >
+          <AccessTimeIcon
+            sx={{
+              fontSize: 14,
+              color: deadlinePassed ? "error.main" : "text.disabled",
+            }}
+          />
+          <Typography
+            variant="caption"
+            color={deadlinePassed ? "error" : "text.disabled"}
+          >
+            {deadlinePassed ? "Expired" : `Due ${formatDate(bounty.deadline)}`}
+          </Typography>
         </Box>
       </CardContent>
 
@@ -177,8 +190,9 @@ export default function BountyCard({ bounty }: Props) {
             size="small"
             endIcon={<ArrowForwardIcon />}
             sx={{
+              fontSize: "0.8rem",
               borderColor: alpha(theme.palette.divider, 0.2),
-              "&:hover": { borderColor: "secondary.main", color: "secondary.main" },
+              "&:hover": { borderColor: "primary.main" },
             }}
           >
             View Details
