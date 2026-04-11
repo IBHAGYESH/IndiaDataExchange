@@ -23,12 +23,11 @@ export class UserRoute {
       })
     );
 
-    this.router.patch(
-      `${this.path}/profile`,
+    this.router.delete(
+      `${this.path}/account`,
       authMiddleware,
       tryCatch(async (req: AuthRequest, res: Response) => {
-        const { name, bio } = req.body;
-        const { data, code } = await this.service.updateProfile(req.user!.userId, { name, bio });
+        const { data, code } = await this.service.deleteAccount(req.user!.userId);
         res.status(code).json(data);
       })
     );

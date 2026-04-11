@@ -1,0 +1,21 @@
+{
+  "sidebarHeading": "Dashboard",
+  "adminSection": "Admin",
+  "platformOverview": "Platform Overview",
+  "marketplace": "Marketplace",
+  "bounties": "Bounties",
+  "dashboard": "Dashboard",
+  "navigation": "Navigation",
+  "overview": "Overview",
+  "myListings": "My Listings",
+  "myPurchases": "My Purchases",
+  "myBounties": "My Bounties",
+  "mySubmissions": "My Submissions",
+  "listDataset": "List Dataset",
+  "postBounty": "Post Bounty",
+  "admin": "Admin",
+  "adminOverview": "Admin Overview",
+  "adminDatasets": "Manage Datasets",
+  "adminBounties": "Manage Bounties",
+  "accountPrivacy": "Account & privacy"
+}

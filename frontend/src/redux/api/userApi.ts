@@ -9,9 +9,9 @@ export const userApi = apiInstance.injectEndpoints({
       providesTags: ["user"],
     }),
 
-    updateProfile: builder.mutation<{ user: User }, { name?: string; bio?: string }>({
-      query: (body) => ({ url: apiRoutes.user.profile, method: "PATCH", body }),
-      invalidatesTags: ["user"],
+    deleteAccount: builder.mutation<{ success: boolean }, void>({
+      query: () => ({ url: apiRoutes.user.account, method: "DELETE" }),
+      invalidatesTags: ["user", "datasets", "bounties", "purchases", "submissions"],
     }),
 
     getListings: builder.query<{ datasets: unknown[]; total: number }, void>({
@@ -38,7 +38,7 @@ export const userApi = apiInstance.injectEndpoints({
 
 export const {
   useGetProfileQuery,
-  useUpdateProfileMutation,
+  useDeleteAccountMutation,
   useGetListingsQuery,
   useGetPurchasesQuery,
   useGetUserBountiesQuery,

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   Box,
   Typography,
@@ -8,7 +9,6 @@ import {
   CardContent,
   CircularProgress,
   alpha,
-  useTheme,
   Chip,
 } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
@@ -20,26 +20,56 @@ import GavelIcon from "@mui/icons-material/Gavel";
 import Link from "next/link";
 import AdminProtectedRoute from "@/components/shared/AdminProtectedRoute";
 import { useGetAdminStatsQuery } from "@/redux/api/adminApi";
-
-const statCards = [
-  { key: "totalUsers" as const, label: "Total Users", icon: <PeopleIcon />, color: "#8B5CF6" },
-  { key: "totalDatasets" as const, label: "Total Datasets", icon: <StorageIcon />, color: "#FF6B35" },
-  { key: "totalBounties" as const, label: "Total Bounties", icon: <EmojiEventsIcon />, color: "#F59E0B" },
-  { key: "totalVolume" as const, label: "Total Volume (USDC)", icon: <AttachMoneyIcon />, color: "#2EC84F" },
-];
+import { useTranslation } from "react-i18next";
 
 export default function AdminOverviewPage() {
-  const theme = useTheme();
+  const { t } = useTranslation("admin");
   const { data, isLoading, isError, refetch } = useGetAdminStatsQuery();
+
+  const statCards = useMemo(
+    () =>
+      [
+        { key: "totalUsers" as const, labelKey: "totalUsers", icon: <PeopleIcon />, color: "#8B5CF6" },
+        { key: "totalDatasets" as const, labelKey: "totalDatasets", icon: <StorageIcon />, color: "#FF6B35" },
+        { key: "totalBounties" as const, labelKey: "totalBounties", icon: <EmojiEventsIcon />, color: "#F59E0B" },
+        { key: "totalVolume" as const, labelKey: "totalVolume", icon: <AttachMoneyIcon />, color: "#2EC84F" },
+      ] as const,
+    [],
+  );
+
+  const quickActions = useMemo(
+    () =>
+      [
+        {
+          labelKey: "manageDatasets" as const,
+          href: "/dashboard/admin/datasets",
+          icon: <DatasetIcon />,
+          descKey: "manageDatasetsDesc" as const,
+          color: "#FF6B35",
+        },
+        {
+          labelKey: "manageBounties" as const,
+          href: "/dashboard/admin/bounties",
+          icon: <GavelIcon />,
+          descKey: "manageBountiesDesc" as const,
+          color: "#F59E0B",
+        },
+      ] as const,
+    [],
+  );
 
   return (
     <AdminProtectedRoute>
       <Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
           <Typography variant="h4" fontWeight={800}>
-            Platform Admin
+            {t("platformAdmin")}
           </Typography>
-          <Chip label="Admin" size="small" sx={{ bgcolor: alpha("#FF6B35", 0.15), color: "#FF6B35", fontWeight: 600 }} />
+          <Chip
+            label={t("adminChip")}
+            size="small"
+            sx={{ bgcolor: alpha("#FF6B35", 0.15), color: "#FF6B35", fontWeight: 600 }}
+          />
         </Box>
 
         {isLoading && (
@@ -50,14 +80,16 @@ export default function AdminOverviewPage() {
 
         {isError && (
           <Box sx={{ textAlign: "center", py: 8 }}>
-            <Typography color="error" gutterBottom>Failed to load stats.</Typography>
+            <Typography color="error" gutterBottom>
+              {t("failedLoadStats")}
+            </Typography>
             <Typography
               variant="body2"
               color="text.secondary"
               sx={{ cursor: "pointer", textDecoration: "underline" }}
               onClick={() => refetch()}
             >
-              Click to retry
+              {t("clickRetry")}
             </Typography>
           </Box>
         )}
@@ -94,7 +126,7 @@ export default function AdminOverviewPage() {
                       {stat.key === "totalVolume" ? `$${data[stat.key].toFixed(2)}` : data[stat.key]}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" fontWeight={500}>
-                      {stat.label}
+                      {t(stat.labelKey)}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -104,14 +136,11 @@ export default function AdminOverviewPage() {
         )}
 
         <Typography variant="h6" fontWeight={700} sx={{ mt: 5, mb: 3 }}>
-          Quick Actions
+          {t("quickActions")}
         </Typography>
         <Grid container spacing={2}>
-          {[
-            { label: "Manage Datasets", href: "/dashboard/admin/datasets", icon: <DatasetIcon />, desc: "Review, activate, or unlist datasets", color: "#FF6B35" },
-            { label: "Manage Bounties", href: "/dashboard/admin/bounties", icon: <GavelIcon />, desc: "Oversee bounty statuses and disputes", color: "#F59E0B" },
-          ].map((action) => (
-            <Grid key={action.label} size={{ xs: 12, sm: 6 }}>
+          {quickActions.map((action) => (
+            <Grid key={action.labelKey} size={{ xs: 12, sm: 6 }}>
               <Link href={action.href} style={{ textDecoration: "none" }}>
                 <Card
                   elevation={0}
@@ -142,10 +171,10 @@ export default function AdminOverviewPage() {
                     </Box>
                     <Box>
                       <Typography variant="subtitle1" fontWeight={700}>
-                        {action.label}
+                        {t(action.labelKey)}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {action.desc}
+                        {t(action.descKey)}
                       </Typography>
                     </Box>
                   </CardContent>

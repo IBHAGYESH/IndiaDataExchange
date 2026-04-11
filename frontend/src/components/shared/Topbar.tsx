@@ -27,8 +27,10 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import WalletConnectButton from "./WalletConnectButton";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { useAppTheme } from "@/providers/theme-provider";
 import { useAuth } from "@/providers/auth-provider";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   toggleSidebar?: () => void;
@@ -36,6 +38,8 @@ interface Props {
 }
 
 export default function Topbar({ toggleSidebar, showMenu = false }: Props) {
+  const { t } = useTranslation("nav");
+  const { t: tc } = useTranslation("common");
   const { mode, toggleTheme } = useAppTheme();
   const { isConnected } = useAuth();
   const theme = useTheme();
@@ -44,11 +48,11 @@ export default function Topbar({ toggleSidebar, showMenu = false }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const navLinks = [
-    { href: "/marketplace", label: "Marketplace", icon: <StorefrontIcon fontSize="small" /> },
+    { href: "/marketplace", label: t("marketplace"), icon: <StorefrontIcon fontSize="small" /> },
     ...(isConnected
       ? [
-          { href: "/bounties", label: "Bounties", icon: <EmojiEventsIcon fontSize="small" /> },
-          { href: "/dashboard", label: "Dashboard", icon: <DashboardIcon fontSize="small" /> },
+          { href: "/bounties", label: t("bounties"), icon: <EmojiEventsIcon fontSize="small" /> },
+          { href: "/dashboard", label: t("dashboard"), icon: <DashboardIcon fontSize="small" /> },
         ]
       : []),
   ];
@@ -96,7 +100,7 @@ export default function Topbar({ toggleSidebar, showMenu = false }: Props) {
                 letterSpacing: "-0.02em",
               }}
             >
-              IDE
+              {tc("brand")}
             </Typography>
           </Link>
 
@@ -141,6 +145,8 @@ export default function Topbar({ toggleSidebar, showMenu = false }: Props) {
             {mode === "dark" ? <Brightness7Icon fontSize="small" /> : <Brightness4Icon fontSize="small" />}
           </IconButton>
 
+          <LanguageSwitcher />
+
           <WalletConnectButton />
 
           {isMobile && (
@@ -169,7 +175,7 @@ export default function Topbar({ toggleSidebar, showMenu = false }: Props) {
       >
         <Box sx={{ p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography variant="subtitle1" fontWeight={700}>
-            Navigation
+            {t("navigation")}
           </Typography>
           <IconButton onClick={() => setDrawerOpen(false)} size="small">
             <CloseIcon />

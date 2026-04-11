@@ -11,6 +11,7 @@ import {
   submitSignedTransaction,
 } from "@libraries/algorand.service";
 import { returnDataObj } from "@utils/index";
+import { AppError } from "@middlewares/error.middleware";
 
 const nonceRepo = new NonceRepository();
 const userRepo = new UserRepository();
@@ -26,7 +27,8 @@ export class AuthService {
   async verifyAndIssueJWT(
     walletAddress: string,
     nonce: string,
-    signedTxnBase64: string
+    signedTxnBase64: string,
+    privacyConsentAccepted?: boolean
   ) {
     const nonceRecord = await nonceRepo.findValid(walletAddress, nonce);
     if (!nonceRecord) {
@@ -45,7 +47,33 @@ export class AuthService {
     await nonceRepo.delete(walletAddress);
 
     const isAdmin = appConfig.admin.walletAddress === walletAddress;
+    const existing = await userRepo.findByWallet(walletAddress);
+    if (!existing && !privacyConsentAccepted) {
+      throw new AppError(
+        "ValidationError",
+        400,
+        "You must accept the Privacy Policy and Terms to create an account",
+        true
+      );
+    }
+    if (existing && !existing.consentGivenAt && !privacyConsentAccepted) {
+      throw new AppError(
+        "ValidationError",
+        400,
+        "You must accept the Privacy Policy and Terms to continue",
+        true
+      );
+    }
+
     const user = await userRepo.findOrCreate(walletAddress, isAdmin);
+
+    if (!user.consentGivenAt) {
+      if (!privacyConsentAccepted) {
+        throw new AppError("ValidationError", 400, "Privacy consent required", true);
+      }
+      await userRepo.update(user._id!.toString(), { consentGivenAt: new Date() });
+      user.consentGivenAt = new Date();
+    }
 
     const optedIn = await isOptedIntoUSDC(walletAddress);
     if (user && user.isUSDCOptedIn !== optedIn) {

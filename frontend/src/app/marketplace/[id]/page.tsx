@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useRef, useEffect } from "react";
+import { use, useRef, useEffect, useMemo } from "react";
 import {
   Container,
   GridLegacy as Grid,
@@ -17,23 +17,35 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import MainLayout from "@/components/layouts/MainLayout";
 import DatasetPurchaseButton from "@/components/dataset/DatasetPurchaseButton";
 import { useGetDatasetQuery } from "@/redux/api/datasetApi";
 import { formatUSDC, truncateAddress, formatBytes, formatDate } from "@/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import config from "@/config";
+import { useTranslation } from "react-i18next";
 
 export default function DatasetDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const { t } = useTranslation("marketplace");
+  const { t: tCommon } = useTranslation("common");
   const { id } = use(params);
   const router = useRouter();
   const searchParams = useSearchParams();
   const purchaseRef = useRef<HTMLDivElement>(null);
   const { data, isLoading, isError } = useGetDatasetQuery(id);
+
+  const reportHref = useMemo(() => {
+    if (!data?.dataset) return "#";
+    const d = data.dataset;
+    const subject = t("reportSubject", { id: d._id });
+    const body = t("reportBody", { title: d.title, id: d._id });
+    return `mailto:${config.reportEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }, [data?.dataset, t]);
 
   useEffect(() => {
     if (searchParams.get("purchase") === "true" && data?.dataset && purchaseRef.current) {
@@ -55,7 +67,7 @@ export default function DatasetDetailPage({
     return (
       <MainLayout>
         <Container maxWidth="lg" sx={{ py: 8, textAlign: "center" }}>
-          <Typography variant="h5">Dataset not found</Typography>
+          <Typography variant="h5">{t("notFound")}</Typography>
         </Container>
       </MainLayout>
     );
@@ -63,30 +75,44 @@ export default function DatasetDetailPage({
 
   const { dataset } = data;
 
+  const infoRows = [
+    { label: t("formatLabel"), value: dataset.format.toUpperCase() },
+    { label: t("records"), value: dataset.recordCount.toLocaleString() },
+    { label: t("fileSize"), value: formatBytes(dataset.sizeBytes) },
+    { label: t("totalPurchases"), value: dataset.totalPurchases.toString() },
+    { label: t("listedOn"), value: formatDate(dataset.createdAt) },
+    { label: t("seller"), value: truncateAddress(dataset.sellerWalletAddress) },
+  ];
+
   return (
     <MainLayout>
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          onClick={() => router.push("/marketplace")}
-          sx={{ mb: 3, fontWeight: 600 }}
-        >
-          Back to Marketplace
-        </Button>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={1} sx={{ mb: 3 }}>
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => router.push("/marketplace")}
+            sx={{ fontWeight: 600 }}
+          >
+            {t("backToMarketplace")}
+          </Button>
+          <Button
+            component="a"
+            href={reportHref}
+            startIcon={<FlagOutlinedIcon />}
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            {tCommon("reportDataset")}
+          </Button>
+        </Stack>
 
         <Grid container spacing={4}>
-          {/* Main Content */}
           <Grid item xs={12} md={8}>
             <Box sx={{ mb: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
               <Chip label={dataset.category} color="primary" />
-              <Chip
-                label={`Format: ${dataset.format.toUpperCase()}`}
-                variant="outlined"
-              />
-              <Chip
-                label={`${dataset.recordCount.toLocaleString()} records`}
-                variant="outlined"
-              />
+              <Chip label={t("formatChipShort", { fmt: dataset.format.toUpperCase() })} variant="outlined" />
+              <Chip label={t("rowsCount", { count: dataset.recordCount })} variant="outlined" />
             </Box>
 
             <Typography variant="h4" fontWeight={800} gutterBottom>
@@ -99,38 +125,17 @@ export default function DatasetDetailPage({
 
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 3 }}>
               {dataset.tags.map((tag) => (
-                <Chip
-                  key={tag}
-                  label={`#${tag}`}
-                  size="small"
-                  sx={{ bgcolor: "background.paper" }}
-                />
+                <Chip key={tag} label={`#${tag}`} size="small" sx={{ bgcolor: "background.paper" }} />
               ))}
             </Box>
 
             <Divider sx={{ my: 3 }} />
 
             <Typography variant="h6" fontWeight={700} gutterBottom>
-              Dataset Info
+              {t("datasetInfo")}
             </Typography>
             <Grid container spacing={2}>
-              {[
-                { label: "Format", value: dataset.format.toUpperCase() },
-                {
-                  label: "Records",
-                  value: dataset.recordCount.toLocaleString(),
-                },
-                { label: "File Size", value: formatBytes(dataset.sizeBytes) },
-                {
-                  label: "Total Purchases",
-                  value: dataset.totalPurchases.toString(),
-                },
-                { label: "Listed On", value: formatDate(dataset.createdAt) },
-                {
-                  label: "Seller",
-                  value: truncateAddress(dataset.sellerWalletAddress),
-                },
-              ].map((item) => (
+              {infoRows.map((item) => (
                 <Grid item xs={6} sm={4} key={item.label}>
                   <Box>
                     <Typography variant="caption" color="text.secondary">
@@ -147,11 +152,10 @@ export default function DatasetDetailPage({
             <Divider sx={{ my: 3 }} />
 
             <Typography variant="h6" fontWeight={700} gutterBottom>
-              Sample Preview
+              {t("samplePreview")}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Preview the sample data before purchasing. The full dataset is
-              larger and higher quality.
+              {t("sampleBlurb")}
             </Typography>
             <Button
               variant="outlined"
@@ -160,11 +164,10 @@ export default function DatasetDetailPage({
               target="_blank"
               rel="noopener noreferrer"
             >
-              View Sample: {dataset.sampleFileName}
+              {t("viewSampleFile", { name: dataset.sampleFileName })}
             </Button>
           </Grid>
 
-          {/* Purchase Card */}
           <Grid item xs={12} md={4}>
             <Card
               ref={purchaseRef}
@@ -178,20 +181,11 @@ export default function DatasetDetailPage({
               }}
             >
               <CardContent>
-                <Typography
-                  variant="h4"
-                  color="primary"
-                  fontWeight={800}
-                  gutterBottom
-                >
+                <Typography variant="h4" color="primary" fontWeight={800} gutterBottom>
                   {formatUSDC(dataset.priceUSDC)}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mb: 3 }}
-                >
-                  One-time purchase. Re-download anytime from your dashboard.
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  {t("oneTimePurchase")}
                 </Typography>
 
                 <DatasetPurchaseButton
@@ -203,8 +197,7 @@ export default function DatasetDetailPage({
                 <Divider sx={{ my: 2 }} />
 
                 <Typography variant="caption" color="text.secondary">
-                  Payment goes directly to seller&apos;s wallet. No platform
-                  fees. Powered by Algorand + x402.
+                  {t("paymentNote")}
                 </Typography>
 
                 <Box sx={{ mt: 2 }}>
@@ -215,7 +208,7 @@ export default function DatasetDetailPage({
                     variant="caption"
                     display="block"
                   >
-                    View seller on Algo Explorer ↗
+                    {t("viewSellerExplorer")}
                   </MuiLink>
                 </Box>
               </CardContent>

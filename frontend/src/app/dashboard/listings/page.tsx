@@ -22,16 +22,20 @@ import { useGetListingsQuery, useUpdateDatasetMutation } from "@/redux/api/userA
 import { Dataset } from "@/types";
 import { formatUSDC, formatBytes, formatDate, truncateAddress } from "@/utils";
 import config from "@/config";
+import { useTranslation } from "react-i18next";
 
 function DatasetInfoGrid({ dataset }: { dataset: Dataset }) {
+  const { t } = useTranslation("dashboard");
+  const { t: tm } = useTranslation("marketplace");
+
   const items: { label: string; value: string }[] = [
-    { label: "Format", value: dataset.format.toUpperCase() },
-    { label: "Records", value: dataset.recordCount.toLocaleString() },
-    { label: "File size", value: formatBytes(dataset.sizeBytes) },
-    { label: "Total purchases", value: String(dataset.totalPurchases) },
-    { label: "Listed", value: formatDate(dataset.createdAt) },
-    { label: "Last updated", value: formatDate(dataset.updatedAt) },
-    { label: "Seller wallet", value: truncateAddress(dataset.sellerWalletAddress) },
+    { label: tm("formatLabel"), value: dataset.format.toUpperCase() },
+    { label: tm("records"), value: dataset.recordCount.toLocaleString() },
+    { label: t("fileSizeLower"), value: formatBytes(dataset.sizeBytes) },
+    { label: tm("totalPurchases"), value: String(dataset.totalPurchases) },
+    { label: tm("listedOn"), value: formatDate(dataset.createdAt) },
+    { label: t("lastUpdated"), value: formatDate(dataset.updatedAt) },
+    { label: t("sellerWallet"), value: truncateAddress(dataset.sellerWalletAddress) },
   ];
 
   return (
@@ -51,6 +55,7 @@ function DatasetInfoGrid({ dataset }: { dataset: Dataset }) {
 }
 
 export default function ListingsPage() {
+  const { t } = useTranslation("dashboard");
   const theme = useTheme();
   const { data, isLoading } = useGetListingsQuery();
   const [updateDataset] = useUpdateDatasetMutation();
@@ -76,10 +81,10 @@ export default function ListingsPage() {
   return (
     <Box>
       <Typography variant="h5" fontWeight={800} gutterBottom>
-        My Listings
+        {t("listingsTitle")}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        {data?.total || 0} datasets listed
+        {t("listingsCount", { count: data?.total || 0 })}
       </Typography>
 
       <Grid container spacing={3}>
@@ -134,7 +139,7 @@ export default function ListingsPage() {
                 <Divider sx={{ my: 2 }} />
 
                 <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                  Dataset info
+                  {t("datasetInfoHeading")}
                 </Typography>
                 <DatasetInfoGrid dataset={dataset} />
               </CardContent>
@@ -149,7 +154,7 @@ export default function ListingsPage() {
                   rel="noopener noreferrer"
                   sx={previewSx}
                 >
-                  View sample: {dataset.sampleFileName}
+                  {t("viewSampleWithName", { name: dataset.sampleFileName })}
                 </Button>
                 {dataset.status === "active" && (
                   <Button
@@ -160,7 +165,7 @@ export default function ListingsPage() {
                     startIcon={<StorefrontIcon />}
                     sx={previewSx}
                   >
-                    View on marketplace
+                    {t("viewOnMarketplace")}
                   </Button>
                 )}
                 <Button
@@ -169,7 +174,7 @@ export default function ListingsPage() {
                   color={dataset.status === "active" ? "warning" : "success"}
                   onClick={() => handleToggleStatus(dataset)}
                 >
-                  {dataset.status === "active" ? "Unlist" : "Re-list"}
+                  {dataset.status === "active" ? t("unlist") : t("relist")}
                 </Button>
               </CardActions>
             </Card>
@@ -178,8 +183,8 @@ export default function ListingsPage() {
         {(!data?.datasets || data.datasets.length === 0) && (
           <Grid item xs={12}>
             <Typography color="text.secondary" textAlign="center" sx={{ py: 4 }}>
-              No datasets listed yet.{" "}
-              <Link href="/dashboard/list-dataset">List your first dataset →</Link>
+              {t("listingsEmpty")}{" "}
+              <Link href="/dashboard/list-dataset">{t("listingsEmptyLink")}</Link>
             </Typography>
           </Grid>
         )}

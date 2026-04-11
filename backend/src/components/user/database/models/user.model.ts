@@ -4,8 +4,7 @@ import { model, Schema } from "mongoose";
 export interface IUser {
   _id?: string;
   walletAddress: string;
-  name: string;
-  bio: string;
+  consentGivenAt?: Date;
   isUSDCOptedIn: boolean;
   isAdmin: boolean;
   totalEarnings: number;
@@ -17,8 +16,7 @@ export interface IUser {
 const UserSchema = new Schema<IUser>(
   {
     walletAddress: { type: String, required: true, unique: true, index: true },
-    name: { type: String, default: "" },
-    bio: { type: String, default: "" },
+    consentGivenAt: { type: Date, default: null },
     isUSDCOptedIn: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },
     totalEarnings: { type: Number, default: 0 },

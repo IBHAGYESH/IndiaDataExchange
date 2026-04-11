@@ -8,6 +8,17 @@ import React, {
   useCallback,
   useRef,
 } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+  Link as MuiLink,
+} from "@mui/material";
+import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { PeraWalletConnect } from "@perawallet/connect";
 import algosdk from "algosdk";
 import { User } from "@/types";
@@ -52,14 +63,30 @@ export const AuthContext = createContext<AuthContextType>(
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const { t } = useTranslation("auth");
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [jwt, setJwt] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isOptedIn, setIsOptedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [consentOpen, setConsentOpen] = useState(false);
+  const consentResolveRef = useRef<((accepted: boolean) => void) | null>(null);
   const peraRef = useRef<PeraWalletConnect | null>(null);
   const initRef = useRef(false);
+
+  const waitForPrivacyConsent = useCallback(() => {
+    return new Promise<boolean>((resolve) => {
+      consentResolveRef.current = resolve;
+      setConsentOpen(true);
+    });
+  }, []);
+
+  const resolveConsent = useCallback((accepted: boolean) => {
+    setConsentOpen(false);
+    consentResolveRef.current?.(accepted);
+    consentResolveRef.current = null;
+  }, []);
 
   const fetchUserData = useCallback(
     async (address: string, token: string) => {
@@ -144,6 +171,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!accounts?.length) throw new Error("No accounts returned");
       const address = accounts[0];
 
+      const consentOk = await waitForPrivacyConsent();
+      if (!consentOk) {
+        try {
+          pera.disconnect();
+        } catch {
+          /* ignore */
+        }
+        setLoading(false);
+        throw new Error("Consent declined");
+      }
+
       const nonceRes = await fetch(
         `${config.apiUrl}/auth/nonce/${address}`
       );
@@ -167,7 +205,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const verifyRes = await fetch(`${config.apiUrl}/auth/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ walletAddress: address, signedTxnBase64, nonce }),
+        body: JSON.stringify({
+          walletAddress: address,
+          signedTxnBase64,
+          nonce,
+          privacyConsentAccepted: true,
+        }),
       });
 
       if (!verifyRes.ok) {
@@ -211,7 +254,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [waitForPrivacyConsent]);
 
   const disconnectWallet = useCallback(() => {
     try {
@@ -252,6 +295,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
+      <Dialog open={consentOpen} onClose={() => resolveConsent(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 800 }}>{t("consentTitle")}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            {t("consentBody")}
+          </Typography>
+          <Typography variant="body2" component="div">
+            <MuiLink component={Link} href="/privacy" target="_blank" rel="noopener noreferrer">
+              {t("viewPrivacy")}
+            </MuiLink>
+            {" · "}
+            <MuiLink component={Link} href="/terms" target="_blank" rel="noopener noreferrer">
+              {t("viewTerms")}
+            </MuiLink>
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+          <Button color="inherit" onClick={() => resolveConsent(false)}>
+            {t("consentDecline")}
+          </Button>
+          <Button variant="contained" onClick={() => resolveConsent(true)}>
+            {t("consentAgree")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AuthContext.Provider>
   );
 };

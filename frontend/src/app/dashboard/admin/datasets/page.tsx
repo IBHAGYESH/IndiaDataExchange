@@ -31,8 +31,11 @@ import AdminProtectedRoute from "@/components/shared/AdminProtectedRoute";
 import { useGetAdminDatasetsQuery, useUpdateDatasetStatusMutation } from "@/redux/api/adminApi";
 import { useToast } from "@/providers/toast-provider";
 import { Dataset } from "@/types";
+import { useTranslation } from "react-i18next";
 
 export default function AdminDatasetsPage() {
+  const { t } = useTranslation("admin");
+  const { t: tc } = useTranslation("common");
   const theme = useTheme();
   const { showToast } = useToast();
   const [page, setPage] = useState(1);
@@ -44,10 +47,13 @@ export default function AdminDatasetsPage() {
     if (!confirmDialog) return;
     try {
       await updateStatus({ id: confirmDialog.id, status: confirmDialog.newStatus }).unwrap();
-      showToast(`Dataset ${confirmDialog.newStatus === "active" ? "activated" : "unlisted"} successfully`, "success");
+      showToast(
+        confirmDialog.newStatus === "active" ? t("toastDatasetActivated") : t("toastDatasetUnlisted"),
+        "success",
+      );
       refetch();
     } catch {
-      showToast("Failed to update status", "error");
+      showToast(t("toastUpdateFailed"), "error");
     }
     setConfirmDialog(null);
   };
@@ -64,10 +70,10 @@ export default function AdminDatasetsPage() {
             </IconButton>
           </Link>
           <Typography variant="h5" fontWeight={800}>
-            Manage Datasets
+            {t("manageDatasets")}
           </Typography>
           {data && (
-            <Chip label={`${data.total} total`} size="small" variant="outlined" />
+            <Chip label={t("totalCount", { count: data.total })} size="small" variant="outlined" />
           )}
         </Box>
 
@@ -79,14 +85,16 @@ export default function AdminDatasetsPage() {
 
         {isError && (
           <Box sx={{ textAlign: "center", py: 8 }}>
-            <Typography color="error" gutterBottom>Failed to load datasets.</Typography>
+            <Typography color="error" gutterBottom>
+              {t("failedLoadDatasets")}
+            </Typography>
             <Typography
               variant="body2"
               color="text.secondary"
               sx={{ cursor: "pointer", textDecoration: "underline" }}
               onClick={() => refetch()}
             >
-              Click to retry
+              {t("clickRetry")}
             </Typography>
           </Box>
         )}
@@ -103,13 +111,15 @@ export default function AdminDatasetsPage() {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Title</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Seller</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Category</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Price</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Purchases</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }} align="right">Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colTitle")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colSeller")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colCategory")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colPrice")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colPurchases")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colStatus")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">
+                      {t("colActions")}
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -149,7 +159,7 @@ export default function AdminDatasetsPage() {
                       </TableCell>
                       <TableCell align="right">
                         {ds.status === "active" ? (
-                          <Tooltip title="Unlist dataset">
+                          <Tooltip title={t("tooltipUnlist")}>
                             <IconButton
                               size="small"
                               onClick={() => setConfirmDialog({ id: ds._id, title: ds.title, newStatus: "unlisted" })}
@@ -159,7 +169,7 @@ export default function AdminDatasetsPage() {
                             </IconButton>
                           </Tooltip>
                         ) : (
-                          <Tooltip title="Activate dataset">
+                          <Tooltip title={t("tooltipActivate")}>
                             <IconButton
                               size="small"
                               onClick={() => setConfirmDialog({ id: ds._id, title: ds.title, newStatus: "active" })}
@@ -175,7 +185,7 @@ export default function AdminDatasetsPage() {
                   {datasets.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={7} sx={{ textAlign: "center", py: 6 }}>
-                        <Typography color="text.secondary">No datasets found</Typography>
+                        <Typography color="text.secondary">{t("noDatasetsTable")}</Typography>
                       </TableCell>
                     </TableRow>
                   )}
@@ -203,19 +213,17 @@ export default function AdminDatasetsPage() {
           maxWidth="xs"
           fullWidth
         >
-          <DialogTitle sx={{ fontWeight: 700 }}>
-            Confirm Status Change
-          </DialogTitle>
+          <DialogTitle sx={{ fontWeight: 700 }}>{t("confirmStatusTitle")}</DialogTitle>
           <DialogContent>
             <Typography variant="body2">
-              Are you sure you want to{" "}
-              <strong>{confirmDialog?.newStatus === "active" ? "activate" : "unlist"}</strong>{" "}
-              the dataset &ldquo;{confirmDialog?.title}&rdquo;?
+              {confirmDialog?.newStatus === "active"
+                ? t("confirmDatasetActivate", { title: confirmDialog?.title ?? "" })
+                : t("confirmDatasetUnlist", { title: confirmDialog?.title ?? "" })}
             </Typography>
           </DialogContent>
           <DialogActions sx={{ px: 3, pb: 2 }}>
             <Button onClick={() => setConfirmDialog(null)} color="inherit">
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button
               onClick={handleStatusChange}
@@ -223,7 +231,7 @@ export default function AdminDatasetsPage() {
               disabled={updating}
               color={confirmDialog?.newStatus === "active" ? "success" : "warning"}
             >
-              {updating ? "Updating..." : "Confirm"}
+              {updating ? t("updating") : t("confirm")}
             </Button>
           </DialogActions>
         </Dialog>

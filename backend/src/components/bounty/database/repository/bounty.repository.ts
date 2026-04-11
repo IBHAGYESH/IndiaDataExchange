@@ -41,4 +41,11 @@ export class BountyRepository {
   async incrementSubmissionCount(id: string) {
     return await this.model.findByIdAndUpdate(id, { $inc: { submissionCount: 1 } });
   }
+
+  async anonymizeBuyerWallet(buyerId: string, placeholderWallet: string) {
+    return await this.model.updateMany(
+      { buyerId },
+      { $set: { buyerWalletAddress: placeholderWallet } }
+    );
+  }
 }

@@ -1,8 +1,7 @@
 export interface User {
   _id: string;
   walletAddress: string;
-  name: string;
-  bio: string;
+  consentGivenAt?: string;
   isUSDCOptedIn: boolean;
   isAdmin: boolean;
   totalEarnings: number;

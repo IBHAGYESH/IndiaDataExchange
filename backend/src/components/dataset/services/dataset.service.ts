@@ -90,10 +90,20 @@ export class DatasetService {
       format: DatasetFormat;
       recordCount: number;
       sizeBytes: number;
+      sellerAttestationAccepted: boolean;
     },
     sampleFile: Express.Multer.File,
     fullDataFile: Express.Multer.File
   ) {
+    if (!data.sellerAttestationAccepted) {
+      throw new AppError(
+        "ValidationError",
+        400,
+        "You must confirm you have the right to share this dataset and accept responsibility for its content",
+        true
+      );
+    }
+
     // Verify user is opted into USDC to receive payments
     const user = await userRepo.findById(userId);
     if (!user) throw new AppError("NotFound", 404, "User not found", true);

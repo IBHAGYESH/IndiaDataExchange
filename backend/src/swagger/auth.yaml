@@ -58,6 +58,9 @@ paths:
               nonce:
                 type: string
                 description: The nonce that was obtained from /auth/nonce
+              privacyConsentAccepted:
+                type: boolean
+                description: Required for new accounts and for legacy accounts without consent on file
       responses:
         '200':
           description: Authentication successful
@@ -162,10 +165,9 @@ definitions:
         type: string
       walletAddress:
         type: string
-      name:
+      consentGivenAt:
         type: string
-      bio:
-        type: string
+        format: date-time
       isUSDCOptedIn:
         type: boolean
       isAdmin:

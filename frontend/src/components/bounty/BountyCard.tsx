@@ -24,25 +24,31 @@ import {
   formatDate,
   isDeadlinePassed,
 } from "@/utils";
-
-const statusConfig: Record<
-  string,
-  { color: "success" | "warning" | "error" | "default"; label: string }
-> = {
-  open: { color: "success", label: "Open" },
-  accepted: { color: "warning", label: "Accepted" },
-  cancelled: { color: "error", label: "Cancelled" },
-  expired: { color: "default", label: "Expired" },
-};
+import { useTranslation } from "react-i18next";
 
 interface Props {
   bounty: Bounty;
 }
 
 export default function BountyCard({ bounty }: Props) {
+  const { t } = useTranslation("bounties");
+  const { t: tm } = useTranslation("marketplace");
   const theme = useTheme();
   const deadlinePassed = isDeadlinePassed(bounty.deadline);
-  const cfg = statusConfig[bounty.status] || statusConfig.expired;
+
+  const statusKey = bounty.status as "open" | "accepted" | "cancelled" | "expired";
+  const statusLabel = t(`status_${statusKey}`, { defaultValue: bounty.status });
+
+  const statusColor: Record<string, "success" | "warning" | "error" | "default"> = {
+    open: "success",
+    accepted: "warning",
+    cancelled: "error",
+    expired: "default",
+  };
+  const color = statusColor[bounty.status] ?? "default";
+
+  const categoryLabels = tm("categoryLabels", { returnObjects: true }) as Record<string, string>;
+  const categoryLabel = categoryLabels[bounty.category] ?? bounty.category;
 
   return (
     <Card
@@ -63,9 +69,9 @@ export default function BountyCard({ bounty }: Props) {
           }}
         >
           <Chip
-            label={cfg.label}
+            label={statusLabel}
             size="small"
-            color={cfg.color}
+            color={color}
             sx={{ fontWeight: 600, fontSize: "0.7rem" }}
           />
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -118,7 +124,7 @@ export default function BountyCard({ bounty }: Props) {
 
         <Stack direction="row" spacing={0.75} flexWrap="wrap" sx={{ gap: 0.5, mb: 2 }}>
           <Chip
-            label={bounty.category}
+            label={categoryLabel}
             size="small"
             sx={{
               fontWeight: 600,
@@ -177,7 +183,7 @@ export default function BountyCard({ bounty }: Props) {
             variant="caption"
             color={deadlinePassed ? "error" : "text.disabled"}
           >
-            {deadlinePassed ? "Expired" : `Due ${formatDate(bounty.deadline)}`}
+            {deadlinePassed ? t("expiredShort") : t("dueDate", { date: formatDate(bounty.deadline) })}
           </Typography>
         </Box>
       </CardContent>
@@ -195,7 +201,7 @@ export default function BountyCard({ bounty }: Props) {
               "&:hover": { borderColor: "primary.main" },
             }}
           >
-            View Details
+            {t("viewDetails")}
           </Button>
         </Link>
       </CardActions>

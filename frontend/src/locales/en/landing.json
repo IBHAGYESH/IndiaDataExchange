@@ -1,0 +1,116 @@
+{
+  "heroTitle": "India Data Exchange",
+  "heroSubtitle": "Where Indian Knowledge Becomes",
+  "heroHighlight": "AI Fuel",
+  "heroDescription": "Buy and sell datasets using USDC on Algorand. Instant payments. Zero friction. AI agents welcome.",
+  "browseMarketplace": "Browse Marketplace",
+  "monetizeData": "Monetize Your Data",
+  "x402Overline": "x402 Protocol — AI Agent Purchase Flow",
+  "x402Caption": "AI agents pay automatically via x402 protocol — no wallet connection required",
+  "whyTitle": "Why India Data Exchange?",
+  "whySubtitle": "Built on Algorand for speed, finality, and near-zero fees",
+  "categoriesTitle": "Data Categories",
+  "categoriesSubtitle": "India-specific datasets across critical sectors",
+  "ctaTitleLine1": "Ready to monetize",
+  "ctaTitleLine2": "your data?",
+  "ctaBody": "Connect your Pera Wallet and start earning USDC from your Indian datasets today.",
+  "listDataset": "List a Dataset",
+  "viewBounties": "View Bounties",
+  "footerBuilt": "Built on Algorand · Powered by x402 Protocol",
+  "footerCredit": "Crafted with",
+  "footerBy": "by",
+  "stats": [
+    { "label": "Datasets Listed", "value": "500+", "icon": "📦" },
+    { "label": "USDC Paid Out", "value": "$12K+", "icon": "💵" },
+    { "label": "Active Sellers", "value": "200+", "icon": "👥" },
+    { "label": "AI Agent Purchases", "value": "1K+", "icon": "🤖" }
+  ],
+  "features": [
+    {
+      "title": "Instant USDC Payments",
+      "desc": "Algorand settles in under 3 seconds. Sellers receive USDC directly — no escrow, no waiting."
+    },
+    {
+      "title": "AI Agent Native",
+      "desc": "AI agents browse and purchase datasets autonomously via x402 HTTP payments. No account needed."
+    },
+    {
+      "title": "Bounty System",
+      "desc": "Post bounties with USDC locked in smart contract escrow. Released only on acceptance."
+    },
+    {
+      "title": "Non-Custodial",
+      "desc": "Your keys, your data. Sign in with Algorand wallet. No emails, no passwords."
+    }
+  ],
+  "categories": [
+    {
+      "key": "agriculture",
+      "label": "Agriculture",
+      "emoji": "🌾",
+      "description": "Crop data, disease images, weather patterns"
+    },
+    {
+      "key": "language",
+      "label": "Language",
+      "emoji": "🗣️",
+      "description": "Voice recordings, text corpora, translations"
+    },
+    {
+      "key": "traffic",
+      "label": "Traffic",
+      "emoji": "🚗",
+      "description": "Urban mobility, intersection data, flow patterns"
+    },
+    {
+      "key": "healthcare",
+      "label": "Healthcare",
+      "emoji": "🏥",
+      "description": "Ayurvedic plants, medical images, records"
+    },
+    {
+      "key": "cultural",
+      "label": "Cultural",
+      "emoji": "🎭",
+      "description": "Heritage sites, festivals, artisan data"
+    },
+    {
+      "key": "financial",
+      "label": "Financial",
+      "emoji": "💰",
+      "description": "Market data, transactions, economic indicators"
+    }
+  ],
+  "x402Steps": [
+    {
+      "label": "Discovery",
+      "title": "Agent fetches datasets",
+      "code": "GET /api/datasets?category=agriculture",
+      "response": "200 OK — 12 datasets found"
+    },
+    {
+      "label": "Request",
+      "title": "Agent requests download",
+      "code": "GET /api/datasets/abc123/download",
+      "response": "Headers: Accept: application/json"
+    },
+    {
+      "label": "Paywall",
+      "title": "Server returns 402",
+      "code": "HTTP 402 Payment Required",
+      "response": "X-Payment: USDC $2.50 on Algorand"
+    },
+    {
+      "label": "Payment",
+      "title": "Agent pays via x402",
+      "code": "USDC Transfer → Algorand Testnet",
+      "response": "Tx confirmed in 3.2s — Round 45892"
+    },
+    {
+      "label": "Delivery",
+      "title": "Agent gets the dataset",
+      "code": "GET /api/datasets/abc123/download",
+      "response": "200 OK — dataset.csv (2.4MB)"
+    }
+  ]
+}

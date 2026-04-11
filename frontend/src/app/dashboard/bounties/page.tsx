@@ -34,8 +34,12 @@ import { useState } from "react";
 import algosdk from "algosdk";
 import config from "@/config";
 import { submittedTxIdFromAlgodResponse } from "@/utils/algod";
+import { useTranslation } from "react-i18next";
+import Link from "next/link";
 
 export default function DashboardBountiesPage() {
+  const { t } = useTranslation("bounties");
+  const { t: tc } = useTranslation("common");
   const theme = useTheme();
   const { data, isLoading, refetch } = useGetUserBountiesQuery();
   const [initiateRefund] = useInitiateRefundMutation();
@@ -64,13 +68,13 @@ export default function DashboardBountiesPage() {
       await confirmRefund({ bountyId, txId }).unwrap();
       refetch();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Refund failed");
+      setError(err instanceof Error ? err.message : t("refundFailed"));
     } finally {
       setRefundLoading(null);
     }
   };
 
-  const handleAccept = async (bountyId: string, submissionId: string, winnerAddress: string) => {
+  const handleAccept = async (bountyId: string, submissionId: string) => {
     if (!peraWallet) return;
     setAcceptLoading(submissionId);
     setAcceptError(null);
@@ -86,7 +90,7 @@ export default function DashboardBountiesPage() {
       await confirmAcceptance({ bountyId, submissionId, txId }).unwrap();
       refetch();
     } catch (err: unknown) {
-      setAcceptError(err instanceof Error ? err.message : "Failed to accept submission");
+      setAcceptError(err instanceof Error ? err.message : t("errAccept"));
     } finally {
       setAcceptLoading(null);
     }
@@ -108,7 +112,10 @@ export default function DashboardBountiesPage() {
   return (
     <Box>
       <Typography variant="h5" fontWeight={800} gutterBottom>
-        My Bounties
+        {t("dashboardTitle")}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        {t("dashboardSubtitle", { count: data?.total ?? 0 })}
       </Typography>
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -142,7 +149,10 @@ export default function DashboardBountiesPage() {
                 <Box>
                   <Typography fontWeight={700}>{bounty.title}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {bounty.submissionCount} submissions · Due {formatDate(bounty.deadline)}
+                    {t("submissionSummary", {
+                      count: bounty.submissionCount,
+                      date: formatDate(bounty.deadline),
+                    })}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
@@ -166,13 +176,13 @@ export default function DashboardBountiesPage() {
                   onClick={() => handleRefund(bounty._id)}
                   sx={{ mb: 2 }}
                 >
-                  {refundLoading === bounty._id ? "Processing..." : "Refund Escrow"}
+                  {refundLoading === bounty._id ? tc("processing") : t("refundEscrow")}
                 </Button>
               )}
               {bounty.submissions && bounty.submissions.length > 0 && (
                 <Box>
                   <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                    Submissions
+                    {t("submissions")}
                   </Typography>
                   {bounty.submissions.map((sub) => (
                     <Card
@@ -197,7 +207,7 @@ export default function DashboardBountiesPage() {
                           {sub.description}
                         </Typography>
                         <Typography variant="caption" color="text.disabled" display="block" sx={{ mb: 1.5 }}>
-                          Submitter {truncateAddress(sub.sellerWalletAddress)}
+                          {t("submitterLabel", { address: truncateAddress(sub.sellerWalletAddress) })}
                         </Typography>
                         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                           <Button
@@ -209,7 +219,7 @@ export default function DashboardBountiesPage() {
                             rel="noopener noreferrer"
                             sx={previewBtnSx}
                           >
-                            Preview sample
+                            {t("previewSample")}
                           </Button>
                           {sub.status === "pending" && canAcceptPending && (
                             <Button
@@ -224,9 +234,9 @@ export default function DashboardBountiesPage() {
                                 )
                               }
                               disabled={!!acceptLoading}
-                              onClick={() => handleAccept(bounty._id, sub._id, sub.sellerWalletAddress)}
+                              onClick={() => handleAccept(bounty._id, sub._id)}
                             >
-                              Accept submission
+                              {t("acceptSubmission")}
                             </Button>
                           )}
                           {sub.status === "accepted" && sub.downloadUrl && (
@@ -239,7 +249,7 @@ export default function DashboardBountiesPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              Download full file
+                              {t("downloadFullFile")}
                             </Button>
                           )}
                         </Stack>
@@ -255,8 +265,8 @@ export default function DashboardBountiesPage() {
 
       {(!data?.bounties || data.bounties.length === 0) && (
         <Typography color="text.secondary" textAlign="center" sx={{ py: 4 }}>
-          No bounties posted yet.{" "}
-          <a href="/dashboard/post-bounty">Post a bounty →</a>
+          {t("noBountiesPosted")}{" "}
+          <Link href="/dashboard/post-bounty">{t("postBountyLink")}</Link>
         </Typography>
       )}
     </Box>

@@ -21,7 +21,9 @@ import PostAddIcon from "@mui/icons-material/PostAdd";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import GavelIcon from "@mui/icons-material/Gavel";
+import PrivacyTipIcon from "@mui/icons-material/PrivacyTip";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/providers/auth-provider";
 
 type NavItem =
@@ -35,24 +37,26 @@ interface Props {
 
 export default function Sidebar({ activePath }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation("nav");
   const { user } = useAuth();
 
   const navItems: NavItem[] = [
-    { label: "Overview", href: "/dashboard", icon: <DashboardIcon fontSize="small" /> },
-    { label: "My Listings", href: "/dashboard/listings", icon: <StorageIcon fontSize="small" /> },
-    { label: "My Purchases", href: "/dashboard/purchases", icon: <ShoppingCartIcon fontSize="small" /> },
-    { label: "My Bounties", href: "/dashboard/bounties", icon: <EmojiEventsIcon fontSize="small" /> },
-    { label: "My Submissions", href: "/dashboard/submissions", icon: <AssignmentIcon fontSize="small" /> },
+    { label: t("overview"), href: "/dashboard", icon: <DashboardIcon fontSize="small" /> },
+    { label: t("myListings"), href: "/dashboard/listings", icon: <StorageIcon fontSize="small" /> },
+    { label: t("myPurchases"), href: "/dashboard/purchases", icon: <ShoppingCartIcon fontSize="small" /> },
+    { label: t("myBounties"), href: "/dashboard/bounties", icon: <EmojiEventsIcon fontSize="small" /> },
+    { label: t("mySubmissions"), href: "/dashboard/submissions", icon: <AssignmentIcon fontSize="small" /> },
     { divider: true },
-    { label: "List Dataset", href: "/dashboard/list-dataset", icon: <AddIcon fontSize="small" /> },
-    { label: "Post Bounty", href: "/dashboard/post-bounty", icon: <PostAddIcon fontSize="small" /> },
+    { label: t("listDataset"), href: "/dashboard/list-dataset", icon: <AddIcon fontSize="small" /> },
+    { label: t("postBounty"), href: "/dashboard/post-bounty", icon: <PostAddIcon fontSize="small" /> },
+    { label: t("accountPrivacy"), href: "/dashboard/account", icon: <PrivacyTipIcon fontSize="small" /> },
     ...(user?.isAdmin
       ? [
           { divider: true } as NavItem,
-          { sectionLabel: "Admin" } as NavItem,
-          { label: "Platform Overview", href: "/dashboard/admin", icon: <AdminPanelSettingsIcon fontSize="small" /> } as NavItem,
-          { label: "Manage Datasets", href: "/dashboard/admin/datasets", icon: <TableChartIcon fontSize="small" /> } as NavItem,
-          { label: "Manage Bounties", href: "/dashboard/admin/bounties", icon: <GavelIcon fontSize="small" /> } as NavItem,
+          { sectionLabel: t("adminSection") } as NavItem,
+          { label: t("platformOverview"), href: "/dashboard/admin", icon: <AdminPanelSettingsIcon fontSize="small" /> } as NavItem,
+          { label: t("adminDatasets"), href: "/dashboard/admin/datasets", icon: <TableChartIcon fontSize="small" /> } as NavItem,
+          { label: t("adminBounties"), href: "/dashboard/admin/bounties", icon: <GavelIcon fontSize="small" /> } as NavItem,
         ]
       : []),
   ];
@@ -71,7 +75,7 @@ export default function Sidebar({ activePath }: Props) {
         color="text.disabled"
         sx={{ px: 1, mb: 1, letterSpacing: "0.1em", fontSize: "0.65rem" }}
       >
-        Dashboard
+        {t("sidebarHeading")}
       </Typography>
       <List dense disablePadding>
         {navItems.map((item, idx) => {

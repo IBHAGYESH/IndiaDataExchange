@@ -16,6 +16,7 @@ import { wrapFetchWithPayment, x402Client } from "@x402-avm/fetch";
 import { registerExactAvmScheme } from "@x402-avm/avm/exact/client";
 import type { ClientAvmSigner } from "@x402-avm/avm";
 import algosdk from "algosdk";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   datasetId: string;
@@ -27,6 +28,7 @@ export default function DatasetPurchaseButton({
   datasetId,
   priceUSDC,
 }: Props) {
+  const { t } = useTranslation("marketplace");
   const { isConnected, peraWallet, walletAddress, jwt } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,7 +72,7 @@ export default function DatasetPurchaseButton({
 
   const handlePurchase = useCallback(async () => {
     if (!fetchWithPay || !walletAddress) {
-      setError("Please connect your wallet first");
+      setError(t("connectWalletFirst"));
       return;
     }
 
@@ -92,7 +94,7 @@ export default function DatasetPurchaseButton({
         const body = await response.json().catch(() => ({}));
         throw new Error(
           (body as Record<string, string>).message ||
-            `Purchase failed (HTTP ${response.status})`
+            t("purchaseFailedHttp", { status: String(response.status) })
         );
       }
 
@@ -101,20 +103,20 @@ export default function DatasetPurchaseButton({
       setFileName(body.fileName);
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Purchase failed. Please try again.";
+        err instanceof Error ? err.message : t("purchaseTryAgain");
       if (!message.includes("cancelled") && !message.includes("rejected")) {
         setError(message);
       }
     } finally {
       setLoading(false);
     }
-  }, [fetchWithPay, walletAddress, jwt, datasetId]);
+  }, [fetchWithPay, walletAddress, jwt, datasetId, t]);
 
   if (downloadUrl) {
     return (
       <Box>
         <Alert severity="success" sx={{ mb: 2 }}>
-          Payment confirmed! Your download is ready.
+          {t("paymentReady")}
         </Alert>
         <Button
           variant="contained"
@@ -126,14 +128,14 @@ export default function DatasetPurchaseButton({
           fullWidth
           size="large"
         >
-          Download {fileName || "Dataset"}
+          {fileName ? t("downloadNamed", { name: fileName }) : t("downloadDataset")}
         </Button>
         <Typography
           variant="caption"
           color="text.secondary"
           sx={{ mt: 1, display: "block" }}
         >
-          Link expires in 1 hour. Return to dashboard to re-download anytime.
+          {t("linkExpiresNote")}
         </Typography>
       </Box>
     );
@@ -162,8 +164,8 @@ export default function DatasetPurchaseButton({
         sx={{ fontWeight: 700, py: 1.5 }}
       >
         {loading
-          ? "Processing Payment..."
-          : `Purchase for ${formatUSDC(priceUSDC)}`}
+          ? t("processingPayment")
+          : t("purchaseFor", { price: formatUSDC(priceUSDC) })}
       </Button>
       {!isConnected && (
         <Typography
@@ -171,8 +173,7 @@ export default function DatasetPurchaseButton({
           color="text.secondary"
           sx={{ mt: 1, display: "block", textAlign: "center" }}
         >
-          Connect your wallet to purchase. AI agents can purchase directly via
-          x402.
+          {t("connectToPurchase")}
         </Typography>
       )}
     </Box>

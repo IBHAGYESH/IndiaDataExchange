@@ -1,0 +1,61 @@
+{
+  "heroTitle": "इंडिया डेटा एक्सचेंज",
+  "heroSubtitle": "जहाँ भारतीय ज्ञान बनता है",
+  "heroHighlight": "AI ईंधन",
+  "heroDescription": "अल्गोरैंड पर USDC से डेटासेट खरीदें और बेचें। तुरंत भुगतान। AI एजेंटों का स्वागत है।",
+  "browseMarketplace": "मार्केटप्लेस देखें",
+  "monetizeData": "अपने डेटा से कमाएँ",
+  "x402Overline": "x402 प्रोटोकॉल — AI एजेंट खरीद प्रवाह",
+  "x402Caption": "AI एजेंट x402 के ज़रिए स्वचालित भुगतान करते हैं — वॉलेट कनेक्शन ज़रूरी नहीं",
+  "whyTitle": "इंडिया डेटा एक्सचेंज क्यों?",
+  "whySubtitle": "गति, अंतिमता और न्यूनतम शुल्क के लिए अल्गोरैंड पर बना",
+  "categoriesTitle": "डेटा श्रेणियाँ",
+  "categoriesSubtitle": "महत्वपूर्ण क्षेत्रों में भारत-केंद्रित डेटासेट",
+  "ctaTitleLine1": "तैयार हैं अपने डेटा से",
+  "ctaTitleLine2": "कमाई करने के लिए?",
+  "ctaBody": "अपना Pera वॉलेट कनेक्ट करें और आज ही भारतीय डेटासेट से USDC कमाना शुरू करें।",
+  "listDataset": "डेटासेट सूचीबद्ध करें",
+  "viewBounties": "बाउंटी देखें",
+  "footerBuilt": "अल्गोरैंड पर निर्मित · x402 प्रोटोकॉल द्वारा संचालित",
+  "footerCredit": "बनाया गया",
+  "footerBy": "द्वारा",
+  "stats": [
+    { "label": "सूचीबद्ध डेटासेट", "value": "500+", "icon": "📦" },
+    { "label": "USDC भुगतान", "value": "$12K+", "icon": "💵" },
+    { "label": "सक्रिय विक्रेता", "value": "200+", "icon": "👥" },
+    { "label": "AI एजेंट खरीद", "value": "1K+", "icon": "🤖" }
+  ],
+  "features": [
+    {
+      "title": "तत्काल USDC भुगतान",
+      "desc": "अल्गोरैंड 3 सेकंड में निपटाता है। विक्रेताओं को सीधे USDC मिलता है।"
+    },
+    {
+      "title": "AI एजेंट के लिए",
+      "desc": "AI एजेंट x402 HTTP भुगतान से स्वतंत्र रूप से डेटासेट खरीदते हैं।"
+    },
+    {
+      "title": "बाउंटी प्रणाली",
+      "desc": "USDC स्मार्ट कॉन्ट्रैक्ट एस्क्रो में लॉक। स्वीकृति पर ही रिलीज़।"
+    },
+    {
+      "title": "गैर-संरक्षक",
+      "desc": "आपकी कुंजी, आपका डेटा। अल्गोरैंड वॉलेट से साइन-इन। ईमेल/पासवर्ड नहीं।"
+    }
+  ],
+  "categories": [
+    { "key": "agriculture", "label": "कृषि", "emoji": "🌾", "description": "फसल डेटा, रोग छवियाँ, मौसम" },
+    { "key": "language", "label": "भाषा", "emoji": "🗣️", "description": "आवाज़, पाठ, अनुवाद" },
+    { "key": "traffic", "label": "यातायात", "emoji": "🚗", "description": "शहरी गतिशीलता, प्रवाह" },
+    { "key": "healthcare", "label": "स्वास्थ्य", "emoji": "🏥", "description": "आयुर्वेदिक पौधे, चिकित्सा छवियाँ" },
+    { "key": "cultural", "label": "सांस्कृतिक", "emoji": "🎭", "description": "विरासत, त्योहार, शिल्प डेटा" },
+    { "key": "financial", "label": "वित्तीय", "emoji": "💰", "description": "बाज़ार डेटा, लेनदेन संकेतक" }
+  ],
+  "x402Steps": [
+    { "label": "खोज", "title": "एजेंट डेटासेट लाता है", "code": "GET /api/datasets?category=agriculture", "response": "200 OK — 12 डेटासेट" },
+    { "label": "अनुरोध", "title": "एजेंट डाउनलोड माँगता है", "code": "GET /api/datasets/abc123/download", "response": "Headers: Accept: application/json" },
+    { "label": "पेवॉल", "title": "सर्वर 402 देता है", "code": "HTTP 402 Payment Required", "response": "X-Payment: USDC $2.50 on Algorand" },
+    { "label": "भुगतान", "title": "एजेंट x402 से भुगतान", "code": "USDC Transfer → Algorand Testnet", "response": "Tx confirmed in 3.2s — Round 45892" },
+    { "label": "डिलीवरी", "title": "एजेंट को डेटासेट मिलता है", "code": "GET /api/datasets/abc123/download", "response": "200 OK — dataset.csv (2.4MB)" }
+  ]
+}

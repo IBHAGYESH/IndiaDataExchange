@@ -6,6 +6,14 @@ const config = {
     process.env.NEXT_PUBLIC_PINATA_GATEWAY ||
     "https://gateway.pinata.cloud/ipfs",
   algoExplorerTxUrl: "https://lora.algokit.io/testnet/transaction",
+  /** DPDP / GDPR grievance and data-request contact (shown on Privacy Policy) */
+  privacyContactEmail:
+    process.env.NEXT_PUBLIC_PRIVACY_CONTACT_EMAIL || "privacy@example.com",
+  /** Dataset abuse / takedown reports */
+  reportEmail:
+    process.env.NEXT_PUBLIC_REPORT_EMAIL ||
+    process.env.NEXT_PUBLIC_PRIVACY_CONTACT_EMAIL ||
+    "privacy@example.com",
 };
 
 export default config;

@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+import { ANONYMIZED_WALLET_PLACEHOLDER } from "@/constants/privacy";
 import { PurchaseModel, IPurchase } from "../models";
 
 export class PurchaseRepository {
@@ -39,11 +41,24 @@ export class PurchaseRepository {
     return await this.model.countDocuments({ datasetId });
   }
 
+  async countByBuyerWallet(walletAddress: string) {
+    return await this.model.countDocuments({ buyerWalletAddress: walletAddress });
+  }
+
   async hasValidAccess(buyerWalletAddress: string, datasetId: string): Promise<boolean> {
     const purchase = await this.model.findOne({ buyerWalletAddress, datasetId });
     if (!purchase) return false;
     if (purchase.isHuman) return true;
     if (purchase.redownloadExpiresAt && purchase.redownloadExpiresAt > new Date()) return true;
     return false;
+  }
+
+  async anonymizeBuyer(buyerWalletAddress: string, buyerId: Types.ObjectId) {
+    return await this.model.updateMany(
+      {
+        $or: [{ buyerWalletAddress }, { buyerId }],
+      },
+      { $set: { buyerWalletAddress: ANONYMIZED_WALLET_PLACEHOLDER, buyerId: null } }
+    );
   }
 }

@@ -55,4 +55,11 @@ export class DatasetRepository {
   async incrementPurchases(id: string) {
     return await this.model.findByIdAndUpdate(id, { $inc: { totalPurchases: 1 } });
   }
+
+  async anonymizeSellerWallet(sellerId: string, placeholderWallet: string) {
+    return await this.model.updateMany(
+      { sellerId },
+      { $set: { sellerWalletAddress: placeholderWallet } }
+    );
+  }
 }

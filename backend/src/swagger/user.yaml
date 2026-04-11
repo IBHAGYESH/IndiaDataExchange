@@ -27,27 +27,16 @@ paths:
         '401':
           description: Not authenticated
 
-    patch:
+  /api/user/account:
+    delete:
       security:
         - Bearer: []
       tags:
         - user
-      summary: Update user profile
-      consumes:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-              bio:
-                type: string
+      summary: Delete account and anonymise marketplace data
       responses:
         '200':
-          description: Profile updated
+          description: Account deleted
         '401':
           description: Not authenticated
 

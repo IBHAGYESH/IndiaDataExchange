@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import {
   Typography, Box, TextField, Select, MenuItem, FormControl,
   InputLabel, Button, Chip, Alert, CircularProgress, alpha, useTheme,
-  IconButton,
+  IconButton, FormControlLabel, Checkbox,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
@@ -127,6 +128,7 @@ function FileDropZone({
 }
 
 export default function ListDatasetPage() {
+  const { t } = useTranslation("forms");
   const router = useRouter();
   const theme = useTheme();
   const { isOptedIn, refreshUser } = useAuth();
@@ -148,6 +150,7 @@ export default function ListDatasetPage() {
   const [fullDataFile, setFullDataFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [sellerAttestation, setSellerAttestation] = useState(false);
 
   const handleAddTag = () => {
     if (form.tagInput.trim() && !form.tags.includes(form.tagInput.trim())) {
@@ -166,6 +169,10 @@ export default function ListDatasetPage() {
       if (!form[field as keyof typeof form]) { setError(`${field} is required`); return; }
     }
     if (!sampleFile || !fullDataFile) { setError("Both sample file and full data file are required"); return; }
+    if (!sellerAttestation) {
+      setError(t("attestationRequired"));
+      return;
+    }
     const price = parseFloat(form.priceUSDC);
     if (isNaN(price) || price < 0.1 || price > 100) { setError("Price must be between $0.10 and $100.00 USDC"); return; }
     setError(null);
@@ -181,6 +188,7 @@ export default function ListDatasetPage() {
     formData.append("sizeBytes", form.sizeBytes || "0");
     formData.append("sampleFile", sampleFile);
     formData.append("fullDataFile", fullDataFile);
+    formData.append("sellerAttestationAccepted", "true");
 
     try {
       await createDataset(formData).unwrap();
@@ -195,9 +203,9 @@ export default function ListDatasetPage() {
     return (
       <Box sx={{ py: 10, textAlign: "center", maxWidth: 480, mx: "auto" }}>
         <CheckCircleOutlineIcon sx={{ fontSize: 56, color: "#2EC84F", mb: 2 }} />
-        <Typography variant="h5" fontWeight={800}>Dataset Listed!</Typography>
+        <Typography variant="h5" fontWeight={800}>{t("listSuccessTitle")}</Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Your dataset is now live on the marketplace. Redirecting to your listings...
+          {t("listSuccessBody")}
         </Typography>
       </Box>
     );
@@ -208,45 +216,45 @@ export default function ListDatasetPage() {
       <Box sx={{ maxWidth: 680, mx: "auto" }}>
         <Box sx={{ mb: 4 }}>
           <Typography variant="h5" fontWeight={800} sx={{ mb: 0.5 }}>
-            List a Dataset
+            {t("listDatasetTitle")}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Earn USDC every time someone downloads your dataset. Payments go directly to your wallet.
+            {t("listDatasetSubtitle")}
           </Typography>
         </Box>
 
         {!isOptedIn && (
           <Alert severity="warning" sx={{ mb: 3, borderRadius: 3 }} action={
-            <Button size="small" onClick={() => setOptInOpen(true)}>Opt In</Button>
+            <Button size="small" onClick={() => setOptInOpen(true)}>{t("optInButton")}</Button>
           }>
-            You need to opt-in to USDC before listing datasets.
+            {t("usdcRequiredBeforeList")}
           </Alert>
         )}
         {error && <Alert severity="error" sx={{ mb: 3, borderRadius: 3 }}>{error}</Alert>}
 
-        <Section title="Basic Information">
+        <Section title={t("datasetDetails")}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-            <TextField fullWidth required label="Dataset Title" value={form.title}
+            <TextField fullWidth required label={t("title")} value={form.title}
               onChange={(e) => setForm(p => ({ ...p, title: e.target.value }))}
               inputProps={{ maxLength: 100 }}
               placeholder="e.g. Indian Crop Disease Image Dataset"
             />
-            <TextField fullWidth required multiline rows={4} label="Description" value={form.description}
+            <TextField fullWidth required multiline rows={4} label={t("description")} value={form.description}
               onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))}
               inputProps={{ maxLength: 2000 }}
               placeholder="What data does this dataset contain? How was it collected? What can it be used for?"
             />
             <Box sx={{ display: "flex", gap: 2 }}>
               <FormControl fullWidth required>
-                <InputLabel>Category</InputLabel>
-                <Select value={form.category} label="Category"
+                <InputLabel>{t("category")}</InputLabel>
+                <Select value={form.category} label={t("category")}
                   onChange={(e) => setForm(p => ({ ...p, category: e.target.value as DatasetCategory }))}>
                   {categories.map((c) => <MenuItem key={c} value={c} sx={{ textTransform: "capitalize" }}>{c}</MenuItem>)}
                 </Select>
               </FormControl>
               <FormControl fullWidth required>
-                <InputLabel>Format</InputLabel>
-                <Select value={form.format} label="Format"
+                <InputLabel>{t("format")}</InputLabel>
+                <Select value={form.format} label={t("format")}
                   onChange={(e) => setForm(p => ({ ...p, format: e.target.value as DatasetFormat }))}>
                   {formats.map((f) => <MenuItem key={f} value={f}>{f.toUpperCase()}</MenuItem>)}
                 </Select>
@@ -255,21 +263,21 @@ export default function ListDatasetPage() {
           </Box>
         </Section>
 
-        <Section title="Pricing & Metadata">
+        <Section title={t("filesPricing")}>
           <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
             <TextField
-              fullWidth required label="Price (USDC)" type="number"
+              fullWidth required label={t("priceUsdc")} type="number"
               value={form.priceUSDC}
               onChange={(e) => setForm(p => ({ ...p, priceUSDC: e.target.value }))}
               inputProps={{ min: 0.1, max: 100, step: 0.1 }}
-              helperText="$0.10 - $100.00"
+              helperText={t("priceHelper")}
               InputProps={{ startAdornment: <AttachMoneyIcon sx={{ mr: 0.5, color: "text.disabled", fontSize: 20 }} /> }}
             />
-            <TextField fullWidth label="Records" type="number" value={form.recordCount}
+            <TextField fullWidth label={t("recordCount")} type="number" value={form.recordCount}
               onChange={(e) => setForm(p => ({ ...p, recordCount: e.target.value }))}
               placeholder="e.g. 10000"
             />
-            <TextField fullWidth label="Size (bytes)" type="number" value={form.sizeBytes}
+            <TextField fullWidth label={t("sizeBytes")} type="number" value={form.sizeBytes}
               onChange={(e) => setForm(p => ({ ...p, sizeBytes: e.target.value }))}
               placeholder="e.g. 5242880"
             />
@@ -278,12 +286,12 @@ export default function ListDatasetPage() {
           <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
             <LocalOfferIcon sx={{ color: "text.disabled", fontSize: 18 }} />
             <TextField
-              size="small" label="Add Tag" value={form.tagInput} sx={{ flex: 1 }}
+              size="small" label={t("tags")} value={form.tagInput} sx={{ flex: 1 }}
               onChange={(e) => setForm(p => ({ ...p, tagInput: e.target.value }))}
               onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddTag())}
               placeholder="Press enter to add"
             />
-            <Button onClick={handleAddTag} variant="outlined" size="small" sx={{ minWidth: 60, height: 40 }}>Add</Button>
+            <Button onClick={handleAddTag} variant="outlined" size="small" sx={{ minWidth: 60, height: 40 }}>{t("add")}</Button>
           </Box>
           {form.tags.length > 0 && (
             <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", mt: 1.5 }}>
@@ -296,15 +304,15 @@ export default function ListDatasetPage() {
           )}
         </Section>
 
-        <Section title="Upload Files">
+        <Section title={t("filesUpload")}>
           <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
             <Box sx={{ flex: 1 }}>
               <Typography variant="caption" fontWeight={600} sx={{ mb: 1, display: "block", color: "text.secondary" }}>
-                Sample File (Public Preview)
+                {t("sampleFile")}
               </Typography>
               <FileDropZone
-                label="Drop sample file or click to browse"
-                hint="Max 10MB — Users see this before buying"
+                label={t("dropSample")}
+                hint={t("hintSample")}
                 file={sampleFile}
                 onSelect={setSampleFile}
                 onClear={() => setSampleFile(null)}
@@ -312,11 +320,11 @@ export default function ListDatasetPage() {
             </Box>
             <Box sx={{ flex: 1 }}>
               <Typography variant="caption" fontWeight={600} sx={{ mb: 1, display: "block", color: "text.secondary" }}>
-                Full Dataset (Private)
+                {t("fullFile")}
               </Typography>
               <FileDropZone
-                label="Drop full dataset or click to browse"
-                hint="Max 500MB — Only accessible after purchase"
+                label={t("dropFull")}
+                hint={t("hintFull")}
                 file={fullDataFile}
                 onSelect={setFullDataFile}
                 onClear={() => setFullDataFile(null)}
@@ -324,6 +332,25 @@ export default function ListDatasetPage() {
             </Box>
           </Box>
         </Section>
+
+        <FormControlLabel
+          sx={{ alignItems: "flex-start", mb: 2, ml: 0 }}
+          control={
+            <Checkbox
+              checked={sellerAttestation}
+              onChange={(_, c) => setSellerAttestation(c)}
+              sx={{ pt: 0.25 }}
+            />
+          }
+          label={
+            <Box>
+              <Typography variant="body2">{t("sellerAttestation")}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t("sellerAttestationHint")}
+              </Typography>
+            </Box>
+          }
+        />
 
         <Button
           variant="contained"
@@ -334,7 +361,7 @@ export default function ListDatasetPage() {
           startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <CloudUploadIcon />}
           sx={{ py: 1.8, fontWeight: 700, borderRadius: 3, fontSize: "0.95rem" }}
         >
-          {isLoading ? "Uploading to IPFS & Listing..." : "List Dataset"}
+          {isLoading ? t("uploading") : t("submitListing")}
         </Button>
       </Box>
 

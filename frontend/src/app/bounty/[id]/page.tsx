@@ -29,16 +29,26 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DownloadIcon from "@mui/icons-material/Download";
 import MainLayout from "@/components/layouts/MainLayout";
 import ProtectedRoute from "@/components/shared/ProtectedRoute";
-import { useGetBountyQuery, useSubmitToBountyMutation, useAcceptSubmissionMutation, useConfirmAcceptanceMutation } from "@/redux/api/bountyApi";
+import {
+  useGetBountyQuery,
+  useSubmitToBountyMutation,
+  useAcceptSubmissionMutation,
+  useConfirmAcceptanceMutation,
+} from "@/redux/api/bountyApi";
 import { useAuth } from "@/providers/auth-provider";
 import { formatUSDC, truncateAddress, formatDate, isDeadlinePassed } from "@/utils";
 import config from "@/config";
 import algosdk from "algosdk";
 import { submittedTxIdFromAlgodResponse } from "@/utils/algod";
+import { useTranslation } from "react-i18next";
 
 export default function BountyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  const { t } = useTranslation("bounties");
+  const { t: tm } = useTranslation("marketplace");
+  const { t: tc } = useTranslation("common");
+  const { t: tf } = useTranslation("forms");
   const { data, isLoading, isError, refetch } = useGetBountyQuery(id);
   const { user, peraWallet, walletAddress } = useAuth();
   const [submitToBounty] = useSubmitToBountyMutation();
@@ -58,7 +68,9 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
     return (
       <ProtectedRoute>
         <MainLayout>
-          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}><CircularProgress /></Box>
+          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+            <CircularProgress />
+          </Box>
         </MainLayout>
       </ProtectedRoute>
     );
@@ -69,7 +81,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
       <ProtectedRoute>
         <MainLayout>
           <Container sx={{ py: 8, textAlign: "center" }}>
-            <Typography variant="h5">Bounty not found</Typography>
+            <Typography variant="h5">{t("notFound")}</Typography>
           </Container>
         </MainLayout>
       </ProtectedRoute>
@@ -81,9 +93,14 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
   const deadlinePassed = isDeadlinePassed(bounty.deadline);
   const hasSubmitted = bounty.hasSubmitted === true;
 
+  const categoryLabels = tm("categoryLabels", { returnObjects: true }) as Record<string, string>;
+  const categoryLabel = categoryLabels[bounty.category] ?? bounty.category;
+  const statusKey = bounty.status as "open" | "accepted" | "cancelled" | "expired";
+  const statusLabel = t(`status_${statusKey}`, { defaultValue: bounty.status });
+
   const handleSubmit = async () => {
     if (!sampleFile || !fullDataFile) {
-      setSubmitError("Both sample and full data files are required");
+      setSubmitError(t("errBothFiles"));
       return;
     }
     setSubmitting(true);
@@ -101,36 +118,32 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
       setFullDataFile(null);
       refetch();
     } catch (err: unknown) {
-      setSubmitError(err instanceof Error ? err.message : "Submission failed");
+      setSubmitError(err instanceof Error ? err.message : t("errSubmit"));
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleAccept = async (submissionId: string, winnerAddress: string) => {
+  const handleAccept = async (submissionId: string) => {
     if (!peraWallet || !walletAddress) return;
     setAcceptLoading(submissionId);
     setAcceptError(null);
     try {
-      // Get unsigned txn from backend
       const { unsignedTxnBase64 } = await acceptSubmission({ bountyId: id, submissionId }).unwrap();
 
-      // Decode and sign
       const txnBytes = Buffer.from(unsignedTxnBase64, "base64");
       const txn = algosdk.decodeUnsignedTransaction(txnBytes);
       const signedTxns = await peraWallet.signTransaction([[{ txn }]]);
 
-      // Submit to Algorand
       const algodClient = new algosdk.Algodv2("", "https://testnet-api.algonode.cloud", "");
       const submitRes = await algodClient.sendRawTransaction(signedTxns[0]).do();
       const txId = submittedTxIdFromAlgodResponse(submitRes as { txid?: string; txId?: string });
       await algosdk.waitForConfirmation(algodClient, txId, 4);
 
-      // Confirm with backend
       await confirmAcceptance({ bountyId: id, submissionId, txId }).unwrap();
       await refetch();
     } catch (err: unknown) {
-      setAcceptError(err instanceof Error ? err.message : "Failed to accept submission");
+      setAcceptError(err instanceof Error ? err.message : t("errAccept"));
     } finally {
       setAcceptLoading(null);
     }
@@ -145,17 +158,17 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
             onClick={() => router.push("/bounties")}
             sx={{ mb: 3, fontWeight: 600 }}
           >
-            Back to Bounties
+            {t("back")}
           </Button>
           <Grid container spacing={4}>
             <Grid item xs={12} md={8}>
               <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap" }}>
                 <Chip
-                  label={bounty.status.toUpperCase()}
+                  label={statusLabel}
                   color={bounty.status === "open" ? "success" : "default"}
                   sx={{ fontWeight: 700 }}
                 />
-                <Chip label={bounty.category} color="primary" />
+                <Chip label={categoryLabel} color="primary" />
               </Box>
 
               <Typography variant="h4" fontWeight={800} gutterBottom>
@@ -174,18 +187,29 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
 
               <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap", mb: 3 }}>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">Posted By</Typography>
-                  <Typography variant="body2" fontWeight={600}>{truncateAddress(bounty.buyerWalletAddress)}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">Deadline</Typography>
-                  <Typography variant="body2" fontWeight={600} color={deadlinePassed ? "error" : "inherit"}>
-                    {formatDate(bounty.deadline)} {deadlinePassed && "(Passed)"}
+                  <Typography variant="caption" color="text.secondary">
+                    {t("postedBy")}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {truncateAddress(bounty.buyerWalletAddress)}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">Submissions</Typography>
-                  <Typography variant="body2" fontWeight={600}>{bounty.submissionCount}</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {t("deadline")}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600} color={deadlinePassed ? "error" : "inherit"}>
+                    {formatDate(bounty.deadline)}{" "}
+                    {deadlinePassed && t("deadlinePassedSuffix")}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    {t("submissions")}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {bounty.submissionCount}
+                  </Typography>
                 </Box>
               </Box>
 
@@ -196,29 +220,44 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                   rel="noopener noreferrer"
                   variant="body2"
                 >
-                  View escrow transaction on Algo Explorer ↗
+                  {t("viewEscrowTx")}
                 </MuiLink>
               )}
 
-              {/* Submissions (buyer only) */}
               {isBuyer && bounty.submissions && bounty.submissions.length > 0 && (
                 <Box sx={{ mt: 4 }}>
                   <Typography variant="h6" fontWeight={700} gutterBottom>
-                    Submissions ({bounty.submissions.length})
+                    {t("submissionsHeading", { count: bounty.submissions.length })}
                   </Typography>
-                  {acceptError && <Alert severity="error" sx={{ mb: 2 }}>{acceptError}</Alert>}
+                  {acceptError && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                      {acceptError}
+                    </Alert>
+                  )}
                   {bounty.submissions.map((sub) => (
-                    <Card key={sub._id} elevation={0} sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2, mb: 2 }}>
+                    <Card
+                      key={sub._id}
+                      elevation={0}
+                      sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2, mb: 2 }}
+                    >
                       <CardContent>
                         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
                           <Typography fontWeight={700}>{sub.title}</Typography>
                           <Chip
                             label={sub.status}
                             size="small"
-                            color={sub.status === "accepted" ? "success" : sub.status === "rejected" ? "error" : "default"}
+                            color={
+                              sub.status === "accepted"
+                                ? "success"
+                                : sub.status === "rejected"
+                                  ? "error"
+                                  : "default"
+                            }
                           />
                         </Box>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>{sub.description}</Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                          {sub.description}
+                        </Typography>
                         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                           <Button
                             size="small"
@@ -227,18 +266,24 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            Preview sample
+                            {t("previewSample")}
                           </Button>
                           {sub.status === "pending" && bounty.status === "open" && !deadlinePassed && (
                             <Button
                               size="small"
                               variant="contained"
                               color="success"
-                              startIcon={acceptLoading === sub._id ? <CircularProgress size={16} color="inherit" /> : <CheckCircleIcon />}
+                              startIcon={
+                                acceptLoading === sub._id ? (
+                                  <CircularProgress size={16} color="inherit" />
+                                ) : (
+                                  <CheckCircleIcon />
+                                )
+                              }
                               disabled={!!acceptLoading}
-                              onClick={() => handleAccept(sub._id, sub.sellerWalletAddress)}
+                              onClick={() => handleAccept(sub._id)}
                             >
-                              Accept submission
+                              {t("acceptSubmission")}
                             </Button>
                           )}
                           {sub.status === "accepted" && sub.downloadUrl && (
@@ -251,7 +296,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              Download full file
+                              {t("downloadFullFile")}
                             </Button>
                           )}
                         </Stack>
@@ -262,9 +307,17 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
               )}
             </Grid>
 
-            {/* Action Card */}
             <Grid item xs={12} md={4}>
-              <Card elevation={0} sx={{ border: "1px solid", borderColor: "secondary.main", borderRadius: 3, position: "sticky", top: 80 }}>
+              <Card
+                elevation={0}
+                sx={{
+                  border: "1px solid",
+                  borderColor: "secondary.main",
+                  borderRadius: 3,
+                  position: "sticky",
+                  top: 80,
+                }}
+              >
                 <CardContent>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
                     <EmojiEventsIcon sx={{ color: "#FFB800", fontSize: 32 }} />
@@ -273,7 +326,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                     </Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                    USDC reward locked in smart contract. Released directly to winner on acceptance.
+                    {t("rewardEscrowBlurb")}
                   </Typography>
                   <Divider sx={{ mb: 2 }} />
 
@@ -287,43 +340,75 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                       onClick={() => setSubmitOpen(true)}
                       sx={{ fontWeight: 700 }}
                     >
-                      Submit Your Data
+                      {t("submitYourData")}
                     </Button>
                   )}
                   {bounty.status === "open" && !deadlinePassed && !isBuyer && hasSubmitted && (
                     <Alert severity="info" sx={{ fontWeight: 600 }}>
-                      You have already submitted to this bounty.
+                      {t("alreadySubmitted")}
                     </Alert>
                   )}
                   {isBuyer && (
                     <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-                      <Chip label="You posted this bounty" color="primary" />
+                      <Chip label={t("youPostedBounty")} color="primary" />
                     </Box>
                   )}
                   {deadlinePassed && bounty.status === "open" && (
-                    <Alert severity="warning" sx={{ mt: 1 }}>Deadline has passed. Only the bounty poster can refund.</Alert>
+                    <Alert severity="warning" sx={{ mt: 1 }}>
+                      {t("deadlineRefundHint")}
+                    </Alert>
                   )}
                 </CardContent>
               </Card>
             </Grid>
           </Grid>
 
-          {/* Submit Dialog */}
           <Dialog open={submitOpen} onClose={() => setSubmitOpen(false)} maxWidth="sm" fullWidth>
-            <DialogTitle>Submit Your Data</DialogTitle>
+            <DialogTitle>{t("submitYourData")}</DialogTitle>
             <DialogContent>
-              {submitError && <Alert severity="error" sx={{ mb: 2 }}>{submitError}</Alert>}
-              <TextField fullWidth label="Submission Title" value={submitForm.title} onChange={(e) => setSubmitForm(p => ({ ...p, title: e.target.value }))} sx={{ mb: 2, mt: 1 }} />
-              <TextField fullWidth label="Description" multiline rows={4} value={submitForm.description} onChange={(e) => setSubmitForm(p => ({ ...p, description: e.target.value }))} sx={{ mb: 2 }} />
-              <Typography variant="subtitle2" gutterBottom>Sample File (max 10MB, public preview)</Typography>
-              <input type="file" onChange={(e) => setSampleFile(e.target.files?.[0] || null)} style={{ marginBottom: 16 }} />
-              <Typography variant="subtitle2" gutterBottom>Full Data File (max 500MB, private)</Typography>
+              {submitError && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {submitError}
+                </Alert>
+              )}
+              <TextField
+                fullWidth
+                label={t("submissionTitleField")}
+                value={submitForm.title}
+                onChange={(e) => setSubmitForm((p) => ({ ...p, title: e.target.value }))}
+                sx={{ mb: 2, mt: 1 }}
+              />
+              <TextField
+                fullWidth
+                label={tf("description")}
+                multiline
+                rows={4}
+                value={submitForm.description}
+                onChange={(e) => setSubmitForm((p) => ({ ...p, description: e.target.value }))}
+                sx={{ mb: 2 }}
+              />
+              <Typography variant="subtitle2" gutterBottom>
+                {t("sampleFileDialog")}
+              </Typography>
+              <input
+                type="file"
+                onChange={(e) => setSampleFile(e.target.files?.[0] || null)}
+                style={{ marginBottom: 16 }}
+              />
+              <Typography variant="subtitle2" gutterBottom>
+                {t("fullDataDialog")}
+              </Typography>
               <input type="file" onChange={(e) => setFullDataFile(e.target.files?.[0] || null)} />
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setSubmitOpen(false)}>Cancel</Button>
-              <Button variant="contained" onClick={handleSubmit} disabled={submitting} startIcon={submitting ? <CircularProgress size={16} /> : <UploadIcon />}>
-                Submit
+              <Button onClick={() => setSubmitOpen(false)}>{tc("cancel")}</Button>
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={submitting}
+                startIcon={submitting ? <CircularProgress size={16} /> : <UploadIcon />}
+              >
+                {t("submitAction")}
               </Button>
             </DialogActions>
           </Dialog>

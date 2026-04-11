@@ -19,6 +19,7 @@ import { Submission } from "@/types";
 import { formatDate, formatUSDC } from "@/utils";
 import config from "@/config";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 type PopulatedBounty = { title: string; rewardUSDC: number; _id: string; status?: string; deadline?: string };
 
@@ -28,6 +29,7 @@ type SubmissionRow = Submission & {
 };
 
 export default function SubmissionsPage() {
+  const { t } = useTranslation("dashboard");
   const theme = useTheme();
   const { data, isLoading } = useGetSubmissionsQuery();
 
@@ -47,10 +49,10 @@ export default function SubmissionsPage() {
   return (
     <Box>
       <Typography variant="h5" fontWeight={800} gutterBottom>
-        My Submissions
+        {t("submissionsTitle")}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        {data?.total || 0} bounty submissions
+        {t("submissionsCount", { count: data?.total || 0 })}
       </Typography>
 
       {(data?.submissions as SubmissionRow[] | undefined)?.map((sub) => {
@@ -86,7 +88,7 @@ export default function SubmissionsPage() {
                   />
                   {sub.status === "accepted" && reward > 0 && (
                     <Typography variant="body2" fontWeight={800} color="success.main">
-                      Won {formatUSDC(reward)}
+                      {t("wonAmount", { amount: formatUSDC(reward) })}
                     </Typography>
                   )}
                 </Stack>
@@ -98,23 +100,23 @@ export default function SubmissionsPage() {
 
               {bounty && (
                 <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
-                  For bounty:{" "}
+                  {t("forBounty")}{" "}
                   <Link href={`/bounty/${bounty._id}`}>{bounty.title}</Link>
                 </Typography>
               )}
               <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
-                Submitted {formatDate(sub.createdAt)}
+                {t("submittedAt", { date: formatDate(sub.createdAt) })}
               </Typography>
 
               {sub.status === "accepted" && sub.paymentTxId && (
                 <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1.5 }}>
-                  Payment:{" "}
+                  {t("paymentExplorer")}{" "}
                   <a
                     href={`${config.algoExplorerTxUrl}/${sub.paymentTxId}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    View on Algo Explorer ↗
+                    {t("viewExplorerShort")}
                   </a>
                 </Typography>
               )}
@@ -129,7 +131,7 @@ export default function SubmissionsPage() {
                   rel="noopener noreferrer"
                   sx={previewSx}
                 >
-                  View sample
+                  {t("viewSample")}
                 </Button>
                 {sub.status === "accepted" && sub.downloadUrl && (
                   <Button
@@ -141,7 +143,7 @@ export default function SubmissionsPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Download full file
+                    {t("downloadFull")}
                   </Button>
                 )}
               </Stack>
@@ -152,8 +154,8 @@ export default function SubmissionsPage() {
 
       {(!data?.submissions || data.submissions.length === 0) && (
         <Typography color="text.secondary" textAlign="center" sx={{ py: 4 }}>
-          No submissions yet.{" "}
-          <Link href="/bounties">Browse bounties →</Link>
+          {t("submissionsEmpty")}{" "}
+          <Link href="/bounties">{t("submissionsEmptyLink")}</Link>
         </Typography>
       )}
     </Box>

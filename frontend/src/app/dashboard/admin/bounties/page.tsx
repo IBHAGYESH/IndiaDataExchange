@@ -34,6 +34,7 @@ import AdminProtectedRoute from "@/components/shared/AdminProtectedRoute";
 import { useGetAdminBountiesQuery, useUpdateBountyStatusMutation } from "@/redux/api/adminApi";
 import { useToast } from "@/providers/toast-provider";
 import { Bounty } from "@/types";
+import { useTranslation } from "react-i18next";
 
 const statusColors: Record<string, string> = {
   open: "#2EC84F",
@@ -43,6 +44,9 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminBountiesPage() {
+  const { t } = useTranslation("admin");
+  const { t: tb } = useTranslation("bounties");
+  const { t: tc } = useTranslation("common");
   const theme = useTheme();
   const { showToast } = useToast();
   const [page, setPage] = useState(1);
@@ -55,10 +59,10 @@ export default function AdminBountiesPage() {
     if (!confirmDialog) return;
     try {
       await updateStatus({ id: confirmDialog.id, status: confirmDialog.newStatus }).unwrap();
-      showToast(`Bounty status updated to "${confirmDialog.newStatus}"`, "success");
+      showToast(t("toastBountyUpdated"), "success");
       refetch();
     } catch {
-      showToast("Failed to update status", "error");
+      showToast(t("toastUpdateFailed"), "error");
     }
     setConfirmDialog(null);
     setSelectedStatus("");
@@ -76,10 +80,10 @@ export default function AdminBountiesPage() {
             </IconButton>
           </Link>
           <Typography variant="h5" fontWeight={800}>
-            Manage Bounties
+            {t("manageBounties")}
           </Typography>
           {data && (
-            <Chip label={`${data.total} total`} size="small" variant="outlined" />
+            <Chip label={t("totalCount", { count: data.total })} size="small" variant="outlined" />
           )}
         </Box>
 
@@ -91,14 +95,16 @@ export default function AdminBountiesPage() {
 
         {isError && (
           <Box sx={{ textAlign: "center", py: 8 }}>
-            <Typography color="error" gutterBottom>Failed to load bounties.</Typography>
+            <Typography color="error" gutterBottom>
+              {t("failedLoadBounties")}
+            </Typography>
             <Typography
               variant="body2"
               color="text.secondary"
               sx={{ cursor: "pointer", textDecoration: "underline" }}
               onClick={() => refetch()}
             >
-              Click to retry
+              {t("clickRetry")}
             </Typography>
           </Box>
         )}
@@ -115,13 +121,15 @@ export default function AdminBountiesPage() {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Title</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Buyer</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Category</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Reward</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Submissions</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }} align="right">Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colTitle")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colBuyer")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colCategory")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colReward")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colSubmissions")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t("colStatus")}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">
+                      {t("colActions")}
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -132,7 +140,7 @@ export default function AdminBountiesPage() {
                           {bounty.title}
                         </Typography>
                         <Typography variant="caption" color="text.disabled">
-                          Deadline: {new Date(bounty.deadline).toLocaleDateString()}
+                          {t("deadlineShort", { date: new Date(bounty.deadline).toLocaleDateString() })}
                         </Typography>
                       </TableCell>
                       <TableCell>
@@ -162,7 +170,7 @@ export default function AdminBountiesPage() {
                       </TableCell>
                       <TableCell align="right">
                         {bounty.status === "open" && (
-                          <Tooltip title="Cancel bounty">
+                          <Tooltip title={t("tooltipCancelBounty")}>
                             <IconButton
                               size="small"
                               onClick={() => {
@@ -184,7 +192,7 @@ export default function AdminBountiesPage() {
                   {bounties.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={7} sx={{ textAlign: "center", py: 6 }}>
-                        <Typography color="text.secondary">No bounties found</Typography>
+                        <Typography color="text.secondary">{t("noBountiesTable")}</Typography>
                       </TableCell>
                     </TableRow>
                   )}
@@ -212,18 +220,16 @@ export default function AdminBountiesPage() {
           maxWidth="xs"
           fullWidth
         >
-          <DialogTitle sx={{ fontWeight: 700 }}>
-            Update Bounty Status
-          </DialogTitle>
+          <DialogTitle sx={{ fontWeight: 700 }}>{t("bountyDialogTitle")}</DialogTitle>
           <DialogContent>
             <Typography variant="body2" sx={{ mb: 2 }}>
-              Changing status of &ldquo;{confirmDialog?.title}&rdquo;
+              {t("bountyChangingIntro", { title: confirmDialog?.title ?? "" })}
             </Typography>
             <FormControl fullWidth size="small">
-              <InputLabel>New Status</InputLabel>
+              <InputLabel>{t("newStatus")}</InputLabel>
               <Select
                 value={selectedStatus}
-                label="New Status"
+                label={t("newStatus")}
                 onChange={(e) => {
                   setSelectedStatus(e.target.value);
                   if (confirmDialog) {
@@ -231,23 +237,25 @@ export default function AdminBountiesPage() {
                   }
                 }}
               >
-                <MenuItem value="open">Open</MenuItem>
-                <MenuItem value="accepted">Accepted</MenuItem>
-                <MenuItem value="cancelled">Cancelled</MenuItem>
-                <MenuItem value="expired">Expired</MenuItem>
+                <MenuItem value="open">{tb("status_open")}</MenuItem>
+                <MenuItem value="accepted">{tb("status_accepted")}</MenuItem>
+                <MenuItem value="cancelled">{tb("status_cancelled")}</MenuItem>
+                <MenuItem value="expired">{tb("status_expired")}</MenuItem>
               </Select>
             </FormControl>
           </DialogContent>
           <DialogActions sx={{ px: 3, pb: 2 }}>
-            <Button onClick={() => { setConfirmDialog(null); setSelectedStatus(""); }} color="inherit">
-              Cancel
-            </Button>
             <Button
-              onClick={handleStatusChange}
-              variant="contained"
-              disabled={updating || !selectedStatus}
+              onClick={() => {
+                setConfirmDialog(null);
+                setSelectedStatus("");
+              }}
+              color="inherit"
             >
-              {updating ? "Updating..." : "Confirm"}
+              {tc("cancel")}
+            </Button>
+            <Button onClick={handleStatusChange} variant="contained" disabled={updating || !selectedStatus}>
+              {updating ? t("updating") : t("confirm")}
             </Button>
           </DialogActions>
         </Dialog>

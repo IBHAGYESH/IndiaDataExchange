@@ -14,10 +14,13 @@ import {
 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import { useRouter } from "next/navigation";
 import { Dataset } from "@/types";
 import { formatUSDC, truncateAddress, formatBytes } from "@/utils";
 import config from "@/config";
+import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 
 interface Props {
   dataset: Dataset;
@@ -44,10 +47,21 @@ const categoryGradients: Record<string, string> = {
 };
 
 export default function DatasetCard({ dataset }: Props) {
+  const { t } = useTranslation("marketplace");
+  const { t: tCommon } = useTranslation("common");
   const theme = useTheme();
   const router = useRouter();
 
   const detailPath = `/marketplace/${dataset._id}`;
+
+  const categoryLabels = t("categoryLabels", { returnObjects: true }) as Record<string, string>;
+  const categoryLabel = categoryLabels[dataset.category] ?? dataset.category;
+
+  const reportHref = useMemo(() => {
+    const subject = t("reportSubject", { id: dataset._id });
+    const body = t("reportBody", { title: dataset.title, id: dataset._id });
+    return `mailto:${config.reportEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }, [dataset._id, dataset.title, t]);
 
   return (
     <Card
@@ -85,7 +99,7 @@ export default function DatasetCard({ dataset }: Props) {
       <CardContent sx={{ flex: 1, p: { xs: 2, sm: 2.5 } }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1.5 }}>
           <Chip
-            label={dataset.category}
+            label={categoryLabel}
             size="small"
             sx={{
               fontWeight: 600,
@@ -148,7 +162,7 @@ export default function DatasetCard({ dataset }: Props) {
             sx={{ fontSize: "0.7rem", height: 24 }}
           />
           <Chip
-            label={`${dataset.recordCount.toLocaleString()} rows`}
+            label={t("rowsCount", { count: dataset.recordCount })}
             size="small"
             variant="outlined"
             sx={{ fontSize: "0.7rem", height: 24 }}
@@ -193,13 +207,13 @@ export default function DatasetCard({ dataset }: Props) {
             {truncateAddress(dataset.sellerWalletAddress)}
           </Typography>
           <Typography variant="caption" color="text.disabled">
-            {dataset.totalPurchases} sale{dataset.totalPurchases !== 1 ? "s" : ""}
+            {t("sales", { count: dataset.totalPurchases })}
           </Typography>
         </Box>
       </CardContent>
 
       <CardActions
-        sx={{ p: 2, pt: 0, gap: 1 }}
+        sx={{ p: 2, pt: 0, gap: 1, flexWrap: "wrap" }}
         onClick={(e) => e.stopPropagation()}
       >
         <Button
@@ -210,22 +224,32 @@ export default function DatasetCard({ dataset }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           sx={{
-            flex: 1,
+            flex: "1 1 100px",
             fontSize: "0.8rem",
             borderColor: alpha(theme.palette.divider, 0.2),
             "&:hover": { borderColor: "primary.main" },
           }}
         >
-          Preview
+          {t("preview")}
         </Button>
         <Button
           size="small"
           variant="contained"
           startIcon={<ShoppingCartIcon />}
           onClick={() => router.push(`${detailPath}?purchase=true`)}
-          sx={{ flex: 1, fontSize: "0.8rem" }}
+          sx={{ flex: "1 1 100px", fontSize: "0.8rem" }}
         >
-          Buy
+          {t("buy")}
+        </Button>
+        <Button
+          size="small"
+          variant="text"
+          startIcon={<FlagOutlinedIcon />}
+          href={reportHref}
+          component="a"
+          sx={{ flex: "1 1 100%", fontSize: "0.75rem" }}
+        >
+          {tCommon("reportDataset")}
         </Button>
       </CardActions>
     </Card>

@@ -8,19 +8,41 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { useAuth } from "@/providers/auth-provider";
 import { formatUSDC } from "@/utils";
 import type { UserDashboardStats } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   stats: UserDashboardStats;
 }
 
 export default function DashboardStats({ stats }: Props) {
+  const { t } = useTranslation("dashboard");
   const { user } = useAuth();
 
   const cards = [
-    { label: "Total Earnings", value: formatUSDC(user?.totalEarnings || 0), icon: <TrendingUpIcon />, color: "#138808" },
-    { label: "Total Spent", value: formatUSDC(user?.totalSpent || 0), icon: <ShoppingCartIcon />, color: "#FF6B35" },
-    { label: "Datasets Listed", value: stats.listed.toString(), icon: <StorageIcon />, color: "#8B5CF6" },
-    { label: "Open Bounties", value: stats.bounties.toString(), icon: <EmojiEventsIcon />, color: "#FFB800" },
+    {
+      label: t("totalEarnings"),
+      value: formatUSDC(user?.totalEarnings || 0),
+      icon: <TrendingUpIcon />,
+      color: "#138808",
+    },
+    {
+      label: t("totalSpent"),
+      value: formatUSDC(user?.totalSpent || 0),
+      icon: <ShoppingCartIcon />,
+      color: "#FF6B35",
+    },
+    {
+      label: t("datasetsListed"),
+      value: stats.listed.toString(),
+      icon: <StorageIcon />,
+      color: "#8B5CF6",
+    },
+    {
+      label: t("openBounties"),
+      value: stats.bounties.toString(),
+      icon: <EmojiEventsIcon />,
+      color: "#FFB800",
+    },
   ];
 
   return (
@@ -31,8 +53,12 @@ export default function DashboardStats({ stats }: Props) {
             <CardContent>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <Box>
-                  <Typography variant="caption" color="text.secondary">{card.label}</Typography>
-                  <Typography variant="h5" fontWeight={800} sx={{ mt: 0.5 }}>{card.value}</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {card.label}
+                  </Typography>
+                  <Typography variant="h5" fontWeight={800} sx={{ mt: 0.5 }}>
+                    {card.value}
+                  </Typography>
                 </Box>
                 <Box sx={{ p: 1, borderRadius: 2, bgcolor: `${card.color}20`, color: card.color }}>
                   {card.icon}

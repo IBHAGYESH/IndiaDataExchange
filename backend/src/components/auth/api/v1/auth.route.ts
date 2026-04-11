@@ -27,7 +27,7 @@ export class AuthRoute {
     this.router.post(
       `${this.path}/verify`,
       tryCatch(async (req: Request, res: Response) => {
-        const { walletAddress, signedTxnBase64, nonce } = req.body;
+        const { walletAddress, signedTxnBase64, nonce, privacyConsentAccepted } = req.body;
         if (!walletAddress || !signedTxnBase64 || !nonce) {
           throw new AppError(
             "ValidationError",
@@ -39,7 +39,8 @@ export class AuthRoute {
         const { data, code } = await this.service.verifyAndIssueJWT(
           walletAddress,
           nonce,
-          signedTxnBase64
+          signedTxnBase64,
+          !!privacyConsentAccepted
         );
         res.status(code).json(data);
       })

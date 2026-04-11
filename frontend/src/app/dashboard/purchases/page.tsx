@@ -23,6 +23,7 @@ import { useGetPurchasesQuery } from "@/redux/api/userApi";
 import { Purchase, PurchasedDataset } from "@/types";
 import { formatUSDC, formatDate, formatBytes, truncateAddress } from "@/utils";
 import config from "@/config";
+import { useTranslation } from "react-i18next";
 
 function PurchaseInfoGrid({
   dataset,
@@ -31,19 +32,22 @@ function PurchaseInfoGrid({
   dataset: PurchasedDataset;
   purchase: Purchase;
 }) {
+  const { t } = useTranslation("dashboard");
+  const { t: tm } = useTranslation("marketplace");
+
   const items: { label: string; value: string }[] = [
-    { label: "Format", value: dataset.format.toUpperCase() },
-    { label: "Records", value: dataset.recordCount.toLocaleString() },
-    { label: "File size", value: formatBytes(dataset.sizeBytes) },
-    { label: "List price (now)", value: formatUSDC(dataset.priceUSDC) },
-    { label: "You paid", value: formatUSDC(purchase.amountPaidUSDC) },
-    { label: "Downloads", value: String(purchase.downloadCount) },
-    { label: "Purchased", value: formatDate(purchase.createdAt) },
+    { label: tm("formatLabel"), value: dataset.format.toUpperCase() },
+    { label: tm("records"), value: dataset.recordCount.toLocaleString() },
+    { label: t("fileSizeLower"), value: formatBytes(dataset.sizeBytes) },
+    { label: t("listPriceNow"), value: formatUSDC(dataset.priceUSDC) },
+    { label: t("youPaid"), value: formatUSDC(purchase.amountPaidUSDC) },
+    { label: t("downloads"), value: String(purchase.downloadCount) },
+    { label: t("purchased"), value: formatDate(purchase.createdAt) },
     ...(purchase.lastDownloadAt
-      ? [{ label: "Last download", value: formatDate(purchase.lastDownloadAt) } as const]
+      ? [{ label: t("lastDownload"), value: formatDate(purchase.lastDownloadAt) } as const]
       : []),
-    { label: "Seller", value: truncateAddress(dataset.sellerWalletAddress) },
-    { label: "Listing status", value: dataset.status },
+    { label: tm("seller"), value: truncateAddress(dataset.sellerWalletAddress) },
+    { label: t("listingStatus"), value: dataset.status },
   ];
 
   return (
@@ -63,6 +67,7 @@ function PurchaseInfoGrid({
 }
 
 export default function PurchasesPage() {
+  const { t } = useTranslation("dashboard");
   const theme = useTheme();
   const { data, isLoading } = useGetPurchasesQuery();
 
@@ -82,10 +87,10 @@ export default function PurchasesPage() {
   return (
     <Box>
       <Typography variant="h5" fontWeight={800} gutterBottom>
-        My Purchases
+        {t("purchasesTitle")}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        {data?.total || 0} datasets purchased
+        {t("purchasesCount", { count: data?.total || 0 })}
       </Typography>
 
       <Grid container spacing={3}>
@@ -99,9 +104,7 @@ export default function PurchasesPage() {
               >
                 <CardContent>
                   {!ds ? (
-                    <Typography color="text.secondary">
-                      This dataset is no longer available or was removed.
-                    </Typography>
+                    <Typography color="text.secondary">{t("listingRemoved")}</Typography>
                   ) : (
                     <>
                       <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 1.5 }}>
@@ -130,20 +133,20 @@ export default function PurchasesPage() {
                       )}
 
                       <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
-                        Payment:{" "}
+                        {t("paymentTx")}{" "}
                         <a
                           href={`${config.algoExplorerTxUrl}/${purchase.paymentTxId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          View transaction on Algo Explorer ↗
+                          {t("viewAlgoExplorer")}
                         </a>
                       </Typography>
 
                       <Divider sx={{ my: 2 }} />
 
                       <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                        Purchase &amp; dataset details
+                        {t("purchaseDetails")}
                       </Typography>
                       <PurchaseInfoGrid dataset={ds} purchase={purchase} />
                     </>
@@ -161,7 +164,7 @@ export default function PurchasesPage() {
                       rel="noopener noreferrer"
                       sx={previewSx}
                     >
-                      View sample: {ds.sampleFileName}
+                      {t("viewSampleWithName", { name: ds.sampleFileName })}
                     </Button>
                     {purchase.downloadUrl && (
                       <Button
@@ -172,7 +175,7 @@ export default function PurchasesPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        Download full file
+                        {t("downloadFull")}
                       </Button>
                     )}
                     <Button
@@ -183,7 +186,7 @@ export default function PurchasesPage() {
                       startIcon={<StorefrontIcon />}
                       sx={previewSx}
                     >
-                      Marketplace page
+                      {t("marketplacePage")}
                     </Button>
                   </CardActions>
                 )}
@@ -194,7 +197,8 @@ export default function PurchasesPage() {
         {(!data?.purchases || data.purchases.length === 0) && (
           <Grid item xs={12}>
             <Typography color="text.secondary" textAlign="center" sx={{ py: 4 }}>
-              No purchases yet. <a href="/marketplace">Browse the marketplace →</a>
+              {t("purchasesEmpty")}{" "}
+              <Link href="/marketplace">{t("purchasesEmptyLink")}</Link>
             </Typography>
           </Grid>
         )}

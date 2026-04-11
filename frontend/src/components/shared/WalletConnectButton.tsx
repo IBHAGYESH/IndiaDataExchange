@@ -23,8 +23,10 @@ import { useAuth } from "@/providers/auth-provider";
 import { useToast } from "@/providers/toast-provider";
 import { truncateAddress } from "@/utils";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export default function WalletConnectButton() {
+  const { t } = useTranslation("auth");
   const {
     walletAddress,
     isConnected,
@@ -43,11 +45,15 @@ export default function WalletConnectButton() {
     setConnecting(true);
     try {
       await connectWallet();
-      showToast("Wallet connected successfully!", "success");
+      showToast(t("walletConnected"), "success");
     } catch (err: unknown) {
       const msg =
         err instanceof Error ? err.message : "Failed to connect wallet";
-      if (!msg.includes("cancelled") && !msg.includes("rejected")) {
+      if (
+        !msg.includes("cancelled") &&
+        !msg.includes("rejected") &&
+        !msg.includes("Consent declined")
+      ) {
         showToast(msg, "error");
       }
     } finally {
@@ -65,7 +71,7 @@ export default function WalletConnectButton() {
         {!isOptedIn && (
           <Chip
             icon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
-            label="USDC"
+            label={t("usdcChip")}
             size="small"
             color="warning"
             variant="outlined"
@@ -114,14 +120,14 @@ export default function WalletConnectButton() {
           <MenuItem
             onClick={() => {
               navigator.clipboard.writeText(walletAddress);
-              showToast("Address copied!", "success");
+              showToast(t("addressCopied"), "success");
               setAnchorEl(null);
             }}
           >
             <ListItemIcon>
               <ContentCopyIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText>Copy Address</ListItemText>
+            <ListItemText>{t("copyAddress")}</ListItemText>
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -132,12 +138,12 @@ export default function WalletConnectButton() {
             <ListItemIcon>
               <DashboardIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText>Dashboard</ListItemText>
+            <ListItemText>{t("goToDashboard")}</ListItemText>
           </MenuItem>
           <MenuItem
             onClick={() => {
               disconnectWallet();
-              showToast("Wallet disconnected", "info");
+              showToast(t("walletDisconnected"), "info");
               setAnchorEl(null);
               router.push("/");
             }}
@@ -146,7 +152,7 @@ export default function WalletConnectButton() {
             <ListItemIcon>
               <LogoutIcon fontSize="small" color="error" />
             </ListItemIcon>
-            <ListItemText>Disconnect</ListItemText>
+            <ListItemText>{t("disconnect")}</ListItemText>
           </MenuItem>
         </Menu>
       </Box>
@@ -174,7 +180,7 @@ export default function WalletConnectButton() {
         fontSize: "0.85rem",
       }}
     >
-      {connecting ? "Connecting..." : "Connect"}
+      {connecting ? t("connecting") : t("connectShort")}
     </Button>
   );
 }

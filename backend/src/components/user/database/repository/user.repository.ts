@@ -24,7 +24,11 @@ export class UserRepository {
   async findOrCreate(walletAddress: string, isAdmin = false): Promise<InstanceType<typeof UserModel> & { isNew?: boolean }> {
     let user = await this.model.findOne({ walletAddress });
     if (!user) {
-      user = await this.model.create({ walletAddress, isAdmin });
+      user = await this.model.create({
+        walletAddress,
+        isAdmin,
+        consentGivenAt: new Date(),
+      });
       (user as unknown as { isNew: boolean }).isNew = true;
     } else if (isAdmin && !user.isAdmin) {
       user.isAdmin = true;
@@ -35,5 +39,9 @@ export class UserRepository {
 
   async getCount(filter: FilterQuery<IUser>) {
     return await this.model.countDocuments(filter);
+  }
+
+  async deleteById(id: string) {
+    return await this.model.findByIdAndDelete(id);
   }
 }

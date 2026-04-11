@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import config from "@/config";
 import algosdk from "algosdk";
+import { useTranslation } from "react-i18next";
 
 function base64ToUint8(b64: string): Uint8Array {
   const binary = atob(b64);
@@ -45,6 +46,7 @@ export default function USDCOptInPrompt({
   onClose,
   onOptInSuccess,
 }: Props) {
+  const { t } = useTranslation("common");
   const { walletAddress, peraWallet, setOptedIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,7 +62,7 @@ export default function USDCOptInPrompt({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ walletAddress }),
       });
-      if (!buildRes.ok) throw new Error("Failed to build opt-in transaction");
+      if (!buildRes.ok) throw new Error(t("buildOptinFailed"));
       const { unsignedTxnBase64 } = await buildRes.json();
 
       const unsignedTxnBytes = base64ToUint8(unsignedTxnBase64);
@@ -75,14 +77,14 @@ export default function USDCOptInPrompt({
         body: JSON.stringify({ walletAddress, signedTxnBase64 }),
       });
 
-      if (!submitRes.ok) throw new Error("Failed to submit opt-in transaction");
+      if (!submitRes.ok) throw new Error(t("submitOptinFailed"));
 
       setOptedIn(true);
       onOptInSuccess();
       onClose();
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : "Failed to opt-in to USDC"
+        err instanceof Error ? err.message : t("optInFailed")
       );
     } finally {
       setLoading(false);
@@ -94,18 +96,15 @@ export default function USDCOptInPrompt({
       <DialogTitle>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <MonetizationOnIcon color="primary" />
-          Opt-in to USDC
+          {t("usdcOptInTitle")}
         </Box>
       </DialogTitle>
       <DialogContent>
         <Typography variant="body1" sx={{ mb: 2 }}>
-          To list datasets or submit bounty responses, your wallet must opt-in
-          to USDC (the payment token used on India Data Exchange).
+          {t("usdcOptInIntro")}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          This is a free, one-time transaction that allows your Algorand wallet
-          to hold USDC. You&apos;ll need a small amount of ALGO for the
-          transaction fee (~0.001 ALGO).
+          {t("usdcOptInFee")}
         </Typography>
         {error && (
           <Alert severity="error" sx={{ mt: 2 }}>
@@ -115,7 +114,7 @@ export default function USDCOptInPrompt({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={loading}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button
           variant="contained"
@@ -129,7 +128,7 @@ export default function USDCOptInPrompt({
             )
           }
         >
-          {loading ? "Processing..." : "Opt In to USDC"}
+          {loading ? t("processing") : t("optInToUsdc")}
         </Button>
       </DialogActions>
     </Dialog>

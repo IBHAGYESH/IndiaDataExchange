@@ -1,0 +1,55 @@
+{
+  "privacyTitle": "Privacy Policy",
+  "termsTitle": "Terms of Service",
+  "lastUpdated": "Last updated: April 2026",
+  "grievanceIntro": "For data access, correction, deletion requests, or grievances under Indian law, contact:",
+  "languagesNote": "This notice is available in English and Hindi in the app. You may request this notice in any of the 22 languages scheduled under the Indian Constitution by emailing us—we will respond within a reasonable time (typically within 30 days).",
+  "privacySections": [
+    {
+      "title": "What personal data we process",
+      "body": "We process only: (1) your Algorand wallet address; (2) a record of when you accepted our policies (consent timestamp); (3) technical/account data needed to operate the service: whether you have opted in to USDC on Algorand, aggregate totals shown on your profile (earnings and spend on the platform), and whether you are an administrator. We do not collect your name, email, phone number, or government ID for a normal user account."
+    },
+    {
+      "title": "Why we process it",
+      "body": "We use this data to authenticate you with your wallet, process USDC payments and listings, show your dashboard statistics, and meet legal obligations. We do not use your wallet address for unrelated marketing."
+    },
+    {
+      "title": "Blockchain",
+      "body": "Transactions you sign on Algorand (including payments and smart-contract calls) are recorded on a public blockchain. We cannot change or delete those records. Our privacy commitments apply to data we hold in our own systems."
+    },
+    {
+      "title": "IPFS and datasets",
+      "body": "Dataset files you upload are stored with our infrastructure provider (e.g. Pinata/IPFS). Buyers receive access according to our product rules. You are responsible for lawful content in datasets you upload. Reports about unlawful content can be sent to the contact below."
+    },
+    {
+      "title": "Retention and deletion",
+      "body": "We keep account data until you ask us to delete it, or as long as needed to operate the service. We may delete inactive accounts after a long period (e.g. 24 months without meaningful use) after notice where feasible. When you delete your account, we remove your user record and anonymise your wallet on marketplace records we control. We cannot remove data already on public blockchains or copies held by other users."
+    },
+    {
+      "title": "Your rights",
+      "body": "Depending on applicable law (including India’s Digital Personal Data Protection Act and, where relevant, GDPR), you may have rights to access, correct, or delete personal data we hold, and to withdraw consent where processing is consent-based. Use the contact below to exercise these rights."
+    }
+  ],
+  "termsSections": [
+    {
+      "title": "The service",
+      "body": "India Data Exchange (IDE) is a marketplace for datasets and related bounties, built on Algorand. Use of the site is at your own risk. We provide the platform “as is”."
+    },
+    {
+      "title": "Wallets and payments",
+      "body": "You connect a self-custody Algorand wallet. You are responsible for key security and for transactions you sign. USDC movements follow Algorand and smart-contract rules."
+    },
+    {
+      "title": "Listings and content",
+      "body": "Sellers warrant they have the right to offer datasets they list and that listings comply with law. IDE may remove or restrict content reported as unlawful or violating these terms, subject to review."
+    },
+    {
+      "title": "Limitation of liability",
+      "body": "To the maximum extent permitted by law, IDE and its operators are not liable for indirect damages, loss of profits, or issues arising from third-party networks (including Algorand), IPFS providers, or buyer/seller disputes. Nothing excludes liability that cannot be excluded under applicable law."
+    },
+    {
+      "title": "Changes",
+      "body": "We may update these terms. Continued use after changes constitutes acceptance where permitted by law. Material changes to privacy practices will be reflected in the Privacy Policy."
+    }
+  ]
+}

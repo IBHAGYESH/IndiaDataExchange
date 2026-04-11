@@ -55,4 +55,11 @@ export class SubmissionRepository {
       { status: "rejected" }
     );
   }
+
+  async anonymizeSellerWallet(sellerId: string, placeholderWallet: string) {
+    return await this.model.updateMany(
+      { sellerId },
+      { $set: { sellerWalletAddress: placeholderWallet } }
+    );
+  }
 }

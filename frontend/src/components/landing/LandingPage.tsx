@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Container,
@@ -25,120 +26,20 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/auth-provider";
 import { useToast } from "@/providers/toast-provider";
 
-const categories = [
-  {
-    label: "Agriculture",
-    emoji: "\u{1F33E}",
-    description: "Crop data, disease images, weather patterns",
-  },
-  {
-    label: "Language",
-    emoji: "\u{1F5E3}\u{FE0F}",
-    description: "Voice recordings, text corpora, translations",
-  },
-  {
-    label: "Traffic",
-    emoji: "\u{1F697}",
-    description: "Urban mobility, intersection data, flow patterns",
-  },
-  {
-    label: "Healthcare",
-    emoji: "\u{1F3E5}",
-    description: "Ayurvedic plants, medical images, records",
-  },
-  {
-    label: "Cultural",
-    emoji: "\u{1F3AD}",
-    description: "Heritage sites, festivals, artisan data",
-  },
-  {
-    label: "Financial",
-    emoji: "\u{1F4B0}",
-    description: "Market data, transactions, economic indicators",
-  },
-];
-
-const stats = [
-  { label: "Datasets Listed", value: "500+", icon: "\u{1F4E6}" },
-  { label: "USDC Paid Out", value: "$12K+", icon: "\u{1F4B5}" },
-  { label: "Active Sellers", value: "200+", icon: "\u{1F465}" },
-  { label: "AI Agent Purchases", value: "1K+", icon: "\u{1F916}" },
-];
-
-const features = [
-  {
-    icon: <FlashOnIcon sx={{ fontSize: 32 }} />,
-    title: "Instant USDC Payments",
-    desc: "Algorand settles in under 3 seconds. Sellers receive USDC directly \u2014 no escrow, no waiting.",
-    gradient: "linear-gradient(135deg, #FF6B35, #FF8C5A)",
-  },
-  {
-    icon: <SmartToyIcon sx={{ fontSize: 32 }} />,
-    title: "AI Agent Native",
-    desc: "AI agents browse and purchase datasets autonomously via x402 HTTP payments. No account needed.",
-    gradient: "linear-gradient(135deg, #2EC84F, #4ADE7B)",
-  },
-  {
-    icon: <EmojiEventsIcon sx={{ fontSize: 32 }} />,
-    title: "Bounty System",
-    desc: "Post bounties with USDC locked in smart contract escrow. Released only on acceptance.",
-    gradient: "linear-gradient(135deg, #F59E0B, #FCD34D)",
-  },
-  {
-    icon: <SecurityIcon sx={{ fontSize: 32 }} />,
-    title: "Non-Custodial",
-    desc: "Your keys, your data. Sign in with Algorand wallet. No emails, no passwords.",
-    gradient: "linear-gradient(135deg, #8B5CF6, #A78BFA)",
-  },
-];
-
-const x402Steps = [
-  {
-    label: "Discovery",
-    title: "Agent fetches datasets",
-    code: "GET /api/datasets?category=agriculture",
-    response: "200 OK \u2014 12 datasets found",
-    color: "#4ADE7B",
-    icon: "\u{1F50D}",
-  },
-  {
-    label: "Request",
-    title: "Agent requests download",
-    code: "GET /api/datasets/abc123/download",
-    response: "Headers: Accept: application/json",
-    color: "#60A5FA",
-    icon: "\u{1F4E5}",
-  },
-  {
-    label: "Paywall",
-    title: "Server returns 402",
-    code: "HTTP 402 Payment Required",
-    response: "X-Payment: USDC $2.50 on Algorand",
-    color: "#F59E0B",
-    icon: "\u{1F512}",
-  },
-  {
-    label: "Payment",
-    title: "Agent pays via x402",
-    code: "USDC Transfer \u2192 Algorand Testnet",
-    response: "Tx confirmed in 3.2s \u2014 Round 45892",
-    color: "#FF6B35",
-    icon: "\u{1F4B3}",
-  },
-  {
-    label: "Delivery",
-    title: "Agent gets the dataset",
-    code: "GET /api/datasets/abc123/download",
-    response: "200 OK \u2014 dataset.csv (2.4MB)",
-    color: "#4ADE7B",
-    icon: "\u2705",
-  },
-];
+type X402StepRow = {
+  label: string;
+  title: string;
+  code: string;
+  response: string;
+  color: string;
+  icon: string;
+};
 
 function useWalletAction(targetPath: string) {
   const { isConnected, connectWallet } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
+  const { t } = useTranslation("auth");
 
   return async () => {
     if (isConnected) {
@@ -146,11 +47,15 @@ function useWalletAction(targetPath: string) {
     } else {
       try {
         await connectWallet();
-        showToast("Wallet connected!", "success");
+        showToast(t("walletConnectedShort"), "success");
         router.push(targetPath);
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Failed to connect";
-        if (!msg.includes("cancelled") && !msg.includes("rejected")) {
+        if (
+          !msg.includes("cancelled") &&
+          !msg.includes("rejected") &&
+          !msg.includes("Consent declined")
+        ) {
           showToast(msg, "error");
         }
       }
@@ -158,7 +63,7 @@ function useWalletAction(targetPath: string) {
   };
 }
 
-function X402AnimationSequence() {
+function X402AnimationSequence({ steps }: { steps: X402StepRow[] }) {
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -178,25 +83,29 @@ function X402AnimationSequence() {
   }, [isVisible]);
 
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible || steps.length === 0) return;
     setActiveStep(-1);
+    let intervalId: ReturnType<typeof setInterval> | undefined;
     const startTimeout = setTimeout(() => {
       let step = 0;
-      const interval = setInterval(() => {
+      intervalId = setInterval(() => {
         setActiveStep(step);
         step++;
-        if (step >= x402Steps.length) {
-          clearInterval(interval);
+        if (step >= steps.length) {
+          if (intervalId) clearInterval(intervalId);
+          intervalId = undefined;
           setTimeout(() => {
             setIsVisible(false);
             setTimeout(() => setIsVisible(true), 600);
           }, 3000);
         }
       }, 1200);
-      return () => clearInterval(interval);
     }, 400);
-    return () => clearTimeout(startTimeout);
-  }, [isVisible]);
+    return () => {
+      clearTimeout(startTimeout);
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [isVisible, steps.length]);
 
   return (
     <Box
@@ -211,7 +120,7 @@ function X402AnimationSequence() {
         "&::-webkit-scrollbar": { display: "none" },
       }}
     >
-      {x402Steps.map((step, idx) => {
+      {steps.map((step, idx) => {
         const isActive = idx <= activeStep;
         const isCurrent = idx === activeStep;
         return (
@@ -317,7 +226,7 @@ function X402AnimationSequence() {
                 {step.response}
               </Box>
             </Box>
-            {idx < x402Steps.length - 1 && (
+            {idx < steps.length - 1 && (
               <Box
                 sx={{
                   display: "flex",
@@ -350,9 +259,9 @@ function X402AnimationSequence() {
                             width: 5,
                             height: 5,
                             borderRadius: "50%",
-                            bgcolor: x402Steps[idx + 1].color,
+                            bgcolor: steps[idx + 1].color,
                             animation: "flowPulse 1s ease infinite",
-                            boxShadow: `0 0 6px ${x402Steps[idx + 1].color}`,
+                            boxShadow: `0 0 6px ${steps[idx + 1].color}`,
                           }
                         : {},
                   }}
@@ -367,8 +276,65 @@ function X402AnimationSequence() {
 }
 
 export default function LandingPage() {
+  const { t } = useTranslation("landing");
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+
+  const categories = useMemo(() => {
+    const raw = t("categories", { returnObjects: true }) as Array<{
+      key: string;
+      label: string;
+      emoji: string;
+      description: string;
+    }>;
+    return Array.isArray(raw) ? raw : [];
+  }, [t]);
+
+  const stats = useMemo(() => {
+    const raw = t("stats", { returnObjects: true }) as Array<{
+      label: string;
+      value: string;
+      icon: string;
+    }>;
+    return Array.isArray(raw) ? raw : [];
+  }, [t]);
+
+  const features = useMemo(() => {
+    const raw = t("features", { returnObjects: true }) as Array<{ title: string; desc: string }>;
+    const icons = [
+      <FlashOnIcon key="f1" sx={{ fontSize: 32 }} />,
+      <SmartToyIcon key="f2" sx={{ fontSize: 32 }} />,
+      <EmojiEventsIcon key="f3" sx={{ fontSize: 32 }} />,
+      <SecurityIcon key="f4" sx={{ fontSize: 32 }} />,
+    ];
+    const gradients = [
+      "linear-gradient(135deg, #FF6B35, #FF8C5A)",
+      "linear-gradient(135deg, #2EC84F, #4ADE7B)",
+      "linear-gradient(135deg, #F59E0B, #FCD34D)",
+      "linear-gradient(135deg, #8B5CF6, #A78BFA)",
+    ];
+    if (!Array.isArray(raw)) return [];
+    return raw.map((item, i) => ({
+      title: item.title,
+      desc: item.desc,
+      icon: icons[i],
+      gradient: gradients[i],
+    }));
+  }, [t]);
+
+  const x402Steps = useMemo(() => {
+    const raw = t("x402Steps", { returnObjects: true }) as Array<{
+      label: string;
+      title: string;
+      code: string;
+      response: string;
+    }>;
+    const colors = ["#4ADE7B", "#60A5FA", "#F59E0B", "#FF6B35", "#4ADE7B"];
+    const icons = ["\u{1F50D}", "\u{1F4E5}", "\u{1F512}", "\u{1F4B3}", "\u2705"];
+    if (!Array.isArray(raw)) return [];
+    return raw.map((s, i) => ({ ...s, color: colors[i], icon: icons[i] }));
+  }, [t]);
+
   const handleSellData = useWalletAction("/dashboard/list-dataset");
   const handleListDataset = useWalletAction("/dashboard/list-dataset");
   const handleViewBounties = useWalletAction("/bounties");
@@ -453,7 +419,7 @@ export default function LandingPage() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              India Data Exchange
+              {t("heroTitle")}
             </Typography>
 
             <Typography
@@ -466,7 +432,7 @@ export default function LandingPage() {
                 animation: "fadeInUp 0.6s ease 0.1s both",
               }}
             >
-              Where Indian Knowledge Becomes{" "}
+              {t("heroSubtitle")}{" "}
               <Box
                 component="span"
                 sx={{
@@ -476,7 +442,7 @@ export default function LandingPage() {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                AI Fuel
+                {t("heroHighlight")}
               </Box>
             </Typography>
 
@@ -493,8 +459,7 @@ export default function LandingPage() {
                 animation: "fadeInUp 0.6s ease 0.2s both",
               }}
             >
-              Buy and sell datasets using USDC on Algorand. Instant payments.
-              Zero friction. AI agents welcome.
+              {t("heroDescription")}
             </Typography>
 
             <Stack
@@ -510,7 +475,7 @@ export default function LandingPage() {
                   endIcon={<ArrowForwardIcon />}
                   sx={{ px: 4, py: 1.5 }}
                 >
-                  Browse Marketplace
+                  {t("browseMarketplace")}
                 </Button>
               </Link>
               <Button
@@ -529,7 +494,7 @@ export default function LandingPage() {
                   },
                 }}
               >
-                Monetize Your Data
+                {t("monetizeData")}
               </Button>
             </Stack>
           </Box>
@@ -554,9 +519,9 @@ export default function LandingPage() {
                 fontSize: "0.65rem",
               }}
             >
-              x402 Protocol — AI Agent Purchase Flow
+              {t("x402Overline")}
             </Typography>
-            <X402AnimationSequence />
+            <X402AnimationSequence steps={x402Steps} />
             <Typography
               variant="caption"
               sx={{
@@ -566,8 +531,7 @@ export default function LandingPage() {
                 fontSize: "0.7rem",
               }}
             >
-              AI agents pay automatically via x402 protocol — no wallet
-              connection required
+              {t("x402Caption")}
             </Typography>
           </Box>
         </Container>
@@ -625,14 +589,14 @@ export default function LandingPage() {
         <Container maxWidth="lg">
           <Box sx={{ textAlign: "center", mb: { xs: 5, md: 8 } }}>
             <Typography variant="h3" fontWeight={800} gutterBottom>
-              Why India Data Exchange?
+              {t("whyTitle")}
             </Typography>
             <Typography
               variant="body1"
               color="text.secondary"
               sx={{ maxWidth: 500, mx: "auto" }}
             >
-              Built on Algorand for speed, finality, and near-zero fees
+              {t("whySubtitle")}
             </Typography>
           </Box>
           <Grid
@@ -695,17 +659,17 @@ export default function LandingPage() {
         <Container maxWidth="lg">
           <Box sx={{ textAlign: "center", mb: { xs: 5, md: 8 } }}>
             <Typography variant="h3" fontWeight={800} gutterBottom>
-              Data Categories
+              {t("categoriesTitle")}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              India-specific datasets across critical sectors
+              {t("categoriesSubtitle")}
             </Typography>
           </Box>
           <Grid container spacing={2.5} justifyContent="center">
             {categories.map((cat, idx) => (
-              <Grid size={{ xs: 6, sm: 4, md: 2 }} key={cat.label}>
+              <Grid size={{ xs: 6, sm: 4, md: 2 }} key={cat.key}>
                 <Link
-                  href={`/marketplace?category=${cat.label.toLowerCase()}`}
+                  href={`/marketplace?category=${cat.key}`}
                   style={{ textDecoration: "none" }}
                 >
                   <Card
@@ -779,17 +743,16 @@ export default function LandingPage() {
             gutterBottom
             sx={{ animation: "fadeInUp 0.5s ease both" }}
           >
-            Ready to monetize
+            {t("ctaTitleLine1")}
             <br />
-            your data?
+            {t("ctaTitleLine2")}
           </Typography>
           <Typography
             variant="body1"
             color="text.secondary"
             sx={{ mb: 5, maxWidth: 480, mx: "auto" }}
           >
-            Connect your Pera Wallet and start earning USDC from your Indian
-            datasets today.
+            {t("ctaBody")}
           </Typography>
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -803,7 +766,7 @@ export default function LandingPage() {
               onClick={handleListDataset}
               sx={{ px: 5 }}
             >
-              List a Dataset
+              {t("listDataset")}
             </Button>
             <Button
               variant="outlined"
@@ -820,44 +783,9 @@ export default function LandingPage() {
                 },
               }}
             >
-              View Bounties
+              {t("viewBounties")}
             </Button>
           </Stack>
-        </Container>
-      </Box>
-
-      {/* Footer */}
-      <Box
-        sx={{
-          py: 4,
-          borderTop: `1px solid ${alpha(theme.palette.divider, 0.06)}`,
-          textAlign: "center",
-        }}
-      >
-        <Container>
-          <Typography variant="body2" color="text.disabled" sx={{ mb: 0.5 }}>
-            Built on Algorand · Powered by x402 Protocol
-          </Typography>
-          <Typography variant="body2" color="text.disabled">
-            Crafted with{" "}
-            <Box component="span" sx={{ color: "#FF6B35" }}>
-              &#10084;&#65039;
-            </Box>{" "}
-            by{" "}
-            <Box
-              component="a"
-              href="https://ibhagyesh.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              sx={{
-                color: "primary.main",
-                textDecoration: "none",
-                "&:hover": { textDecoration: "underline" },
-              }}
-            >
-              ibhagyesh
-            </Box>
-          </Typography>
         </Container>
       </Box>
     </Box>

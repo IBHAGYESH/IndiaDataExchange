@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback } from "react";
+import { Suspense, useCallback, useMemo } from "react";
 import {
   Container,
   GridLegacy as Grid,
@@ -26,28 +26,10 @@ import MainLayout from "@/components/layouts/MainLayout";
 import DatasetCard from "@/components/dataset/DatasetCard";
 import { useGetDatasetsQuery } from "@/redux/api/datasetApi";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
-const categories = [
-  { value: "", label: "All Categories" },
-  { value: "agriculture", label: "Agriculture" },
-  { value: "language", label: "Language" },
-  { value: "traffic", label: "Traffic" },
-  { value: "healthcare", label: "Healthcare" },
-  { value: "cultural", label: "Cultural" },
-  { value: "financial", label: "Financial" },
-  { value: "other", label: "Other" },
-];
-
-const formats = [
-  { value: "", label: "All Formats" },
-  { value: "csv", label: "CSV" },
-  { value: "json", label: "JSON" },
-  { value: "images", label: "Images" },
-  { value: "audio", label: "Audio" },
-  { value: "video", label: "Video" },
-  { value: "pdf", label: "PDF" },
-  { value: "other", label: "Other" },
-];
+const CATEGORY_VALUES = ["", "agriculture", "language", "traffic", "healthcare", "cultural", "financial", "other"] as const;
+const FORMAT_VALUES = ["", "csv", "json", "images", "audio", "video", "pdf", "other"] as const;
 
 export default function MarketplacePage() {
   return (
@@ -58,10 +40,32 @@ export default function MarketplacePage() {
 }
 
 function MarketplaceContent() {
+  const { t } = useTranslation("marketplace");
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
+
+  const categoryLabels = t("categoryLabels", { returnObjects: true }) as Record<string, string>;
+  const formatLabels = t("formatLabels", { returnObjects: true }) as Record<string, string>;
+
+  const categories = useMemo(
+    () =>
+      CATEGORY_VALUES.map((value) => ({
+        value,
+        label: value ? categoryLabels[value] ?? value : t("allCategories"),
+      })),
+    [t, categoryLabels],
+  );
+
+  const formats = useMemo(
+    () =>
+      FORMAT_VALUES.map((value) => ({
+        value,
+        label: value ? formatLabels[value] ?? value : t("allFormats"),
+      })),
+    [t, formatLabels],
+  );
 
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
@@ -81,7 +85,7 @@ function MarketplaceContent() {
       }
       router.push(`${pathname}?${current.toString()}`, { scroll: false });
     },
-    [searchParams, router, pathname]
+    [searchParams, router, pathname],
   );
 
   const { data, isLoading, isError, refetch } = useGetDatasetsQuery({
@@ -94,6 +98,9 @@ function MarketplaceContent() {
     limit: 12,
   });
 
+  const categoryDisplay = category ? categoryLabels[category] ?? category : "";
+  const formatDisplay = format ? formatLabels[format] ?? format : "";
+
   return (
     <MainLayout>
       <Box
@@ -104,16 +111,11 @@ function MarketplaceContent() {
       >
         <Container maxWidth="xl" sx={{ py: { xs: 3, md: 5 } }}>
           <Box sx={{ mb: { xs: 3, md: 4 } }}>
-            <Typography
-              variant="h4"
-              fontWeight={800}
-              sx={{ letterSpacing: "-0.02em", mb: 0.5 }}
-            >
-              Data Marketplace
+            <Typography variant="h4" fontWeight={800} sx={{ letterSpacing: "-0.02em", mb: 0.5 }}>
+              {t("pageTitle")}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Discover and purchase Indian datasets. AI agents can purchase via
-              x402 payments — no account needed.
+              {t("pageSubtitle")}
             </Typography>
           </Box>
 
@@ -132,7 +134,7 @@ function MarketplaceContent() {
           >
             <TextField
               size="small"
-              placeholder="Search datasets..."
+              placeholder={t("searchPlaceholder")}
               value={search}
               onChange={(e) => updateUrl({ search: e.target.value, page: "1" })}
               sx={{ flex: "1 1 260px" }}
@@ -145,43 +147,43 @@ function MarketplaceContent() {
               }}
             />
             <FormControl size="small" sx={{ minWidth: 140 }}>
-              <InputLabel>Category</InputLabel>
+              <InputLabel>{t("category")}</InputLabel>
               <Select
                 value={category}
-                label="Category"
+                label={t("category")}
                 onChange={(e) => updateUrl({ category: e.target.value, page: "1" })}
               >
                 {categories.map((c) => (
-                  <MenuItem key={c.value} value={c.value}>
+                  <MenuItem key={c.value || "all"} value={c.value}>
                     {c.label}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
             <FormControl size="small" sx={{ minWidth: 120 }}>
-              <InputLabel>Format</InputLabel>
+              <InputLabel>{t("format")}</InputLabel>
               <Select
                 value={format}
-                label="Format"
+                label={t("format")}
                 onChange={(e) => updateUrl({ format: e.target.value, page: "1" })}
               >
                 {formats.map((f) => (
-                  <MenuItem key={f.value} value={f.value}>
+                  <MenuItem key={f.value || "all-f"} value={f.value}>
                     {f.label}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
             <FormControl size="small" sx={{ minWidth: 130 }}>
-              <InputLabel>Sort By</InputLabel>
+              <InputLabel>{t("sortBy")}</InputLabel>
               <Select
                 value={sortBy}
-                label="Sort By"
+                label={t("sortBy")}
                 onChange={(e) => updateUrl({ sortBy: e.target.value })}
               >
-                <MenuItem value="createdAt">Newest</MenuItem>
-                <MenuItem value="price">Price</MenuItem>
-                <MenuItem value="purchases">Most Popular</MenuItem>
+                <MenuItem value="createdAt">{t("newest")}</MenuItem>
+                <MenuItem value="price">{t("sortPrice")}</MenuItem>
+                <MenuItem value="purchases">{t("mostPopular")}</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -189,15 +191,11 @@ function MarketplaceContent() {
           {(category || format || search) && (
             <Stack direction="row" spacing={1} sx={{ mb: 3 }} flexWrap="wrap">
               {search && (
-                <Chip
-                  label={`Search: "${search}"`}
-                  onDelete={() => updateUrl({ search: "" })}
-                  size="small"
-                />
+                <Chip label={t("searchChip", { q: search })} onDelete={() => updateUrl({ search: "" })} size="small" />
               )}
               {category && (
                 <Chip
-                  label={`Category: ${category}`}
+                  label={t("categoryChip", { cat: categoryDisplay })}
                   onDelete={() => updateUrl({ category: "" })}
                   size="small"
                   color="primary"
@@ -206,7 +204,7 @@ function MarketplaceContent() {
               )}
               {format && (
                 <Chip
-                  label={`Format: ${format}`}
+                  label={t("formatChipFilter", { fmt: formatDisplay })}
                   onDelete={() => updateUrl({ format: "" })}
                   size="small"
                   color="secondary"
@@ -225,7 +223,7 @@ function MarketplaceContent() {
           {isError && (
             <Box sx={{ textAlign: "center", py: 8 }}>
               <Typography color="error" gutterBottom>
-                Failed to load datasets.
+                {t("loadFailed")}
               </Typography>
               <Typography
                 variant="body2"
@@ -233,7 +231,7 @@ function MarketplaceContent() {
                 sx={{ cursor: "pointer", textDecoration: "underline" }}
                 onClick={() => refetch()}
               >
-                Click to retry
+                {t("clickRetry")}
               </Typography>
             </Box>
           )}
@@ -242,7 +240,7 @@ function MarketplaceContent() {
             <Fade in timeout={400}>
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  {data.total} dataset{data.total !== 1 ? "s" : ""} found
+                  {t("datasetsFound", { count: data.total })}
                 </Typography>
                 <Grid container spacing={3}>
                   {data.datasets.map((dataset, idx) => (
@@ -280,10 +278,10 @@ function MarketplaceContent() {
                   <Box sx={{ textAlign: "center", py: 8 }}>
                     <TuneIcon sx={{ fontSize: 48, color: "text.disabled", mb: 2 }} />
                     <Typography variant="h6" color="text.secondary">
-                      No datasets match your filters
+                      {t("emptyFiltersTitle")}
                     </Typography>
                     <Typography variant="body2" color="text.disabled">
-                      Try adjusting your search or filters
+                      {t("emptyFiltersHint")}
                     </Typography>
                   </Box>
                 )}

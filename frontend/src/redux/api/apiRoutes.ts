@@ -27,6 +27,7 @@ const apiRoutes = {
   },
   user: {
     profile: `/api/user/profile`,
+    account: `/api/user/account`,
     listings: `/api/user/listings`,
     purchases: `/api/user/purchases`,
     bounties: `/api/user/bounties`,

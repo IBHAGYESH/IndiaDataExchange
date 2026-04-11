@@ -43,34 +43,30 @@ async function seedDatabase() {
   const [adminUser, seller, buyer, hunter] = await Promise.all([
     UserModel.create({
       walletAddress: DEMO_ADMIN,
-      name: "Platform Admin",
-      bio: "India Data Exchange administrator",
       isAdmin: true,
       isUSDCOptedIn: true,
+      consentGivenAt: new Date(),
     }),
     UserModel.create({
       walletAddress: DEMO_SELLER,
-      name: "Priya Sharma",
-      bio: "Agricultural data scientist from Pune. Specializing in crop disease and yield prediction datasets.",
       isAdmin: false,
       isUSDCOptedIn: true,
       totalEarnings: 45.5,
+      consentGivenAt: new Date(),
     }),
     UserModel.create({
       walletAddress: DEMO_BUYER,
-      name: "Vikram Rajan",
-      bio: "AI startup founder building agricultural prediction models for Indian farmers.",
       isAdmin: false,
       isUSDCOptedIn: true,
       totalSpent: 87.0,
+      consentGivenAt: new Date(),
     }),
     UserModel.create({
       walletAddress: DEMO_HUNTER,
-      name: "Anita Patel",
-      bio: "NLP researcher at IIT Bombay. Collecting and curating Indian language datasets.",
       isAdmin: false,
       isUSDCOptedIn: true,
       totalEarnings: 120.0,
+      consentGivenAt: new Date(),
     }),
   ]);
   console.log("Created 4 demo users");
