@@ -170,10 +170,19 @@ export class BountyService {
     userId: string,
     walletAddress: string,
     bountyId: string,
-    data: { title: string; description: string },
+    data: { title: string; description: string; submitterAttestationAccepted: boolean },
     sampleFile: Express.Multer.File,
     fullDataFile: Express.Multer.File
   ) {
+    if (!data.submitterAttestationAccepted) {
+      throw new AppError(
+        "ValidationError",
+        400,
+        "You must confirm you have the right to share this data and accept responsibility for its content",
+        true
+      );
+    }
+
     const bounty = await bountyRepo.findById(bountyId);
     if (!bounty) throw new AppError("NotFound", 404, "Bounty not found", true);
     if (bounty.status !== "open") throw new AppError("ValidationError", 400, "Bounty is no longer accepting submissions", true);

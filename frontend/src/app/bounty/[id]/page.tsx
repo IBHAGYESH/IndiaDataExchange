@@ -21,6 +21,8 @@ import {
   TextField,
   Stack,
   Link as MuiLink,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
@@ -61,6 +63,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
   const [fullDataFile, setFullDataFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitterAttestation, setSubmitterAttestation] = useState(false);
   const [acceptLoading, setAcceptLoading] = useState<string | null>(null);
   const [acceptError, setAcceptError] = useState<string | null>(null);
 
@@ -103,12 +106,17 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
       setSubmitError(t("errBothFiles"));
       return;
     }
+    if (!submitterAttestation) {
+      setSubmitError(tf("attestationRequired"));
+      return;
+    }
     setSubmitting(true);
     setSubmitError(null);
     try {
       const formData = new FormData();
       formData.append("title", submitForm.title);
       formData.append("description", submitForm.description);
+      formData.append("submitterAttestationAccepted", "true");
       formData.append("sampleFile", sampleFile);
       formData.append("fullDataFile", fullDataFile);
       await submitToBounty({ bountyId: id, formData }).unwrap();
@@ -116,6 +124,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
       setSubmitForm({ title: "", description: "" });
       setSampleFile(null);
       setFullDataFile(null);
+      setSubmitterAttestation(false);
       refetch();
     } catch (err: unknown) {
       setSubmitError(err instanceof Error ? err.message : t("errSubmit"));
@@ -363,7 +372,16 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
             </Grid>
           </Grid>
 
-          <Dialog open={submitOpen} onClose={() => setSubmitOpen(false)} maxWidth="sm" fullWidth>
+          <Dialog
+            open={submitOpen}
+            onClose={() => {
+              setSubmitOpen(false);
+              setSubmitterAttestation(false);
+              setSubmitError(null);
+            }}
+            maxWidth="sm"
+            fullWidth
+          >
             <DialogTitle>{t("submitYourData")}</DialogTitle>
             <DialogContent>
               {submitError && (
@@ -399,9 +417,35 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                 {t("fullDataDialog")}
               </Typography>
               <input type="file" onChange={(e) => setFullDataFile(e.target.files?.[0] || null)} />
+              <FormControlLabel
+                sx={{ alignItems: "flex-start", mt: 2, mr: 0 }}
+                control={
+                  <Checkbox
+                    checked={submitterAttestation}
+                    onChange={(e) => setSubmitterAttestation(e.target.checked)}
+                    sx={{ pt: 0.25 }}
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography variant="body2">{tf("sellerAttestation")}</Typography>
+                    <Typography variant="caption" color="text.secondary" display="block">
+                      {tf("sellerAttestationHint")}
+                    </Typography>
+                  </Box>
+                }
+              />
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setSubmitOpen(false)}>{tc("cancel")}</Button>
+              <Button
+                onClick={() => {
+                  setSubmitOpen(false);
+                  setSubmitterAttestation(false);
+                  setSubmitError(null);
+                }}
+              >
+                {tc("cancel")}
+              </Button>
               <Button
                 variant="contained"
                 onClick={handleSubmit}

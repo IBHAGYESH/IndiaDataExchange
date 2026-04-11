@@ -184,6 +184,11 @@ paths:
           name: description
           type: string
           required: true
+        - in: formData
+          name: submitterAttestationAccepted
+          type: boolean
+          description: Must be true — legal attestation for uploaded data (DPDP / platform policy)
+          required: true
       responses:
         '201':
           description: Submission created

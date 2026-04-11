@@ -13,7 +13,10 @@ export class BountyRepository {
   }
 
   async update(id: string, data: Partial<IBounty>) {
-    return await this.model.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    return await this.model.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
   }
 
   async getCount(filter: FilterQuery<IBounty>) {
@@ -31,7 +34,12 @@ export class BountyRepository {
     limit?: number;
     sort?: string;
   }) {
-    return await this.model.find(filter).skip(skip).limit(limit).sort(sort).lean();
+    return await this.model
+      .find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort(sort)
+      .lean();
   }
 
   async findByBuyerId(buyerId: string) {
@@ -39,13 +47,15 @@ export class BountyRepository {
   }
 
   async incrementSubmissionCount(id: string) {
-    return await this.model.findByIdAndUpdate(id, { $inc: { submissionCount: 1 } });
+    return await this.model.findByIdAndUpdate(id, {
+      $inc: { submissionCount: 1 },
+    });
   }
 
   async anonymizeBuyerWallet(buyerId: string, placeholderWallet: string) {
     return await this.model.updateMany(
       { buyerId },
-      { $set: { buyerWalletAddress: placeholderWallet } }
+      { $set: { buyerWalletAddress: placeholderWallet, status: "cancelled" } },
     );
   }
 }

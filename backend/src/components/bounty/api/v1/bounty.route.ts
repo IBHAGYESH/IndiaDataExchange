@@ -103,15 +103,22 @@ export class BountyRoute {
         if (!files?.sampleFile?.[0] || !files?.fullDataFile?.[0]) {
           throw new AppError("ValidationError", 400, "Both sampleFile and fullDataFile are required", true);
         }
-        const { title, description } = req.body;
+        const body = req.body as Record<string, unknown>;
+        const title = typeof body.title === "string" ? body.title : "";
+        const description = typeof body.description === "string" ? body.description : "";
+        const submitterAttestationAccepted = body.submitterAttestationAccepted;
         if (!title || !description) {
           throw new AppError("ValidationError", 400, "Title and description required", true);
         }
+        const attestationOk =
+          submitterAttestationAccepted === true ||
+          submitterAttestationAccepted === "true" ||
+          submitterAttestationAccepted === "1";
         const { data, code } = await this.service.submitToBounty(
           req.user!.userId,
           req.user!.walletAddress,
           id,
-          { title, description },
+          { title, description, submitterAttestationAccepted: attestationOk },
           files.sampleFile[0],
           files.fullDataFile[0]
         );

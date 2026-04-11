@@ -17,7 +17,10 @@ export class DatasetRepository {
   }
 
   async update(id: string, data: Partial<IDataset>) {
-    return await this.model.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    return await this.model.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
   }
 
   async getCount(filter: FilterQuery<IDataset>) {
@@ -53,13 +56,15 @@ export class DatasetRepository {
   }
 
   async incrementPurchases(id: string) {
-    return await this.model.findByIdAndUpdate(id, { $inc: { totalPurchases: 1 } });
+    return await this.model.findByIdAndUpdate(id, {
+      $inc: { totalPurchases: 1 },
+    });
   }
 
   async anonymizeSellerWallet(sellerId: string, placeholderWallet: string) {
     return await this.model.updateMany(
       { sellerId },
-      { $set: { sellerWalletAddress: placeholderWallet } }
+      { $set: { sellerWalletAddress: placeholderWallet, status: "unlisted" } },
     );
   }
 }

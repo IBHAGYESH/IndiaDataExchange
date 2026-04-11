@@ -28,5 +28,5 @@
   "hintSample": "Max 10MB — Users see this before buying",
   "hintFull": "Max 500MB — Only accessible after purchase",
   "priceHelper": "$0.10 - $100.00",
-  "attestationRequired": "You must confirm the dataset responsibility statement before listing."
+  "attestationRequired": "You must confirm the data responsibility statement before continuing."
 }
