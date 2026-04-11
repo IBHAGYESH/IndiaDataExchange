@@ -3,7 +3,7 @@
 import { Suspense, useCallback } from "react";
 import {
   Container,
-  Grid,
+  GridLegacy as Grid,
   Typography,
   Box,
   Select,

@@ -1,6 +1,15 @@
 "use client";
 
-import { Typography, Box, Grid, Card, CardContent, CircularProgress, Alert, Button } from "@mui/material";
+import {
+  Typography,
+  Box,
+  GridLegacy as Grid,
+  Card,
+  CardContent,
+  CircularProgress,
+  Alert,
+  Button,
+} from "@mui/material";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import { useGetProfileQuery } from "@/redux/api/userApi";
 import { useAuth } from "@/providers/auth-provider";

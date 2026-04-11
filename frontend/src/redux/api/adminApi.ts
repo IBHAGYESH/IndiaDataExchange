@@ -12,7 +12,10 @@ export const adminApi = apiInstance.injectEndpoints({
       query: () => apiRoutes.admin.stats,
     }),
 
-    getAdminDatasets: builder.query<{ datasets: unknown[]; total: number }, { page?: number; limit?: number }>({
+    getAdminDatasets: builder.query<
+      { datasets: unknown[]; total: number; page: number; totalPages: number },
+      { page?: number; limit?: number }
+    >({
       query: (params) => {
         const sp = new URLSearchParams();
         Object.entries(params).forEach(([k, v]) => v !== undefined && sp.append(k, String(v)));
@@ -28,7 +31,10 @@ export const adminApi = apiInstance.injectEndpoints({
       }),
     }),
 
-    getAdminBounties: builder.query<{ bounties: unknown[]; total: number }, { page?: number; limit?: number }>({
+    getAdminBounties: builder.query<
+      { bounties: unknown[]; total: number; page: number; totalPages: number },
+      { page?: number; limit?: number }
+    >({
       query: (params) => {
         const sp = new URLSearchParams();
         Object.entries(params).forEach(([k, v]) => v !== undefined && sp.append(k, String(v)));

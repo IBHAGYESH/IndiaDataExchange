@@ -192,10 +192,10 @@ export default function AdminBountiesPage() {
               </Table>
             </TableContainer>
 
-            {((data as { totalPages?: number }).totalPages ?? 0) > 1 && (
+            {data.totalPages > 1 && (
               <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
                 <Pagination
-                  count={(data as { totalPages: number }).totalPages}
+                  count={data.totalPages}
                   page={page}
                   onChange={(_e, p) => setPage(p)}
                   color="primary"

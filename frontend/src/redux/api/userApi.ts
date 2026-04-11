@@ -1,10 +1,10 @@
 import { apiInstance } from "./apiInstance";
 import apiRoutes from "./apiRoutes";
-import { User } from "@/types";
+import { User, UserDashboardStats } from "@/types";
 
 export const userApi = apiInstance.injectEndpoints({
   endpoints: (builder) => ({
-    getProfile: builder.query<{ user: User; stats: Record<string, number> }, void>({
+    getProfile: builder.query<{ user: User; stats: UserDashboardStats }, void>({
       query: () => apiRoutes.user.profile,
       providesTags: ["user"],
     }),

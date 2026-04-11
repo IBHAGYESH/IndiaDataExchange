@@ -3,7 +3,7 @@
 import { use, useRef, useEffect } from "react";
 import {
   Container,
-  Grid,
+  GridLegacy as Grid,
   Typography,
   Box,
   Chip,

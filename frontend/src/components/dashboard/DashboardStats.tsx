@@ -1,15 +1,16 @@
 "use client";
 
-import { Grid, Card, CardContent, Typography, Box } from "@mui/material";
+import { GridLegacy as Grid, Card, CardContent, Typography, Box } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import StorageIcon from "@mui/icons-material/Storage";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { useAuth } from "@/providers/auth-provider";
 import { formatUSDC } from "@/utils";
+import type { UserDashboardStats } from "@/types";
 
 interface Props {
-  stats: { listed: number; purchases: number; bounties: number; submissions: number };
+  stats: UserDashboardStats;
 }
 
 export default function DashboardStats({ stats }: Props) {

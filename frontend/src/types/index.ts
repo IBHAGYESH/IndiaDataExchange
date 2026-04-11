@@ -11,6 +11,14 @@ export interface User {
   updatedAt: string;
 }
 
+/** Counts returned with GET /api/user/profile */
+export interface UserDashboardStats {
+  listed: number;
+  purchases: number;
+  bounties: number;
+  submissions: number;
+}
+
 export type DatasetCategory =
   | "agriculture"
   | "language"
