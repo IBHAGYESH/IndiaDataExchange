@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -114,9 +114,12 @@ function X402AnimationSequence({ steps }: { steps: X402StepRow[] }) {
         position: "relative",
         py: 2,
         display: "flex",
-        alignItems: "flex-start",
-        gap: 0,
-        overflowX: "auto",
+        alignItems: "stretch",
+        flexDirection: "row",
+        width: "100%",
+        gap: { xs: 1, sm: 0 },
+        overflowX: { xs: "auto", sm: "hidden" },
+        WebkitOverflowScrolling: "touch",
         "&::-webkit-scrollbar": { display: "none" },
       }}
     >
@@ -124,117 +127,120 @@ function X402AnimationSequence({ steps }: { steps: X402StepRow[] }) {
         const isActive = idx <= activeStep;
         const isCurrent = idx === activeStep;
         return (
-          <Box
-            key={idx}
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              flexShrink: 0,
-            }}
-          >
+          <Fragment key={idx}>
             <Box
               sx={{
-                width: { xs: 140, sm: 150 },
-                minHeight: 160,
-                p: 1.5,
-                borderRadius: 3,
-                border: `1px solid ${
-                  isCurrent
-                    ? alpha(step.color, 0.4)
-                    : isActive
-                      ? alpha(step.color, 0.15)
-                      : alpha(theme.palette.divider, 0.06)
-                }`,
-                bgcolor: isCurrent
-                  ? alpha(step.color, 0.06)
-                  : isActive
-                    ? alpha(step.color, 0.02)
-                    : "transparent",
-                transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                transform: isActive ? "translateY(0)" : "translateY(8px)",
-                opacity: isActive ? 1 : 0.35,
-                boxShadow: isCurrent
-                  ? `0 0 20px ${alpha(step.color, 0.15)}`
-                  : "none",
+                flex: { xs: "0 0 auto", sm: "1 1 0" },
+                minWidth: { xs: 132, sm: 0 },
+                maxWidth: { sm: "100%" },
                 display: "flex",
-                flexDirection: "column",
-                gap: 1,
+                alignItems: "stretch",
               }}
             >
               <Box
                 sx={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 2,
+                  width: "100%",
+                  minWidth: 0,
+                  minHeight: 160,
+                  p: { xs: 1.25, sm: 1.5 },
+                  borderRadius: 3,
+                  border: `1px solid ${
+                    isCurrent
+                      ? alpha(step.color, 0.4)
+                      : isActive
+                        ? alpha(step.color, 0.15)
+                        : alpha(theme.palette.divider, 0.06)
+                  }`,
+                  bgcolor: isCurrent
+                    ? alpha(step.color, 0.06)
+                    : isActive
+                      ? alpha(step.color, 0.02)
+                      : "transparent",
+                  transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                  transform: isActive ? "translateY(0)" : "translateY(8px)",
+                  opacity: isActive ? 1 : 0.35,
+                  boxShadow: isCurrent
+                    ? `0 0 20px ${alpha(step.color, 0.15)}`
+                    : "none",
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  bgcolor: isActive
-                    ? alpha(step.color, 0.15)
-                    : alpha(theme.palette.divider, 0.06),
-                  fontSize: "1rem",
-                  flexShrink: 0,
-                  transition: "all 0.4s ease",
+                  flexDirection: "column",
+                  gap: 1,
                 }}
               >
-                {step.icon}
-              </Box>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: step.color,
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                  fontSize: "0.6rem",
-                  lineHeight: 1,
-                }}
-              >
-                {step.label}
-              </Typography>
-              <Typography
-                sx={{
-                  fontWeight: 600,
-                  fontSize: "0.72rem",
-                  lineHeight: 1.3,
-                  color: isActive ? "text.primary" : "text.disabled",
-                }}
-              >
-                {step.title}
-              </Typography>
-              <Box
-                sx={{
-                  fontFamily: '"JetBrains Mono", "SF Mono", monospace',
-                  fontSize: "0.62rem",
-                  lineHeight: 1.6,
-                  color: isActive ? step.color : "text.disabled",
-                  transition: "color 0.4s ease",
-                  wordBreak: "break-all",
-                }}
-              >
-                {step.code}
-              </Box>
-              <Box
-                sx={{
-                  fontFamily: '"JetBrains Mono", "SF Mono", monospace',
-                  fontSize: "0.58rem",
-                  color: isActive ? "text.secondary" : "text.disabled",
-                  lineHeight: 1.4,
-                  wordBreak: "break-word",
-                }}
-              >
-                {step.response}
+                <Box
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: isActive
+                      ? alpha(step.color, 0.15)
+                      : alpha(theme.palette.divider, 0.06),
+                    fontSize: "1rem",
+                    flexShrink: 0,
+                    transition: "all 0.4s ease",
+                  }}
+                >
+                  {step.icon}
+                </Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: step.color,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    fontSize: "0.6rem",
+                    lineHeight: 1,
+                  }}
+                >
+                  {step.label}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: "0.72rem",
+                    lineHeight: 1.3,
+                    color: isActive ? "text.primary" : "text.disabled",
+                  }}
+                >
+                  {step.title}
+                </Typography>
+                <Box
+                  sx={{
+                    fontFamily: '"JetBrains Mono", "SF Mono", monospace',
+                    fontSize: "0.62rem",
+                    lineHeight: 1.6,
+                    color: isActive ? step.color : "text.disabled",
+                    transition: "color 0.4s ease",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {step.code}
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: '"JetBrains Mono", "SF Mono", monospace',
+                    fontSize: "0.58rem",
+                    color: isActive ? "text.secondary" : "text.disabled",
+                    lineHeight: 1.4,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {step.response}
+                </Box>
               </Box>
             </Box>
             {idx < steps.length - 1 && (
               <Box
                 sx={{
-                  display: "flex",
+                  display: { xs: "none", sm: "flex" },
                   alignItems: "center",
                   justifyContent: "center",
-                  width: 24,
+                  flex: "0 0 14px",
                   alignSelf: "center",
-                  flexShrink: 0,
                   position: "relative",
                 }}
               >
@@ -268,7 +274,7 @@ function X402AnimationSequence({ steps }: { steps: X402StepRow[] }) {
                 />
               </Box>
             )}
-          </Box>
+          </Fragment>
         );
       })}
     </Box>
@@ -517,6 +523,10 @@ export default function LandingPage() {
                 color: "text.secondary",
                 letterSpacing: "0.1em",
                 fontSize: "0.65rem",
+                textAlign: "center",
+                display: "block",
+                width: "100%",
+                mb: 0.5,
               }}
             >
               {t("x402Overline")}
@@ -526,9 +536,13 @@ export default function LandingPage() {
               variant="caption"
               sx={{
                 color: "text.disabled",
-                mt: 1,
+                mt: 1.5,
                 display: "block",
+                width: "100%",
                 fontSize: "0.7rem",
+                textAlign: "center",
+                lineHeight: 1.5,
+                px: { xs: 0, sm: 2 },
               }}
             >
               {t("x402Caption")}
