@@ -1,0 +1,250 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "India Data Exchange — Public agent API",
+    "version": "1.0.0",
+    "description": "Curated endpoints for discovering datasets and purchasing downloads via **HTTP 402 + x402** (USDC on Algorand). The server URL is taken from `NEXT_PUBLIC_API_BASE_URL` in the hosted docs page.\n\n**Humans** using a wallet: send `x-payment-wallet` with the payer address and optional `Authorization: Bearer <JWT>` after signing in. The browser client uses `@x402-avm/fetch` to complete payment automatically.\n\n**AI agents** should use an x402-aware HTTP client (e.g. `wrapFetchWithPayment` from `@x402-avm/fetch`) so `402 Payment Required` responses are handled per the x402 protocol without manual header juggling.\n\nFor the full API (auth, listings, bounties, admin), open the backend **Swagger UI** at `/api-docs` on the same API host."
+  },
+  "tags": [
+    {
+      "name": "Datasets",
+      "description": "Public discovery and x402-gated download"
+    }
+  ],
+  "paths": {
+    "/api/datasets": {
+      "get": {
+        "tags": ["Datasets"],
+        "operationId": "listDatasets",
+        "summary": "List active datasets",
+        "description": "Returns paginated **active** listings. No authentication required.",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "agriculture",
+                "language",
+                "traffic",
+                "healthcare",
+                "cultural",
+                "financial",
+                "other"
+              ]
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["csv", "json", "images", "audio", "video", "pdf", "other"]
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Full-text search on title and description",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "Comma-separated tags",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 20 }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["createdAt", "price", "purchases"],
+              "default": "createdAt"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["datasets", "total", "page", "totalPages"],
+                  "properties": {
+                    "datasets": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Dataset" }
+                    },
+                    "total": { "type": "integer" },
+                    "page": { "type": "integer" },
+                    "totalPages": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/datasets/{id}": {
+      "get": {
+        "tags": ["Datasets"],
+        "operationId": "getDatasetById",
+        "summary": "Get dataset by ID",
+        "description": "Public metadata for one **active** dataset. The full-data IPFS CID is **not** included (use the download flow after payment).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dataset (sanitized)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["dataset"],
+                  "properties": {
+                    "dataset": { "$ref": "#/components/schemas/Dataset" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found or unlisted"
+          }
+        }
+      }
+    },
+    "/api/datasets/{id}/download": {
+      "get": {
+        "tags": ["Datasets"],
+        "operationId": "downloadDataset",
+        "summary": "Download full dataset (x402)",
+        "description": "Protected by **x402 payment middleware**. First request without a valid settlement typically returns **402** with payment requirements in the response body (and/or protocol-specific headers) for USDC on Algorand.\n\nAfter successful payment (or if the wallet already has access for re-download), returns a **short-lived signed URL** for the private full file.\n\nRecommended headers for interactive clients:\n- `x-payment-wallet`: Algorand address of the payer (required for purchase flow).\n- `Authorization`: `Bearer <JWT>` optional; logged-in users get long-lived re-download behavior per product rules.\n\nUse `@x402-avm/fetch` (`wrapFetchWithPayment`) so 402 handling and retries are automatic.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Optional `Bearer <JWT>` for logged-in buyers"
+          },
+          {
+            "name": "x-payment-wallet",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Buyer Algorand address (used with x402 client and for access checks)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signed download URL and metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["downloadUrl", "fileName", "expiresAt"],
+                  "properties": {
+                    "downloadUrl": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "Time-limited URL to fetch the full dataset file"
+                    },
+                    "fileName": { "type": "string" },
+                    "expiresAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "Unix epoch milliseconds when `downloadUrl` is no longer valid (typically 1 hour from issue)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "**Payment required** — x402 protocol. Body includes payment instruction payload (e.g. requirements / `accepts`) for the client to satisfy before retrying the same URL. Exact shape follows `@x402-avm` / facilitator responses.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dataset not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Dataset": {
+        "type": "object",
+        "description": "Listing as returned by the API (`fullDataIpfsCid` is omitted on reads)",
+        "properties": {
+          "_id": { "type": "string" },
+          "sellerId": { "type": "string" },
+          "sellerWalletAddress": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "category": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "priceUSDC": { "type": "number" },
+          "sampleIpfsCid": { "type": "string" },
+          "sampleFileName": { "type": "string" },
+          "format": { "type": "string" },
+          "recordCount": { "type": "integer" },
+          "sizeBytes": { "type": "integer" },
+          "totalPurchases": { "type": "integer" },
+          "status": { "type": "string", "enum": ["active", "unlisted"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

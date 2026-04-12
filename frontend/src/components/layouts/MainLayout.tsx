@@ -19,7 +19,16 @@ export default function MainLayout({
       }}
     >
       <Topbar />
-      <Box component="main" sx={{ flex: 1, position: "relative" }}>
+      <Box
+        component="main"
+        sx={{
+          flex: 1,
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: 0,
+        }}
+      >
         {children}
       </Box>
       <SiteFooter />

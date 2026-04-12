@@ -19,6 +19,7 @@
     "@mui/x-data-grid": "^8.5.3",
     "@perawallet/connect": "^1.4.2",
     "@reduxjs/toolkit": "^2.6.1",
+    "@scalar/api-reference-react": "^0.9.22",
     "@x402-avm/avm": "^2.6.1",
     "@x402-avm/core": "^2.6.1",
     "@x402-avm/fetch": "^2.6.1",
