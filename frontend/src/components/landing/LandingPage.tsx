@@ -115,12 +115,10 @@ function X402AnimationSequence({ steps }: { steps: X402StepRow[] }) {
         py: 2,
         display: "flex",
         alignItems: "stretch",
-        flexDirection: "row",
+        flexDirection: { xs: "column", sm: "row" },
         width: "100%",
-        gap: { xs: 1, sm: 0 },
-        overflowX: { xs: "auto", sm: "hidden" },
-        WebkitOverflowScrolling: "touch",
-        "&::-webkit-scrollbar": { display: "none" },
+        gap: { xs: 0, sm: 0 },
+        overflowX: "hidden",
       }}
     >
       {steps.map((step, idx) => {
@@ -131,8 +129,9 @@ function X402AnimationSequence({ steps }: { steps: X402StepRow[] }) {
             <Box
               sx={{
                 flex: { xs: "0 0 auto", sm: "1 1 0" },
-                minWidth: { xs: 132, sm: 0 },
-                maxWidth: { sm: "100%" },
+                width: { xs: "100%", sm: "auto" },
+                minWidth: { xs: 0, sm: 0 },
+                maxWidth: { xs: "100%", sm: "100%" },
                 display: "flex",
                 alignItems: "stretch",
               }}
@@ -236,16 +235,50 @@ function X402AnimationSequence({ steps }: { steps: X402StepRow[] }) {
             {idx < steps.length - 1 && (
               <Box
                 sx={{
-                  display: { xs: "none", sm: "flex" },
+                  display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  flex: "0 0 14px",
+                  flex: { xs: "0 0 auto", sm: "0 0 14px" },
                   alignSelf: "center",
                   position: "relative",
+                  py: { xs: 0.5, sm: 0 },
                 }}
               >
+                {/* Mobile: vertical link between stacked cards */}
                 <Box
                   sx={{
+                    display: { xs: "block", sm: "none" },
+                    width: 2,
+                    height: 18,
+                    borderRadius: 1,
+                    bgcolor:
+                      idx < activeStep
+                        ? alpha(step.color, 0.45)
+                        : alpha(theme.palette.divider, 0.12),
+                    transition: "all 0.6s ease",
+                    position: "relative",
+                    "&::after":
+                      idx < activeStep
+                        ? {
+                            content: '""',
+                            position: "absolute",
+                            bottom: -3,
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            width: 5,
+                            height: 5,
+                            borderRadius: "50%",
+                            bgcolor: steps[idx + 1].color,
+                            animation: "flowPulse 1s ease infinite",
+                            boxShadow: `0 0 6px ${steps[idx + 1].color}`,
+                          }
+                        : {},
+                  }}
+                />
+                {/* Desktop: horizontal link */}
+                <Box
+                  sx={{
+                    display: { xs: "none", sm: "block" },
                     width: "100%",
                     height: 2,
                     bgcolor:
@@ -472,18 +505,23 @@ export default function LandingPage() {
               direction={{ xs: "column", sm: "row" }}
               spacing={2}
               justifyContent="center"
+              alignItems={{ xs: "stretch", sm: "center" }}
               sx={{ animation: "fadeInUp 0.6s ease 0.3s both" }}
             >
-              <Link href="/marketplace">
-                <Button
-                  variant="contained"
-                  size="large"
-                  endIcon={<ArrowForwardIcon />}
-                  sx={{ px: 4, py: 1.5 }}
-                >
-                  {t("browseMarketplace")}
-                </Button>
-              </Link>
+              <Button
+                component={Link}
+                href="/marketplace"
+                variant="contained"
+                size="large"
+                endIcon={<ArrowForwardIcon />}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  width: { xs: "100%", sm: "auto" },
+                }}
+              >
+                {t("browseMarketplace")}
+              </Button>
               <Button
                 variant="outlined"
                 size="large"
@@ -492,6 +530,7 @@ export default function LandingPage() {
                 sx={{
                   px: 4,
                   py: 1.5,
+                  width: { xs: "100%", sm: "auto" },
                   borderColor: alpha(theme.palette.text.primary, 0.2),
                   color: "text.primary",
                   "&:hover": {
