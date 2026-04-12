@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "i18n:gen": "node scripts/build-i18n-client.mjs",
+    "prebuild": "npm run i18n:gen",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

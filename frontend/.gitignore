@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# optional venv for scripts/translate-locales-from-en.py
+.venv-i18n
