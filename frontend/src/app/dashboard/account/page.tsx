@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDeleteAccountMutation, useGetProfileQuery } from "@/redux/api/userApi";
-import UserActivityBarChart from "@/components/dashboard/UserActivityBarChart";
+import UserDashboardInsights from "@/components/dashboard/UserDashboardInsights";
 import { useAuth } from "@/providers/auth-provider";
 import { useToast } from "@/providers/toast-provider";
 
@@ -51,9 +51,9 @@ export default function AccountPage() {
           <CircularProgress size={32} />
         </Box>
       )}
-      {profileData?.stats && <UserActivityBarChart stats={profileData.stats} />}
+      {!profileLoading && <UserDashboardInsights />}
 
-      <Button variant="outlined" color="error" onClick={() => setConfirmOpen(true)} disabled={isLoading} sx={{ mt: profileData?.stats ? 3 : 0 }}>
+      <Button variant="outlined" color="error" onClick={() => setConfirmOpen(true)} disabled={isLoading} sx={{ mt: !profileLoading ? 3 : 0 }}>
         {t("deleteAccount")}
       </Button>
 

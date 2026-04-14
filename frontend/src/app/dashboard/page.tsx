@@ -11,7 +11,7 @@ import {
   Button,
 } from "@mui/material";
 import DashboardStats from "@/components/dashboard/DashboardStats";
-import UserActivityBarChart from "@/components/dashboard/UserActivityBarChart";
+import UserDashboardInsights from "@/components/dashboard/UserDashboardInsights";
 import { useGetProfileQuery } from "@/redux/api/userApi";
 import { useAuth } from "@/providers/auth-provider";
 import { truncateAddress } from "@/utils";
@@ -92,7 +92,7 @@ export default function DashboardPage() {
 
       {data?.stats && <DashboardStats stats={data.stats} />}
 
-      {data?.stats && <UserActivityBarChart stats={data.stats} />}
+      <UserDashboardInsights />
 
       <Grid container spacing={3} sx={{ mt: 2 }}>
         {actions.map((action) => (
