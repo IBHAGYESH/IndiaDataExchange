@@ -43,6 +43,8 @@ import config from "@/config";
 import algosdk from "algosdk";
 import { submittedTxIdFromAlgodResponse } from "@/utils/algod";
 import { useTranslation } from "react-i18next";
+import FormSection from "@/components/forms/FormSection";
+import FileDropZone from "@/components/forms/FileDropZone";
 
 export default function BountyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -379,46 +381,64 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
               setSubmitterAttestation(false);
               setSubmitError(null);
             }}
-            maxWidth="sm"
+            maxWidth="md"
             fullWidth
           >
-            <DialogTitle>{t("submitYourData")}</DialogTitle>
-            <DialogContent>
+            <DialogTitle sx={{ fontWeight: 800 }}>{t("submitYourData")}</DialogTitle>
+            <DialogContent sx={{ pt: 1 }}>
               {submitError && (
-                <Alert severity="error" sx={{ mb: 2 }}>
+                <Alert severity="error" sx={{ mb: 2, mt: 1 }}>
                   {submitError}
                 </Alert>
               )}
-              <TextField
-                fullWidth
-                label={t("submissionTitleField")}
-                value={submitForm.title}
-                onChange={(e) => setSubmitForm((p) => ({ ...p, title: e.target.value }))}
-                sx={{ mb: 2, mt: 1 }}
-              />
-              <TextField
-                fullWidth
-                label={tf("description")}
-                multiline
-                rows={4}
-                value={submitForm.description}
-                onChange={(e) => setSubmitForm((p) => ({ ...p, description: e.target.value }))}
-                sx={{ mb: 2 }}
-              />
-              <Typography variant="subtitle2" gutterBottom>
-                {t("sampleFileDialog")}
-              </Typography>
-              <input
-                type="file"
-                onChange={(e) => setSampleFile(e.target.files?.[0] || null)}
-                style={{ marginBottom: 16 }}
-              />
-              <Typography variant="subtitle2" gutterBottom>
-                {t("fullDataDialog")}
-              </Typography>
-              <input type="file" onChange={(e) => setFullDataFile(e.target.files?.[0] || null)} />
+              <FormSection title={t("sectionSubmissionDetails")}>
+                <Stack spacing={2}>
+                  <TextField
+                    fullWidth
+                    label={t("submissionTitleField")}
+                    value={submitForm.title}
+                    onChange={(e) => setSubmitForm((p) => ({ ...p, title: e.target.value }))}
+                  />
+                  <TextField
+                    fullWidth
+                    label={tf("description")}
+                    multiline
+                    rows={4}
+                    value={submitForm.description}
+                    onChange={(e) => setSubmitForm((p) => ({ ...p, description: e.target.value }))}
+                  />
+                </Stack>
+              </FormSection>
+              <FormSection title={t("sectionSubmissionFiles")}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="caption" fontWeight={600} sx={{ mb: 1, display: "block", color: "text.secondary" }}>
+                      {t("sampleFileDialog")}
+                    </Typography>
+                    <FileDropZone
+                      label={tf("dropSample")}
+                      hint={tf("hintSample")}
+                      file={sampleFile}
+                      onSelect={setSampleFile}
+                      onClear={() => setSampleFile(null)}
+                    />
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="caption" fontWeight={600} sx={{ mb: 1, display: "block", color: "text.secondary" }}>
+                      {t("fullDataDialog")}
+                    </Typography>
+                    <FileDropZone
+                      label={tf("dropFull")}
+                      hint={tf("hintFull")}
+                      file={fullDataFile}
+                      onSelect={setFullDataFile}
+                      onClear={() => setFullDataFile(null)}
+                    />
+                  </Box>
+                </Stack>
+              </FormSection>
               <FormControlLabel
-                sx={{ alignItems: "flex-start", mt: 2, mr: 0 }}
+                sx={{ alignItems: "flex-start", mt: 0, mb: 1, ml: 0 }}
                 control={
                   <Checkbox
                     checked={submitterAttestation}

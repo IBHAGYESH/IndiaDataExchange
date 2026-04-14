@@ -1,6 +1,6 @@
 import { apiInstance } from "./apiInstance";
 import apiRoutes from "./apiRoutes";
-import { Dataset } from "@/types";
+import { Dataset, DatasetPublicPurchaseRow } from "@/types";
 
 interface ListDatasetsResponse {
   datasets: Dataset[];
@@ -40,6 +40,19 @@ export const datasetApi = apiInstance.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: "dataset", id }],
     }),
 
+    getDatasetPurchases: builder.query<
+      { purchases: DatasetPublicPurchaseRow[]; total: number; page: number; totalPages: number },
+      { id: string; page?: number; limit?: number }
+    >({
+      query: ({ id, page = 1, limit = 10 }) => {
+        const sp = new URLSearchParams();
+        sp.set("page", String(page));
+        sp.set("limit", String(limit));
+        return `${apiRoutes.datasets.purchases(id)}?${sp.toString()}`;
+      },
+      providesTags: (_r, _e, { id }) => [{ type: "dataset", id }],
+    }),
+
     createDataset: builder.mutation<{ dataset: Dataset }, FormData>({
       query: (body) => ({
         url: apiRoutes.datasets.create,
@@ -70,6 +83,7 @@ export const {
   useGetDatasetsQuery,
   useLazyGetDatasetsQuery,
   useGetDatasetQuery,
+  useGetDatasetPurchasesQuery,
   useCreateDatasetMutation,
   useUpdateDatasetMutation,
   useDeleteDatasetMutation,

@@ -36,6 +36,9 @@ const env = cleanEnv(process.env, {
   RATE_LIMIT_MAX: num({ default: 300 }),
 
   LOG_TO_FILE: bool({ default: false }),
+
+  /** Base URL for Algorand transaction links (no trailing tx id). */
+  ALGO_EXPLORER_TX_URL: str({ default: "https://lora.algokit.io/testnet/transaction" }),
 });
 
 export const appConfig = {
@@ -90,5 +93,9 @@ export const appConfig = {
 
   logging: {
     logToFile: env.LOG_TO_FILE,
+  },
+
+  explorer: {
+    algoTxUrlBase: env.ALGO_EXPLORER_TX_URL.replace(/\/$/, ""),
   },
 } as const;

@@ -20,6 +20,7 @@ import GavelIcon from "@mui/icons-material/Gavel";
 import Link from "next/link";
 import AdminProtectedRoute from "@/components/shared/AdminProtectedRoute";
 import { useGetAdminStatsQuery } from "@/redux/api/adminApi";
+import AdminPlatformBarChart from "@/components/dashboard/AdminPlatformBarChart";
 import { useTranslation } from "react-i18next";
 
 export default function AdminOverviewPage() {
@@ -95,6 +96,7 @@ export default function AdminOverviewPage() {
         )}
 
         {data && (
+          <>
           <Grid container spacing={3}>
             {statCards.map((stat) => (
               <Grid key={stat.key} size={{ xs: 12, sm: 6, md: 3 }}>
@@ -133,6 +135,8 @@ export default function AdminOverviewPage() {
               </Grid>
             ))}
           </Grid>
+          <AdminPlatformBarChart stats={data} />
+          </>
         )}
 
         <Typography variant="h6" fontWeight={700} sx={{ mt: 5, mb: 3 }}>

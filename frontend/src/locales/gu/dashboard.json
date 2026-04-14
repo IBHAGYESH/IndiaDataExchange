@@ -61,5 +61,10 @@
   "listingStatus": "લિસ્ટિંગ સ્થિતિ",
   "lastUpdated": "છેલ્લે અપડેટ કર્યું",
   "sellerWallet": "વિક્રેતા વૉલેટ",
-  "datasetInfoHeading": "ડેટાસેટ માહિતી"
+  "datasetInfoHeading": "ડેટાસેટ માહિતી",
+  "activityOverview": "તમારી પ્રવૃત્તિ (ગણતરી)",
+  "chartListed": "યાદી કરેલ",
+  "chartPurchases": "ખરીદીઓ",
+  "chartBounties": "બક્ષિસ",
+  "chartSubmissions": "સબમિશન"
 }

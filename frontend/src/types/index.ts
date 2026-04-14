@@ -49,6 +49,16 @@ export interface Dataset {
   updatedAt: string;
 }
 
+/** Row from GET /api/datasets/:id/purchases (public, privacy-safe). */
+export interface DatasetPublicPurchaseRow {
+  createdAt: string;
+  isHuman: boolean;
+  amountPaidUSDC: number;
+  paymentTxId: string;
+  buyerWallet: string;
+  explorerTxUrl: string;
+}
+
 /** Populated dataset on a purchase (no full-data IPFS fields). */
 export type PurchasedDataset = Omit<Dataset, "sellerId"> & { sellerId?: string };
 

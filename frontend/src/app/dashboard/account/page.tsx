@@ -12,7 +12,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeleteAccountMutation } from "@/redux/api/userApi";
+import { useDeleteAccountMutation, useGetProfileQuery } from "@/redux/api/userApi";
+import UserActivityBarChart from "@/components/dashboard/UserActivityBarChart";
 import { useAuth } from "@/providers/auth-provider";
 import { useToast } from "@/providers/toast-provider";
 
@@ -23,6 +24,7 @@ export default function AccountPage() {
   const { showToast } = useToast();
   const [deleteAccount, { isLoading }] = useDeleteAccountMutation();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const { data: profileData, isLoading: profileLoading } = useGetProfileQuery();
 
   const handleDelete = async () => {
     try {
@@ -43,7 +45,15 @@ export default function AccountPage() {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 560 }}>
         {t("accountIntro")}
       </Typography>
-      <Button variant="outlined" color="error" onClick={() => setConfirmOpen(true)} disabled={isLoading}>
+
+      {profileLoading && (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <CircularProgress size={32} />
+        </Box>
+      )}
+      {profileData?.stats && <UserActivityBarChart stats={profileData.stats} />}
+
+      <Button variant="outlined" color="error" onClick={() => setConfirmOpen(true)} disabled={isLoading} sx={{ mt: profileData?.stats ? 3 : 0 }}>
         {t("deleteAccount")}
       </Button>
 

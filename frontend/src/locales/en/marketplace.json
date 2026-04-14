@@ -75,5 +75,16 @@
   "linkExpiresNote": "Link expires in 1 hour. Return to dashboard to re-download anytime.",
   "processingPayment": "Processing Payment…",
   "purchaseFor": "Purchase for {{price}}",
-  "connectToPurchase": "Connect your wallet to purchase. AI agents can purchase directly via x402."
+  "connectToPurchase": "Connect your wallet to purchase. AI agents can purchase directly via x402.",
+  "recentPurchasesTitle": "Recent purchases",
+  "recentPurchasesSubtitle": "Public record of paid access (buyer wallets are truncated for privacy).",
+  "recentPurchasesEmpty": "No purchases yet — be the first buyer.",
+  "purchaseColDate": "Date",
+  "purchaseColBuyerType": "Buyer type",
+  "purchaseColAmount": "Amount",
+  "purchaseColBuyer": "Buyer",
+  "purchaseColExplorer": "Transaction",
+  "buyerTypeHuman": "Human",
+  "buyerTypeAgent": "AI agent",
+  "viewOnExplorer": "View on explorer"
 }

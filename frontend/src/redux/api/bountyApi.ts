@@ -6,7 +6,15 @@ export const bountyApi = apiInstance.injectEndpoints({
   endpoints: (builder) => ({
     getBounties: builder.query<
       { bounties: Bounty[]; total: number; page: number; totalPages: number },
-      { category?: string; status?: string; page?: number; limit?: number }
+      {
+        category?: string;
+        status?: string;
+        search?: string;
+        sortBy?: string;
+        sortOrder?: string;
+        page?: number;
+        limit?: number;
+      }
     >({
       query: (params) => {
         const sp = new URLSearchParams();

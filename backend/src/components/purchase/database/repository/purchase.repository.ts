@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { ANONYMIZED_WALLET_PLACEHOLDER } from "@/constants/privacy";
+import { getPagination } from "@utils/index";
 import { PurchaseModel, IPurchase } from "../models";
 
 export class PurchaseRepository {
@@ -60,5 +61,20 @@ export class PurchaseRepository {
       },
       { $set: { buyerWalletAddress: ANONYMIZED_WALLET_PLACEHOLDER, buyerId: null } }
     );
+  }
+
+  async findByDatasetIdPaginated(datasetId: string, page: number, limit: number) {
+    if (!Types.ObjectId.isValid(datasetId)) {
+      return { purchases: [] as IPurchase[], total: 0, page: 1, totalPages: 0 };
+    }
+    const oid = new Types.ObjectId(datasetId);
+    const { limitNumber, pageNumber, skipNumber } = getPagination({ limit, page });
+    const filter = { datasetId: oid };
+    const [purchases, total] = await Promise.all([
+      this.model.find(filter).sort({ createdAt: -1 }).skip(skipNumber).limit(limitNumber).lean(),
+      this.model.countDocuments(filter),
+    ]);
+    const totalPages = total === 0 ? 0 : Math.ceil(total / limitNumber);
+    return { purchases, total, page: pageNumber, totalPages };
   }
 }

@@ -75,5 +75,16 @@
   "linkExpiresNote": "લિંક 1 કલાકમાં સમાપ્ત થાય છે. કોઈપણ સમયે ફરીથી ડાઉનલોડ કરવા માટે ડેશબોર્ડ પર પાછા ફરો.",
   "processingPayment": "ચુકવણી પર પ્રક્રિયા કરી રહ્યું છે...",
   "purchaseFor": "{{price}} માટે ખરીદી",
-  "connectToPurchase": "ખરીદી કરવા માટે તમારા વૉલેટને કનેક્ટ કરો. AI એજન્ટો x402 દ્વારા સીધી ખરીદી કરી શકે છે."
+  "connectToPurchase": "ખરીદી કરવા માટે તમારા વૉલેટને કનેક્ટ કરો. AI એજન્ટો x402 દ્વારા સીધી ખરીદી કરી શકે છે.",
+  "recentPurchasesTitle": "તાજેતરની ખરીદીઓ",
+  "recentPurchasesSubtitle": "ચૂકવણીનો જાહેર રેકોર્ડ (ગોપનીયતા માટે વૉલેટ ટૂંકો).",
+  "recentPurchasesEmpty": "હજી કોઈ ખરીદી નહીં — પહેલા ખરીદનાર બનો.",
+  "purchaseColDate": "તારીખ",
+  "purchaseColBuyerType": "ખરીદનાર પ્રકાર",
+  "purchaseColAmount": "રકમ",
+  "purchaseColBuyer": "ખરીદનાર",
+  "purchaseColExplorer": "વ્યવહાર",
+  "buyerTypeHuman": "માનવ",
+  "buyerTypeAgent": "AI એજન્ટ",
+  "viewOnExplorer": "એક્સપ્લોરર પર જુઓ"
 }

@@ -75,5 +75,16 @@
   "linkExpiresNote": "लिंक 1 घंटे में समाप्त होगा। पुनः डाउनलोड के लिए डैशबोर्ड पर जाएँ।",
   "processingPayment": "भुगतान प्रसंस्करण…",
   "purchaseFor": "{{price}} में खरीदें",
-  "connectToPurchase": "खरीदने के लिए वॉलेट कनेक्ट करें। AI एजेंट x402 से सीधे खरीद सकते हैं।"
+  "connectToPurchase": "खरीदने के लिए वॉलेट कनेक्ट करें। AI एजेंट x402 से सीधे खरीद सकते हैं।",
+  "recentPurchasesTitle": "हाल की खरीदारियाँ",
+  "recentPurchasesSubtitle": "भुगतान की सार्वजनिक जानकारी (गोपनीयता के लिए वॉलेट संक्षिप्त)।",
+  "recentPurchasesEmpty": "अभी कोई खरीदारी नहीं — आप पहले खरीदार बनें।",
+  "purchaseColDate": "तारीख",
+  "purchaseColBuyerType": "खरीदार प्रकार",
+  "purchaseColAmount": "राशि",
+  "purchaseColBuyer": "खरीदार",
+  "purchaseColExplorer": "लेनदेन",
+  "buyerTypeHuman": "मानव",
+  "buyerTypeAgent": "AI एजेंट",
+  "viewOnExplorer": "एक्सप्लोरर पर देखें"
 }

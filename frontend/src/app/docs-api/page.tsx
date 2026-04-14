@@ -11,7 +11,7 @@ import MainLayout from "@/components/layouts/MainLayout";
 import config from "@/config";
 import publicAgentSpec from "@/docs/public-agent-openapi.json";
 
-/** Map MUI palette to Scalar CSS variables so /docs matches the rest of IDE. */
+/** Map MUI palette to Scalar CSS variables so /docs-api matches the rest of IDE. */
 function scalarCssFromTheme(theme: Theme) {
   const { palette, typography } = theme;
   const font: string =
@@ -40,7 +40,7 @@ function scalarCssFromTheme(theme: Theme) {
   `;
 }
 
-export default function DocsPage() {
+export default function DocsApiPage() {
   const theme = useTheme();
 
   const configuration = useMemo((): AnyApiReferenceConfiguration => {

@@ -19,10 +19,14 @@ import {
   useTheme,
   Chip,
   Stack,
+  Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
+import AddIcon from "@mui/icons-material/Add";
+import Link from "next/link";
 import MainLayout from "@/components/layouts/MainLayout";
+import { useAuth } from "@/providers/auth-provider";
 import DatasetCard from "@/components/dataset/DatasetCard";
 import { useGetDatasetsQuery } from "@/redux/api/datasetApi";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
@@ -41,6 +45,8 @@ export default function MarketplacePage() {
 
 function MarketplaceContent() {
   const { t } = useTranslation("marketplace");
+  const { t: tn } = useTranslation("nav");
+  const { isConnected } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -110,13 +116,31 @@ function MarketplaceContent() {
         }}
       >
         <Container maxWidth="xl" sx={{ py: { xs: 3, md: 5 } }}>
-          <Box sx={{ mb: { xs: 3, md: 4 } }}>
-            <Typography variant="h4" fontWeight={800} sx={{ letterSpacing: "-0.02em", mb: 0.5 }}>
-              {t("pageTitle")}
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              {t("pageSubtitle")}
-            </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              flexWrap: "wrap",
+              gap: 2,
+              mb: { xs: 3, md: 4 },
+            }}
+          >
+            <Box>
+              <Typography variant="h4" fontWeight={800} sx={{ letterSpacing: "-0.02em", mb: 0.5 }}>
+                {t("pageTitle")}
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                {t("pageSubtitle")}
+              </Typography>
+            </Box>
+            {isConnected && (
+              <Link href="/dashboard/list-dataset">
+                <Button variant="contained" startIcon={<AddIcon />}>
+                  {tn("listDataset")}
+                </Button>
+              </Link>
+            )}
           </Box>
 
           <Box

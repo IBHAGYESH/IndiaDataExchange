@@ -23,6 +23,24 @@ paths:
           name: category
           type: string
         - in: query
+          name: tags
+          type: string
+          description: Comma-separated tag list
+        - in: query
+          name: search
+          type: string
+          description: Case-insensitive match on title or description
+        - in: query
+          name: sortBy
+          type: string
+          enum: [createdAt, reward, deadline]
+          default: createdAt
+        - in: query
+          name: sortOrder
+          type: string
+          enum: [asc, desc]
+          default: desc
+        - in: query
           name: page
           type: integer
           default: 1

@@ -6,12 +6,14 @@ import {
   GridLegacy as Grid,
   Typography,
   Box,
+  TextField,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
   Pagination,
   CircularProgress,
+  InputAdornment,
   Fade,
   alpha,
   useTheme,
@@ -19,6 +21,7 @@ import {
   Stack,
   Chip,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import MainLayout from "@/components/layouts/MainLayout";
@@ -62,8 +65,13 @@ function BountiesContent() {
 
   const status = searchParams.get("status") || "open";
   const category = searchParams.get("category") || "";
+  const search = searchParams.get("search") || "";
+  const sortBy = searchParams.get("sortBy") || "createdAt";
+  const sortOrder = searchParams.get("sortOrder") || "desc";
   const page = parseInt(searchParams.get("page") || "1", 10);
   const apiStatus = status === "all" ? undefined : status;
+
+  const sortPreset = `${sortBy}:${sortOrder}`;
 
   const updateUrl = useCallback(
     (params: Record<string, string>) => {
@@ -72,7 +80,9 @@ function BountiesContent() {
         if (v) current.set(k, v);
         else current.delete(k);
       });
-      if (!("page" in params)) current.set("page", "1");
+      if (params.page === undefined && !("page" in params)) {
+        current.set("page", "1");
+      }
       router.push(`${pathname}?${current.toString()}`, { scroll: false });
     },
     [searchParams, router, pathname],
@@ -81,6 +91,9 @@ function BountiesContent() {
   const { data, isLoading, isError, refetch } = useGetBountiesQuery({
     status: apiStatus,
     category: category || undefined,
+    search: search || undefined,
+    sortBy,
+    sortOrder,
     page,
     limit: 12,
   });
@@ -137,19 +150,20 @@ function BountiesContent() {
                 border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
               }}
             >
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>{t("filterStatus")}</InputLabel>
-                <Select
-                  value={status}
-                  label={t("filterStatus")}
-                  onChange={(e) => updateUrl({ status: e.target.value, page: "1" })}
-                >
-                  <MenuItem value="all">{t("allStatusesShort")}</MenuItem>
-                  <MenuItem value="open">{t("open")}</MenuItem>
-                  <MenuItem value="accepted">{t("accepted")}</MenuItem>
-                  <MenuItem value="expired">{t("expired")}</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField
+                size="small"
+                placeholder={t("searchPlaceholder")}
+                value={search}
+                onChange={(e) => updateUrl({ search: e.target.value })}
+                sx={{ flex: "1 1 260px" }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
               <FormControl size="small" sx={{ minWidth: 140 }}>
                 <InputLabel>{t("filterCategory")}</InputLabel>
                 <Select
@@ -164,17 +178,54 @@ function BountiesContent() {
                   ))}
                 </Select>
               </FormControl>
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>{t("filterStatus")}</InputLabel>
+                <Select
+                  value={status}
+                  label={t("filterStatus")}
+                  onChange={(e) => updateUrl({ status: e.target.value, page: "1" })}
+                >
+                  <MenuItem value="all">{t("allStatusesShort")}</MenuItem>
+                  <MenuItem value="open">{t("open")}</MenuItem>
+                  <MenuItem value="accepted">{t("accepted")}</MenuItem>
+                  <MenuItem value="expired">{t("expired")}</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl size="small" sx={{ minWidth: 160 }}>
+                <InputLabel>{t("sortBy")}</InputLabel>
+                <Select
+                  value={sortPreset}
+                  label={t("sortBy")}
+                  onChange={(e) => {
+                    const [sb, so] = e.target.value.split(":");
+                    updateUrl({ sortBy: sb, sortOrder: so, page: "1" });
+                  }}
+                >
+                  <MenuItem value="createdAt:desc">{t("sortNewest")}</MenuItem>
+                  <MenuItem value="reward:desc">{t("sortRewardHigh")}</MenuItem>
+                  <MenuItem value="deadline:asc">{t("sortDeadlineSoon")}</MenuItem>
+                </Select>
+              </FormControl>
             </Box>
 
-            {category && (
+            {(category || search) && (
               <Stack direction="row" spacing={1} sx={{ mb: 3 }} flexWrap="wrap">
-                <Chip
-                  label={tm("categoryChip", { cat: categoryDisplay })}
-                  onDelete={() => updateUrl({ category: "" })}
-                  size="small"
-                  color="primary"
-                  variant="outlined"
-                />
+                {search && (
+                  <Chip
+                    label={t("searchChip", { q: search })}
+                    onDelete={() => updateUrl({ search: "" })}
+                    size="small"
+                  />
+                )}
+                {category && (
+                  <Chip
+                    label={tm("categoryChip", { cat: categoryDisplay })}
+                    onDelete={() => updateUrl({ category: "" })}
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                  />
+                )}
               </Stack>
             )}
 

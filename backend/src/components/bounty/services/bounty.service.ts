@@ -19,10 +19,15 @@ const bountyRepo = new BountyRepository();
 const submissionRepo = new SubmissionRepository();
 const userRepo = new UserRepository();
 
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 export class BountyService {
   async listBounties({
     category,
     tags,
+    search,
     status = "open",
     page = 1,
     limit = 20,
@@ -31,6 +36,7 @@ export class BountyService {
   }: {
     category?: DatasetCategory;
     tags?: string;
+    search?: string;
     status?: string;
     page?: number;
     limit?: number;
@@ -43,6 +49,11 @@ export class BountyService {
     if (tags) {
       const tagArray = tags.split(",").map((t) => t.trim());
       filter.tags = { $in: tagArray };
+    }
+    const q = search?.trim();
+    if (q) {
+      const rx = new RegExp(escapeRegExp(q), "i");
+      filter.$or = [{ title: rx }, { description: rx }];
     }
 
     const { limitNumber, pageNumber, skipNumber } = getPagination({ limit, page });

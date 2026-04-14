@@ -61,5 +61,10 @@
   "listingStatus": "Listing status",
   "lastUpdated": "Last updated",
   "sellerWallet": "Seller wallet",
-  "datasetInfoHeading": "Dataset info"
+  "datasetInfoHeading": "Dataset info",
+  "activityOverview": "Your activity (counts)",
+  "chartListed": "Listed",
+  "chartPurchases": "Purchases",
+  "chartBounties": "Bounties",
+  "chartSubmissions": "Submissions"
 }

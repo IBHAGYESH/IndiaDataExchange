@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useRef, useEffect, useMemo } from "react";
+import { use, useRef, useEffect, useMemo, useState } from "react";
 import {
   Container,
   GridLegacy as Grid,
@@ -14,13 +14,21 @@ import {
   CircularProgress,
   Divider,
   Link as MuiLink,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Pagination,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import MainLayout from "@/components/layouts/MainLayout";
 import DatasetPurchaseButton from "@/components/dataset/DatasetPurchaseButton";
-import { useGetDatasetQuery } from "@/redux/api/datasetApi";
+import { useGetDatasetQuery, useGetDatasetPurchasesQuery } from "@/redux/api/datasetApi";
 import { formatUSDC, truncateAddress, formatBytes, formatDate } from "@/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import config from "@/config";
@@ -38,6 +46,15 @@ export default function DatasetDetailPage({
   const searchParams = useSearchParams();
   const purchaseRef = useRef<HTMLDivElement>(null);
   const { data, isLoading, isError } = useGetDatasetQuery(id);
+  const [purchasePage, setPurchasePage] = useState(1);
+  const { data: purchasesData, isLoading: purchasesLoading } = useGetDatasetPurchasesQuery(
+    { id, page: purchasePage, limit: 10 },
+    { skip: isLoading || isError }
+  );
+
+  useEffect(() => {
+    setPurchasePage(1);
+  }, [id]);
 
   const reportHref = useMemo(() => {
     if (!data?.dataset) return "#";
@@ -166,6 +183,71 @@ export default function DatasetDetailPage({
             >
               {t("viewSampleFile", { name: dataset.sampleFileName })}
             </Button>
+
+            <Divider sx={{ my: 4 }} />
+
+            <Typography variant="h6" fontWeight={700} gutterBottom>
+              {t("recentPurchasesTitle")}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              {t("recentPurchasesSubtitle")}
+            </Typography>
+
+            {purchasesLoading && (
+              <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                <CircularProgress size={28} />
+              </Box>
+            )}
+
+            {!purchasesLoading && purchasesData && purchasesData.purchases.length === 0 && (
+              <Typography variant="body2" color="text.secondary">
+                {t("recentPurchasesEmpty")}
+              </Typography>
+            )}
+
+            {!purchasesLoading && purchasesData && purchasesData.purchases.length > 0 && (
+              <>
+                <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>{t("purchaseColDate")}</TableCell>
+                        <TableCell>{t("purchaseColBuyerType")}</TableCell>
+                        <TableCell align="right">{t("purchaseColAmount")}</TableCell>
+                        <TableCell>{t("purchaseColBuyer")}</TableCell>
+                        <TableCell align="right">{t("purchaseColExplorer")}</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {purchasesData.purchases.map((row) => (
+                        <TableRow key={row.paymentTxId}>
+                          <TableCell>{formatDate(row.createdAt)}</TableCell>
+                          <TableCell>{row.isHuman ? t("buyerTypeHuman") : t("buyerTypeAgent")}</TableCell>
+                          <TableCell align="right">{formatUSDC(row.amountPaidUSDC)}</TableCell>
+                          <TableCell>{row.buyerWallet}</TableCell>
+                          <TableCell align="right">
+                            <MuiLink href={row.explorerTxUrl} target="_blank" rel="noopener noreferrer" variant="body2">
+                              {t("viewOnExplorer")}
+                            </MuiLink>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                {purchasesData.totalPages > 1 && (
+                  <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                    <Pagination
+                      count={purchasesData.totalPages}
+                      page={purchasePage}
+                      onChange={(_e, p) => setPurchasePage(p)}
+                      color="primary"
+                      shape="rounded"
+                    />
+                  </Box>
+                )}
+              </>
+            )}
           </Grid>
 
           <Grid item xs={12} md={4}>

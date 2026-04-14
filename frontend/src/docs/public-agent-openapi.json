@@ -3,7 +3,7 @@
   "info": {
     "title": "India Data Exchange — Public agent API",
     "version": "1.0.0",
-    "description": "Curated endpoints for discovering datasets and purchasing downloads via **HTTP 402 + x402** (USDC on Algorand). The server URL is taken from `NEXT_PUBLIC_API_BASE_URL` in the hosted docs page.\n\n**Humans** using a wallet: send `x-payment-wallet` with the payer address and optional `Authorization: Bearer <JWT>` after signing in. The browser client uses `@x402-avm/fetch` to complete payment automatically.\n\n**AI agents** should use an x402-aware HTTP client (e.g. `wrapFetchWithPayment` from `@x402-avm/fetch`) so `402 Payment Required` responses are handled per the x402 protocol without manual header juggling.\n\nFor the full API (auth, listings, bounties, admin), open the backend **Swagger UI** at `/api-docs` on the same API host."
+    "description": "Curated endpoints for discovering datasets and purchasing downloads via **HTTP 402 + x402** (USDC on Algorand). The server URL is taken from `NEXT_PUBLIC_API_BASE_URL` on the `/docs-api` page.\n\n**Humans** using a wallet: send `x-payment-wallet` with the payer address and optional `Authorization: Bearer <JWT>` after signing in. The browser client uses `@x402-avm/fetch` to complete payment automatically.\n\n**AI agents** should use an x402-aware HTTP client (e.g. `wrapFetchWithPayment` from `@x402-avm/fetch`) so `402 Payment Required` responses are handled per the x402 protocol without manual header juggling.\n\nFor the full API (auth, listings, bounties, admin), open the backend **Swagger UI** at `/api-docs` on the same API host."
   },
   "tags": [
     {

@@ -3,7 +3,8 @@ import { UserRepository } from "@components/user/database/repository/user.reposi
 import { PurchaseRepository } from "@components/purchase/database/repository/purchase.repository";
 import { uploadPublicFile, uploadPrivateFile, getSignedUrl } from "@libraries/pinata.service";
 import { AppError } from "@middlewares/error.middleware";
-import { returnDataObj, getPagination } from "@utils/index";
+import { returnDataObj, getPagination, truncateAddress } from "@utils/index";
+import { appConfig } from "@/config";
 import { buildDatasetPurchaseApiUrl } from "@utils/publicApiUrl";
 import { DatasetCategory, DatasetFormat, DatasetStatus } from "../database/models";
 import { FilterQuery } from "mongoose";
@@ -98,6 +99,31 @@ export class DatasetService {
           }
         : safeDataset;
     return returnDataObj({ dataset: datasetOut });
+  }
+
+  async listPublicPurchasesForDataset(datasetId: string, page = 1, limit = 20) {
+    const dataset = await datasetRepo.findById(datasetId);
+    if (!dataset || dataset.status !== "active") {
+      throw new AppError("NotFound", 404, "Dataset not found", true);
+    }
+
+    const { purchases, total, page: pageNumber, totalPages } = await purchaseRepo.findByDatasetIdPaginated(
+      datasetId,
+      page,
+      limit
+    );
+
+    const base = appConfig.explorer.algoTxUrlBase;
+    const rows = purchases.map((p) => ({
+      createdAt: p.createdAt,
+      isHuman: p.isHuman,
+      amountPaidUSDC: p.amountPaidUSDC,
+      paymentTxId: p.paymentTxId,
+      buyerWallet: truncateAddress(p.buyerWalletAddress),
+      explorerTxUrl: `${base}/${p.paymentTxId}`,
+    }));
+
+    return returnDataObj({ purchases: rows, total, page: pageNumber, totalPages });
   }
 
   async createDataset(

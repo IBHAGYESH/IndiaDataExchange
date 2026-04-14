@@ -40,6 +40,21 @@ export class DatasetRoute {
       })
     );
 
+    // Public: paginated purchase history for an active dataset (must be registered before /:id)
+    this.router.get(
+      `${this.path}/:id/purchases`,
+      tryCatch(async (req: Request, res: Response) => {
+        const { id } = req.params as Record<string, string>;
+        const { page, limit } = req.query as Record<string, string>;
+        const { data, code } = await this.service.listPublicPurchasesForDataset(
+          id,
+          parseInt(page) || 1,
+          parseInt(limit) || 20
+        );
+        res.status(code).json(data);
+      })
+    );
+
     // Public: get single dataset (no fullDataIpfsCid)
     this.router.get(
       `${this.path}/:id`,

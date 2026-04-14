@@ -3,6 +3,7 @@
 import { Box } from "@mui/material";
 import Topbar from "../shared/Topbar";
 import SiteFooter from "../shared/SiteFooter";
+import RouteDocumentTitle from "./RouteDocumentTitle";
 
 export default function MainLayout({
   children,
@@ -18,6 +19,7 @@ export default function MainLayout({
         bgcolor: "background.default",
       }}
     >
+      <RouteDocumentTitle />
       <Topbar />
       <Box
         component="main"

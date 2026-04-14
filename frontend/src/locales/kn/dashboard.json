@@ -61,5 +61,10 @@
   "listingStatus": "ಪಟ್ಟಿಯ ಸ್ಥಿತಿ",
   "lastUpdated": "ಕೊನೆಯದಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ",
   "sellerWallet": "ಮಾರಾಟಗಾರರ ಕೈಚೀಲ",
-  "datasetInfoHeading": "ಡೇಟಾಸೆಟ್ ಮಾಹಿತಿ"
+  "datasetInfoHeading": "ಡೇಟಾಸೆಟ್ ಮಾಹಿತಿ",
+  "activityOverview": "ನಿಮ್ಮ ಚಟುವಟಿಕೆ (ಎಣಿಕೆ)",
+  "chartListed": "ಪಟ್ಟಿ ಮಾಡಿದ",
+  "chartPurchases": "ಖರೀದಿಗಳು",
+  "chartBounties": "ಬೌಂಟಿಗಳು",
+  "chartSubmissions": "ಸಲ್ಲಿಕೆಗಳು"
 }

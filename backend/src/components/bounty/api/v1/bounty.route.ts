@@ -20,10 +20,12 @@ export class BountyRoute {
     this.router.get(
       `${this.path}`,
       tryCatch(async (req: Request, res: Response) => {
-        const { category, tags, status, page, limit, sortBy, sortOrder } = req.query as Record<string, string>;
+        const { category, tags, search, status, page, limit, sortBy, sortOrder } =
+          req.query as Record<string, string>;
         const { data, code } = await this.service.listBounties({
           category: category as import("@components/dataset/database/models").DatasetCategory,
           tags,
+          search,
           status,
           page: parseInt(page) || 1,
           limit: parseInt(limit) || 20,

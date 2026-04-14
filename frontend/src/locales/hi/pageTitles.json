@@ -1,0 +1,23 @@
+{
+  "suffix": "India Data Exchange",
+  "home": "होम",
+  "marketplace": "डेटा मार्केटप्लेस",
+  "dataset": "डेटासेट",
+  "bounties": "डेटा बाउंटी",
+  "bounty": "बाउंटी",
+  "dashboard": "डैशबोर्ड",
+  "listDataset": "डेटासेट सूचीबद्ध करें",
+  "listings": "मेरी सूचियाँ",
+  "purchases": "मेरी खरीदारी",
+  "myBounties": "मेरी बाउंटी",
+  "submissions": "मेरी प्रस्तुतियाँ",
+  "postBounty": "बाउंटी पोस्ट करें",
+  "account": "खाता",
+  "docsApi": "API संदर्भ",
+  "docsMcp": "MCP सर्वर",
+  "terms": "नियम",
+  "privacy": "गोपनीयता",
+  "admin": "व्यवस्थापक",
+  "adminDatasets": "व्यवस्थापक · डेटासेट",
+  "adminBounties": "व्यवस्थापक · बाउंटी"
+}

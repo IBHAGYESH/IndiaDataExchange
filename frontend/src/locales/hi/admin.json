@@ -15,6 +15,8 @@
   "backAdmin": "एडमिन पर वापस",
   "failedLoad": "लोड विफल।",
   "clickRetry": "पुनः प्रयास के लिए क्लिक करें",
+  "platformMetricsChart": "प्लेटफ़ॉर्म कुल",
+  "platformMetricsChartHint": "मात्रा कुल USDC है; पैमाना उपयोगकर्ता गिनती से भिन्न हो सकता है।",
   "noResults": "कोई परिणाम नहीं",
   "totalCount": "कुल {{count}}",
   "failedLoadDatasets": "डेटासेट लोड नहीं हो सके।",

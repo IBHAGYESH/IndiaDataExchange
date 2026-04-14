@@ -9,6 +9,7 @@ const apiRoutes = {
   datasets: {
     list: `/api/datasets`,
     get: (id: string) => `/api/datasets/${id}`,
+    purchases: (id: string) => `/api/datasets/${id}/purchases`,
     create: `/api/datasets`,
     update: (id: string) => `/api/datasets/${id}`,
     delete: (id: string) => `/api/datasets/${id}`,

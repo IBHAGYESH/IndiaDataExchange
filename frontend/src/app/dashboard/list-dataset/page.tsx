@@ -1,136 +1,40 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Typography, Box, TextField, Select, MenuItem, FormControl,
-  InputLabel, Button, Chip, Alert, CircularProgress, alpha, useTheme,
-  IconButton, FormControlLabel, Checkbox,
+  Typography,
+  Box,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Button,
+  Chip,
+  Alert,
+  CircularProgress,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import USDCOptInPrompt from "@/components/shared/USDCOptInPrompt";
 import { useAuth } from "@/providers/auth-provider";
 import { useCreateDatasetMutation } from "@/redux/api/datasetApi";
+import FormSection from "@/components/forms/FormSection";
+import FileDropZone from "@/components/forms/FileDropZone";
 import { DatasetCategory, DatasetFormat } from "@/types";
 
 const categories: DatasetCategory[] = ["agriculture", "language", "traffic", "healthcare", "cultural", "financial", "other"];
 const formats: DatasetFormat[] = ["csv", "json", "images", "audio", "video", "pdf", "other"];
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  const theme = useTheme();
-  return (
-    <Box
-      sx={{
-        p: { xs: 2.5, sm: 3 },
-        borderRadius: 3,
-        border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-        bgcolor: alpha(theme.palette.background.paper, 0.6),
-        mb: 3,
-      }}
-    >
-      <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2.5, color: "text.secondary", textTransform: "uppercase", letterSpacing: "0.06em", fontSize: "0.7rem" }}>
-        {title}
-      </Typography>
-      {children}
-    </Box>
-  );
-}
-
-function FileDropZone({
-  label,
-  hint,
-  file,
-  onSelect,
-  onClear,
-}: {
-  label: string;
-  hint: string;
-  file: File | null;
-  onSelect: (f: File) => void;
-  onClear: () => void;
-}) {
-  const theme = useTheme();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [dragOver, setDragOver] = useState(false);
-
-  return (
-    <Box
-      onClick={() => !file && inputRef.current?.click()}
-      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-      onDragLeave={() => setDragOver(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setDragOver(false);
-        const f = e.dataTransfer.files?.[0];
-        if (f) onSelect(f);
-      }}
-      sx={{
-        p: 3,
-        borderRadius: 3,
-        border: `2px dashed ${
-          file
-            ? alpha("#2EC84F", 0.4)
-            : dragOver
-            ? alpha(theme.palette.primary.main, 0.4)
-            : alpha(theme.palette.divider, 0.15)
-        }`,
-        bgcolor: file
-          ? alpha("#2EC84F", 0.04)
-          : dragOver
-          ? alpha(theme.palette.primary.main, 0.04)
-          : "transparent",
-        textAlign: "center",
-        cursor: file ? "default" : "pointer",
-        transition: "all 0.2s ease",
-        "&:hover": !file ? {
-          borderColor: alpha(theme.palette.primary.main, 0.3),
-          bgcolor: alpha(theme.palette.primary.main, 0.02),
-        } : {},
-      }}
-    >
-      <input
-        ref={inputRef}
-        type="file"
-        hidden
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) onSelect(f);
-        }}
-      />
-      {file ? (
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1.5 }}>
-          <CheckCircleOutlineIcon sx={{ color: "#2EC84F", fontSize: 22 }} />
-          <Box sx={{ textAlign: "left" }}>
-            <Typography variant="body2" fontWeight={600}>{file.name}</Typography>
-            <Typography variant="caption" color="text.disabled">
-              {(file.size / 1024 / 1024).toFixed(2)} MB
-            </Typography>
-          </Box>
-          <IconButton size="small" onClick={(e) => { e.stopPropagation(); onClear(); }} sx={{ color: "text.disabled" }}>
-            <DeleteOutlineIcon fontSize="small" />
-          </IconButton>
-        </Box>
-      ) : (
-        <>
-          <InsertDriveFileIcon sx={{ fontSize: 32, color: "text.disabled", mb: 1 }} />
-          <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5 }}>{label}</Typography>
-          <Typography variant="caption" color="text.disabled">{hint}</Typography>
-        </>
-      )}
-    </Box>
-  );
-}
-
 export default function ListDatasetPage() {
   const { t } = useTranslation("forms");
   const router = useRouter();
-  const theme = useTheme();
   const { isOptedIn, refreshUser } = useAuth();
   const [createDataset, { isLoading }] = useCreateDatasetMutation();
   const [optInOpen, setOptInOpen] = useState(false);
@@ -232,7 +136,7 @@ export default function ListDatasetPage() {
         )}
         {error && <Alert severity="error" sx={{ mb: 3, borderRadius: 3 }}>{error}</Alert>}
 
-        <Section title={t("datasetDetails")}>
+        <FormSection title={t("datasetDetails")}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
             <TextField fullWidth required label={t("title")} value={form.title}
               onChange={(e) => setForm(p => ({ ...p, title: e.target.value }))}
@@ -261,9 +165,9 @@ export default function ListDatasetPage() {
               </FormControl>
             </Box>
           </Box>
-        </Section>
+        </FormSection>
 
-        <Section title={t("filesPricing")}>
+        <FormSection title={t("filesPricing")}>
           <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
             <TextField
               fullWidth required label={t("priceUsdc")} type="number"
@@ -302,9 +206,9 @@ export default function ListDatasetPage() {
               ))}
             </Box>
           )}
-        </Section>
+        </FormSection>
 
-        <Section title={t("filesUpload")}>
+        <FormSection title={t("filesUpload")}>
           <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
             <Box sx={{ flex: 1 }}>
               <Typography variant="caption" fontWeight={600} sx={{ mb: 1, display: "block", color: "text.secondary" }}>
@@ -331,7 +235,7 @@ export default function ListDatasetPage() {
               />
             </Box>
           </Box>
-        </Section>
+        </FormSection>
 
         <FormControlLabel
           sx={{ alignItems: "flex-start", mb: 2, ml: 0 }}

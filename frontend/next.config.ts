@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["gateway.pinata.cloud"],
   },
+  async redirects() {
+    return [{ source: "/docs", destination: "/docs-api", permanent: true }];
+  },
 };
 
 export default nextConfig;

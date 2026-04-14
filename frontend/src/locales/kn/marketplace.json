@@ -75,5 +75,16 @@
   "linkExpiresNote": "ಲಿಂಕ್ 1 ಗಂಟೆಯಲ್ಲಿ ಮುಕ್ತಾಯಗೊಳ್ಳುತ್ತದೆ. ಯಾವುದೇ ಸಮಯದಲ್ಲಿ ಮರು-ಡೌನ್‌ಲೋಡ್ ಮಾಡಲು ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಹಿಂತಿರುಗಿ.",
   "processingPayment": "ಪಾವತಿಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ...",
   "purchaseFor": "{{price}} ಗಾಗಿ ಖರೀದಿಸಿ",
-  "connectToPurchase": "ಖರೀದಿಸಲು ನಿಮ್ಮ ವ್ಯಾಲೆಟ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ. AI ಏಜೆಂಟ್‌ಗಳು ನೇರವಾಗಿ x402 ಮೂಲಕ ಖರೀದಿಸಬಹುದು."
+  "connectToPurchase": "ಖರೀದಿಸಲು ನಿಮ್ಮ ವ್ಯಾಲೆಟ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ. AI ಏಜೆಂಟ್‌ಗಳು ನೇರವಾಗಿ x402 ಮೂಲಕ ಖರೀದಿಸಬಹುದು.",
+  "recentPurchasesTitle": "ಇತ್ತೀಚಿನ ಖರೀದಿಗಳು",
+  "recentPurchasesSubtitle": "ಪಾವತಿಯ ಸಾರ್ವಜನಿಕ ದಾಖಲೆ (ಗೌಪ್ಯತೆಗಾಗಿ ವ್ಯಾಲೆಟ್ ಚಿಕ್ಕದು).",
+  "recentPurchasesEmpty": "ಇನ್ನೂ ಖರೀದಿಗಳಿಲ್ಲ — ಮೊದಲ ಖರೀದಿದಾರರಾಗಿ.",
+  "purchaseColDate": "ದಿನಾಂಕ",
+  "purchaseColBuyerType": "ಖರೀದಿದಾರ ಪ್ರಕಾರ",
+  "purchaseColAmount": "ಮೊತ್ತ",
+  "purchaseColBuyer": "ಖರೀದಿದಾರ",
+  "purchaseColExplorer": "ವಹಿವಾಟು",
+  "buyerTypeHuman": "ಮಾನವ",
+  "buyerTypeAgent": "AI ಏಜೆಂಟ್",
+  "viewOnExplorer": "ಎಕ್ಸ್‌ಪ್ಲೋರರ್‌ನಲ್ಲಿ ನೋಡಿ"
 }
