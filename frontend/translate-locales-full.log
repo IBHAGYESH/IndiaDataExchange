@@ -56,3 +56,43 @@
   documentation.json
   forms.json
   batch fail, falling back to single: Max 10MB — Users see this before buying --> No translation was found using the current translator. Try another translator?
+  landing.json
+  batch fail, falling back to single: X-Payment: USDC $2.50 on Algorand --> No translation was found using the current translator. Try another translator?
+  single fail 'Market data, transactions, economic indi': Market data, transactions, economic indicators --> No translation was found using the current translator. Try another translator?
+  legal.json
+  marketplace.json
+  batch fail, falling back to single: Connect your wallet to purchase. AI agents can purchase directly via x402. --> No translation was found using the current translator. Try another translator?
+  nav.json
+  pageTitles.json
+=== mni -> mni-Mtei ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  batch fail, falling back to single: Positive integer, max 200 --> No translation was found using the current translator. Try another translator?
+  forms.json
+  landing.json
+  batch fail, falling back to single: Ayurvedic plants, medical images, records --> No translation was found using the current translator. Try another translator?
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== mr -> mr ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  landing.json
+  legal.json
+  batch fail, falling back to single: Depending on applicable law (including India’s Digital Personal Data Protection Act and, where relevant, GDPR), you may have rights to access, correct, or delete personal data we hold, and to withdraw consent where processing is consent-based. Use the contact below to exercise these rights. --> No translation was found using the current translator. Try another translator?
+  marketplace.json
+  batch fail, falling back to single: Public record of paid access (buyer wallets are truncated for privacy). --> No translation was found using the current translator. Try another translator?
+  nav.json
+  pageTitles.json
+=== ne -> ne ===
+  admin.json
