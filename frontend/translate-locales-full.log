@@ -1,0 +1,58 @@
+=== kok -> gom ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  landing.json
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== ks -> ur ===
+  admin.json
+  auth.json
+  batch fail, falling back to single: By connecting your wallet you agree to our Terms of Service and Privacy Policy. We store only your Algorand wallet address and related account data needed to run the marketplace (authentication, USDC opt-in status, and usage totals). You can request deletion of your account data at any time. Blockchain transactions are public and permanent. --> No translation was found using the current translator. Try another translator?
+  bounties.json
+  batch fail, falling back to single: Submission details --> No translation was found using the current translator. Try another translator?
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  landing.json
+  batch fail, falling back to single: x402 Protocol — AI Agent Purchase Flow --> No translation was found using the current translator. Try another translator?
+  legal.json
+  batch fail, falling back to single: We may update these terms. Continued use after changes constitutes acceptance where permitted by law. Material changes to privacy practices will be reflected in the Privacy Policy. --> No translation was found using the current translator. Try another translator?
+  batch fail, falling back to single: Depending on applicable law (including India’s Digital Personal Data Protection Act and, where relevant, GDPR), you may have rights to access, correct, or delete personal data we hold, and to withdraw consent where processing is consent-based. Use the contact below to exercise these rights. --> No translation was found using the current translator. Try another translator?
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== mai -> mai ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  batch fail, falling back to single: Running total as purchases happened (order #1 = earliest). --> No translation was found using the current translator. Try another translator?
+  documentation.json
+  forms.json
+  batch fail, falling back to single: You must confirm the data responsibility statement before continuing. --> No translation was found using the current translator. Try another translator?
+  landing.json
+  batch fail, falling back to single: Algorand settles in under 3 seconds. Sellers receive USDC directly — no escrow, no waiting. --> No translation was found using the current translator. Try another translator?
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== ml -> ml ===
+  admin.json
+  auth.json
+  bounties.json
+  batch fail, falling back to single: Earn USDC by submitting data buyers need. Rewards locked in smart contract escrow. --> No translation was found using the current translator. Try another translator?
+  common.json
+  dashboard.json
+  batch fail, falling back to single: Browse the marketplace → --> No translation was found using the current translator. Try another translator?
+  documentation.json
+  forms.json
+  batch fail, falling back to single: Max 10MB — Users see this before buying --> No translation was found using the current translator. Try another translator?

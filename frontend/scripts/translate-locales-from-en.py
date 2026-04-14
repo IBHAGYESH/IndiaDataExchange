@@ -12,11 +12,12 @@ Run:
   cd frontend
   PYTHONUNBUFFERED=1 .venv-i18n/bin/python -u scripts/translate-locales-from-en.py
 
-Optional: run only one language by temporarily editing SKIP_DIRS or FOLDER_TO_GOOGLE in this file.
+Optional: run a single target by setting env TARGET_LANG=ta (folder name under locales/).
 """
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 from pathlib import Path
@@ -27,16 +28,16 @@ ROOT = Path(__file__).resolve().parents[1]
 LOCALES = ROOT / "src" / "locales"
 EN = LOCALES / "en"
 
-# Folders we do not auto-translate (hand-maintained or already done)
-SKIP_DIRS = frozenset({"en", "hi", "bn", "gu", "kn"})
+# Source of truth is English. These locales are maintained separately — never overwrite via this script.
+SKIP_DIRS = frozenset({"en", "gu", "hi", "kn","as", "brx", "doi"})
 
-# ISO-ish folder name -> Google Translate target code
-FOLDER_TO_GOOGLE = {
+# Folder name under src/locales/ -> Google Translate target code.
+# Only these targets are generated; missing folders are created on write.
+# (gu/kn/hi are omitted on purpose; they are hand-maintained.)
+FOLDER_TO_GOOGLE: dict[str, str] = {
     "as": "as",
-    "brx": "hi",  # Bodo: no code; Hindi fallback
+    "brx": "hi",  # Bodo: no dedicated code; Hindi fallback
     "doi": "doi",
-    "gu": "gu",
-    "kn": "kn",
     "ks": "ur",  # Kashmiri: Urdu script fallback
     "kok": "gom",  # Konkani
     "mai": "mai",
@@ -223,21 +224,31 @@ def main() -> None:
         raise SystemExit(f"Missing {EN}")
 
     json_names = sorted(p.name for p in EN.glob("*.json"))
-    for folder in sorted(LOCALES.iterdir()):
-        if not folder.is_dir():
-            continue
-        name = folder.name
+    if not json_names:
+        raise SystemExit(f"No JSON files in {EN}")
+
+    only = os.environ.get("TARGET_LANG", "").strip()
+    targets: list[tuple[str, str]] = []
+    for name, google in sorted(FOLDER_TO_GOOGLE.items()):
         if name in SKIP_DIRS:
-            print(f"skip dir {name}")
             continue
-        google = FOLDER_TO_GOOGLE.get(name)
-        if not google:
-            print(f"skip unknown locale folder {name}")
+        if only and name != only:
             continue
+        targets.append((name, google))
+
+    if only and not targets:
+        known = ", ".join(sorted(FOLDER_TO_GOOGLE))
+        raise SystemExit(
+            f"TARGET_LANG={only!r} is not a generated locale (or is in SKIP_DIRS). "
+            f"Known targets: {known}"
+        )
+
+    for name, google in targets:
+        out_dir = LOCALES / name
         print(f"=== {name} -> {google} ===", flush=True)
         for jf in json_names:
             src = EN / jf
-            dst = folder / jf
+            dst = out_dir / jf
             print(f"  {jf}", flush=True)
             translate_file(src, dst, google)
     print("done.", flush=True)

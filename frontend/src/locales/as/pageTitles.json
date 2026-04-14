@@ -1,0 +1,23 @@
+{
+  "suffix": "ইণ্ডিয়া ডাটা এক্সচেঞ্জ",
+  "home": "গৃহ",
+  "marketplace": "ডাটা মাৰ্কেটপ্লেচ",
+  "dataset": "ডাটাছেট",
+  "bounties": "ডাটা বাউন্টিজ",
+  "bounty": "বাউন্টি",
+  "dashboard": "ডেচব'ৰ্ড",
+  "listDataset": "ডাটাছেট তালিকাভুক্ত কৰক",
+  "listings": "মোৰ তালিকাসমূহ",
+  "purchases": "মোৰ ক্ৰয়",
+  "myBounties": "মাই বাউন্টিজ",
+  "submissions": "মোৰ জমা দিয়া সমূহ",
+  "postBounty": "পোষ্ট বাউন্টি",
+  "account": "একাউণ্ট",
+  "docsApi": "এপিআই প্ৰসংগ",
+  "docsMcp": "MCP চাৰ্ভাৰ",
+  "terms": "চৰ্তাৱলী",
+  "privacy": "গোপনীয়তা",
+  "admin": "প্ৰশাসক",
+  "adminDatasets": "প্ৰশাসক · ডাটাছেট",
+  "adminBounties": "এডমিন · বাউন্টিজ"
+}

@@ -1,0 +1,22 @@
+{
+  "sidebarHeading": "डैशबोर्ड",
+  "adminSection": "व्यवस्थापक",
+  "platformOverview": "प्लेटफार्म अवलोकन",
+  "docs": "डॉक्स",
+  "marketplace": "बाजार",
+  "bounties": "इनाम",
+  "dashboard": "डैशबोर्ड",
+  "navigation": "मार्गदर्शन",
+  "overview": "सिंहावलोकन",
+  "myListings": "मेरी सूचियाँ",
+  "myPurchases": "मेरी ख़रीद",
+  "myBounties": "मेरे इनाम",
+  "mySubmissions": "मेरी प्रस्तुतियाँ",
+  "listDataset": "सूची डेटासेट",
+  "postBounty": "इनाम पोस्ट करें",
+  "admin": "व्यवस्थापक",
+  "adminOverview": "व्यवस्थापक अवलोकन",
+  "adminDatasets": "डेटासेट प्रबंधित करें",
+  "adminBounties": "इनाम प्रबंधित करें",
+  "accountPrivacy": "खाता एवं गोपनीयता"
+}
