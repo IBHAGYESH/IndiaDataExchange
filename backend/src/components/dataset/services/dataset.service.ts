@@ -4,6 +4,7 @@ import { PurchaseRepository } from "@components/purchase/database/repository/pur
 import { uploadPublicFile, uploadPrivateFile, getSignedUrl } from "@libraries/pinata.service";
 import { AppError } from "@middlewares/error.middleware";
 import { returnDataObj, getPagination } from "@utils/index";
+import { buildDatasetPurchaseApiUrl } from "@utils/publicApiUrl";
 import { DatasetCategory, DatasetFormat, DatasetStatus } from "../database/models";
 import { FilterQuery } from "mongoose";
 import { IDataset } from "../database/models";
@@ -24,6 +25,7 @@ export class DatasetService {
     limit = 20,
     sortBy = "createdAt",
     sortOrder = "desc",
+    apiPublicOrigin,
   }: {
     category?: DatasetCategory;
     tags?: string;
@@ -35,6 +37,8 @@ export class DatasetService {
     limit?: number;
     sortBy?: string;
     sortOrder?: string;
+    /** When set, each dataset includes `purchaseApiUrl` (x402 download endpoint). */
+    apiPublicOrigin?: string;
   }) {
     const filter: FilterQuery<IDataset> = { status: "active" };
 
@@ -61,21 +65,39 @@ export class DatasetService {
       datasetRepo.getCount(filter),
     ]);
 
+    const withPurchaseUrl =
+      apiPublicOrigin != null && apiPublicOrigin !== ""
+        ? datasets.map((d) => ({
+            ...d,
+            purchaseApiUrl: buildDatasetPurchaseApiUrl(
+              apiPublicOrigin,
+              String(d._id)
+            ),
+          }))
+        : datasets;
+
     return returnDataObj({
-      datasets,
+      datasets: withPurchaseUrl,
       total,
       page: pageNumber,
       totalPages: Math.ceil(total / limitNumber),
     });
   }
 
-  async getDataset(id: string) {
+  async getDataset(id: string, apiPublicOrigin?: string) {
     const dataset = await datasetRepo.findById(id);
     if (!dataset) throw new AppError("NotFound", 404, "Dataset not found", true);
     if (dataset.status === "unlisted") throw new AppError("NotFound", 404, "Dataset not found", true);
 
     const { fullDataIpfsCid: _omit, ...safeDataset } = (dataset.toObject ? dataset.toObject() : dataset) as IDataset & { fullDataIpfsCid?: string };
-    return returnDataObj({ dataset: safeDataset });
+    const datasetOut =
+      apiPublicOrigin != null && apiPublicOrigin !== ""
+        ? {
+            ...safeDataset,
+            purchaseApiUrl: buildDatasetPurchaseApiUrl(apiPublicOrigin, id),
+          }
+        : safeDataset;
+    return returnDataObj({ dataset: datasetOut });
   }
 
   async createDataset(

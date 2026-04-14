@@ -21,7 +21,7 @@ export function createIdeMcpServer(): McpServer {
     "ide_list_datasets",
     {
       description:
-        "List datasets from the India Data Exchange IDE API. Returns a JSON string of the API payload (datasets, total, page, totalPages).",
+        "List datasets from the India Data Exchange IDE API. Returns a JSON string of the API payload (datasets, total, page, totalPages). Each dataset includes purchaseApiUrl: absolute GET URL for the x402 /download endpoint.",
       inputSchema: {
         limit: z.number().int().positive().max(200).optional(),
         page: z.number().int().positive().optional(),
@@ -49,7 +49,7 @@ export function createIdeMcpServer(): McpServer {
     "ide_get_dataset",
     {
       description:
-        "Get one dataset by Mongo _id from the IDE API. Returns a JSON string of { dataset }.",
+        "Get one dataset by Mongo _id from the IDE API. Returns a JSON string of { dataset } including purchaseApiUrl (absolute x402 /download URL).",
       inputSchema: {
         datasetId: z.string().min(1).describe("Dataset _id"),
       },

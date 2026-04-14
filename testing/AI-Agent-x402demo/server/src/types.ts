@@ -27,6 +27,8 @@ export interface DatasetSummary {
   category?: string;
   priceUSDC?: number;
   fileName?: string;
+  /** Absolute IDE URL for x402 purchase flow (GET .../download). */
+  purchaseApiUrl?: string;
 }
 
 /** IDE download endpoint returns { downloadUrl, fileName, expiresAt } — no `success` flag (same as marketplace client). */

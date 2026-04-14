@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { tryCatch } from "@utils/index";
+import { getPublicApiOrigin } from "@utils/publicApiUrl";
 import { AppError } from "@middlewares/error.middleware";
 import { authMiddleware, optionalAuth } from "@middlewares/auth.middleware";
 import { datasetUpload, MulterFiles } from "@middlewares/multer.middleware";
@@ -33,6 +34,7 @@ export class DatasetRoute {
           limit: parseInt(limit) || 20,
           sortBy,
           sortOrder,
+          apiPublicOrigin: getPublicApiOrigin(req),
         });
         res.status(code).json(data);
       })
@@ -43,7 +45,7 @@ export class DatasetRoute {
       `${this.path}/:id`,
       tryCatch(async (req: Request, res: Response) => {
         const { id } = req.params as Record<string, string>;
-        const { data, code } = await this.service.getDataset(id);
+        const { data, code } = await this.service.getDataset(id, getPublicApiOrigin(req));
         res.status(code).json(data);
       })
     );

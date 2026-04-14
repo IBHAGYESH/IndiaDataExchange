@@ -8,8 +8,8 @@ HTTP-deployable [Model Context Protocol](https://modelcontextprotocol.io) server
 
 | Name | Purpose |
 |------|---------|
-| `ide_list_datasets` | `GET /api/datasets` with optional filters; returns JSON string |
-| `ide_get_dataset` | `GET /api/datasets/:id`; returns JSON string of `{ dataset }` |
+| `ide_list_datasets` | `GET /api/datasets` with optional filters; returns JSON string (each dataset has `purchaseApiUrl` for x402 download) |
+| `ide_get_dataset` | `GET /api/datasets/:id`; returns JSON string of `{ dataset }` (includes `purchaseApiUrl`) |
 
 ## Environment
 

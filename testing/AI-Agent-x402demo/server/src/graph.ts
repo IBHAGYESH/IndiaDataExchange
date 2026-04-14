@@ -252,12 +252,15 @@ export function buildDatasetAgentGraph(
     if (state.error) return {};
     const id = state.chosenDatasetId;
     if (!id) return { error: "No dataset id to purchase" };
+    const ds = state.datasets?.find((d) => d._id === id);
+    const url =
+      ds?.purchaseApiUrl?.trim() ||
+      `${base}/api/datasets/${encodeURIComponent(id)}/download`;
     emit({
       type: "step",
       step: "purchasing",
-      detail: `Agent x402 + GET ${base}/api/datasets/${id}/download`,
+      detail: `Agent x402 + GET ${url}`,
     });
-    const url = `${base}/api/datasets/${id}/download`;
     try {
       const res = await payment.fetchWithPayment(url, {
         headers: {
