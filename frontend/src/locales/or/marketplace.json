@@ -76,6 +76,8 @@
   "processingPayment": "ଦେୟ ପ୍ରକ୍ରିୟାକରଣ…",
   "purchaseFor": "{{price}} ପାଇଁ କ୍ରୟ କରନ୍ତୁ |",
   "connectToPurchase": "କିଣିବା ପାଇଁ ଆପଣଙ୍କର ୱାଲେଟ୍ ସଂଯୋଗ କରନ୍ତୁ | AI ଏଜେଣ୍ଟମାନେ ସିଧାସଳଖ x402 ମାଧ୍ୟମରେ କ୍ରୟ କରିପାରିବେ |",
+  "ownListingCannotPurchase": "ଆପଣ ନିଜର ତାଲିକା କିଣିପାରିବେ ନାହିଁ |",
+  "ownListingBuyDisabledTitle": "ଆପଣଙ୍କ ତାଲିକା — କ୍ରୟ ନିଷ୍କ୍ରିୟ |",
   "recentPurchasesTitle": "ସମ୍ପ୍ରତି କ୍ରୟ",
   "recentPurchasesSubtitle": "ଦେୟଯୁକ୍ତ ପ୍ରବେଶର ସର୍ବସାଧାରଣ ରେକର୍ଡ (କ୍ରେତା ୱାଲେଟ୍ ଗୋପନୀୟତା ପାଇଁ ଛୋଟ) |",
   "recentPurchasesEmpty": "ଏପର୍ଯ୍ୟନ୍ତ କ No ଣସି କ୍ରୟ ନାହିଁ - ପ୍ରଥମ କ୍ରେତା ହୁଅନ୍ତୁ |",

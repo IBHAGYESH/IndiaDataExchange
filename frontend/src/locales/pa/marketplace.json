@@ -76,6 +76,8 @@
   "processingPayment": "ਭੁਗਤਾਨ ਦੀ ਪ੍ਰਕਿਰਿਆ ਹੋ ਰਹੀ ਹੈ...",
   "purchaseFor": "{{price}} ਲਈ ਖਰੀਦੋ",
   "connectToPurchase": "ਖਰੀਦਣ ਲਈ ਆਪਣੇ ਵਾਲਿਟ ਨੂੰ ਕਨੈਕਟ ਕਰੋ। AI ਏਜੰਟ x402 ਰਾਹੀਂ ਸਿੱਧੇ ਖਰੀਦ ਸਕਦੇ ਹਨ।",
+  "ownListingCannotPurchase": "ਤੁਸੀਂ ਆਪਣੀ ਲਿਸਟ ਨਹੀਂ ਖਰੀਦ ਸਕਦੇ।",
+  "ownListingBuyDisabledTitle": "ਤੁਹਾਡੀ ਲਿਸਟ — ਖਰੀਦ ਅਯੋਗ ਹੈ",
   "recentPurchasesTitle": "ਹਾਲੀਆ ਖਰੀਦਦਾਰੀ",
   "recentPurchasesSubtitle": "ਅਦਾਇਗੀ ਪਹੁੰਚ ਦਾ ਜਨਤਕ ਰਿਕਾਰਡ (ਖਰੀਦਦਾਰ ਵਾਲਿਟ ਗੋਪਨੀਯਤਾ ਲਈ ਕੱਟੇ ਜਾਂਦੇ ਹਨ)।",
   "recentPurchasesEmpty": "ਅਜੇ ਤੱਕ ਕੋਈ ਖਰੀਦਦਾਰੀ ਨਹੀਂ - ਪਹਿਲੇ ਖਰੀਦਦਾਰ ਬਣੋ।",

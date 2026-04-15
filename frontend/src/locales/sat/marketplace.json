@@ -76,6 +76,8 @@
   "processingPayment": "পেমেন্ট প্রক্রিয়া করা হচ্ছে...",
   "purchaseFor": "{{price}} এর জন্য কিনুন",
   "connectToPurchase": "কেনার জন্য আপনার ওয়ালেট সংযুক্ত করুন. এআই এজেন্টরা সরাসরি x402 এর মাধ্যমে ক্রয় করতে পারে।",
+  "ownListingCannotPurchase": "আপনি নিজের তালিকা ক্রয় করতে পারবেন না।",
+  "ownListingBuyDisabledTitle": "আপনার তালিকা — ক্রয় নিষ্ক্রিয়",
   "recentPurchasesTitle": "সাম্প্রতিক ক্রয়",
   "recentPurchasesSubtitle": "প্রদত্ত অ্যাক্সেসের সর্বজনীন রেকর্ড (ক্রেতার মানিব্যাগ গোপনীয়তার জন্য কাটা হয়)।",
   "recentPurchasesEmpty": "এখনও কোনো কেনাকাটা হয়নি — প্রথম ক্রেতা হন।",

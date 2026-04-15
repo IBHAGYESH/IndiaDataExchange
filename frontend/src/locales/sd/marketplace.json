@@ -76,6 +76,8 @@
   "processingPayment": "ادائگي تي عمل ٿي رهيو آهي…",
   "purchaseFor": "{{price}} لاءِ خريد ڪريو",
   "connectToPurchase": "خريد ڪرڻ لاءِ پنهنجو پرس ڳنڍيو. AI ايجنٽ سڌو خريد ڪري سگھن ٿا x402 ذريعي.",
+  "ownListingCannotPurchase": "توھان پنھجي لسٽ نٿو خريد ڪري سگھو.",
+  "ownListingBuyDisabledTitle": "توھان جي لسٽ — خريد بند آھي",
   "recentPurchasesTitle": "تازو خريداريون",
   "recentPurchasesSubtitle": "ادا ڪيل رسائي جو عوامي رڪارڊ (خريدار پرس رازداري لاءِ ڪٽيل آهن).",
   "recentPurchasesEmpty": "اڃا تائين ڪابه خريداري ناهي - پهريون خريد ڪندڙ ٿيو.",

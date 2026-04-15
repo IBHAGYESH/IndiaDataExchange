@@ -76,6 +76,8 @@
   "processingPayment": "भुगतान के संसाधन...",
   "purchaseFor": "{{price}} के लिये खरीद",
   "connectToPurchase": "खरीदारी के लेल अपन बटुआ कनेक्ट करू। एआई एजेंट सीधा x402 कें माध्यम सं खरीदारी कयर सकय छै.",
+  "ownListingCannotPurchase": "अहाँ अपन सूची नहि खरीद सकैत छी।",
+  "ownListingBuyDisabledTitle": "अहाँक सूची — खरीद निष्क्रिय अछि",
   "recentPurchasesTitle": "हाल के खरीददारी",
   "recentPurchasesSubtitle": "सशुल्क पहुंच कें सार्वजनिक रिकॉर्ड (खरीदार कें बटुआ गोपनीयता कें लेल काटल गेल छै).",
   "recentPurchasesEmpty": "एखन धरि कोनो खरीदारी नहि — पहिल खरीददार बनू।",

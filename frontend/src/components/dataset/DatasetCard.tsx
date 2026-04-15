@@ -17,7 +17,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import { useRouter } from "next/navigation";
 import { Dataset } from "@/types";
-import { formatUSDC, truncateAddress, formatBytes } from "@/utils";
+import { formatUSDC, truncateAddress, formatBytes, sameAlgorandAddress } from "@/utils";
+import { useAuth } from "@/providers/auth-provider";
 import config from "@/config";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
@@ -40,8 +41,13 @@ const categoryGradients: Record<string, string> = {
 export default function DatasetCard({ dataset }: Props) {
   const { t } = useTranslation("marketplace");
   const { t: tCommon } = useTranslation("common");
+  const { walletAddress } = useAuth();
   const theme = useTheme();
   const router = useRouter();
+  const isOwnListing = sameAlgorandAddress(
+    walletAddress,
+    dataset.sellerWalletAddress
+  );
 
   const detailPath = `/marketplace/${dataset._id}`;
 
@@ -227,6 +233,8 @@ export default function DatasetCard({ dataset }: Props) {
           size="small"
           variant="contained"
           startIcon={<ShoppingCartIcon />}
+          disabled={isOwnListing}
+          title={isOwnListing ? t("ownListingBuyDisabledTitle") : undefined}
           onClick={() => router.push(`${detailPath}?purchase=true`)}
           sx={{ flex: "1 1 100px", fontSize: "0.8rem" }}
         >

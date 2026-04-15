@@ -1,3 +1,21 @@
+import algosdk from "algosdk";
+
+/** True when both strings are valid Algorand addresses for the same account (checksum-safe). */
+export function sameAlgorandAddress(
+  a: string | null | undefined,
+  b: string | null | undefined
+): boolean {
+  if (!a || !b) return false;
+  try {
+    return (
+      algosdk.encodeAddress(algosdk.decodeAddress(a).publicKey) ===
+      algosdk.encodeAddress(algosdk.decodeAddress(b).publicKey)
+    );
+  } catch {
+    return false;
+  }
+}
+
 export const truncateAddress = (address: string): string => {
   if (!address || address.length < 10) return address;
   return `${address.slice(0, 6)}...${address.slice(-4)}`;

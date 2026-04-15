@@ -76,6 +76,8 @@
   "processingPayment": "भुगतान प्रसंस्करण…",
   "purchaseFor": "{{price}} में खरीदें",
   "connectToPurchase": "खरीदने के लिए वॉलेट कनेक्ट करें। AI एजेंट x402 से सीधे खरीद सकते हैं।",
+  "ownListingCannotPurchase": "आप अपनी लिस्टिंग नहीं खरीद सकते।",
+  "ownListingBuyDisabledTitle": "आपकी लिस्टिंग — खरीद अक्षम है",
   "recentPurchasesTitle": "हाल की खरीदारियाँ",
   "recentPurchasesSubtitle": "भुगतान की सार्वजनिक जानकारी (गोपनीयता के लिए वॉलेट संक्षिप्त)।",
   "recentPurchasesEmpty": "अभी कोई खरीदारी नहीं — आप पहले खरीदार बनें।",

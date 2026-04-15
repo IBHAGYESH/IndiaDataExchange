@@ -76,6 +76,8 @@
   "processingPayment": "भुक्तानी प्रशोधन गर्दै...",
   "purchaseFor": "{{price}} को लागि खरिद गर्नुहोस्",
   "connectToPurchase": "खरिद गर्न आफ्नो वालेट जडान गर्नुहोस्। एआई एजेन्टहरूले x402 मार्फत सीधै खरिद गर्न सक्छन्।",
+  "ownListingCannotPurchase": "तपाईंले आफ्नो सूची किन्न सक्नुहुन्न।",
+  "ownListingBuyDisabledTitle": "तपाईंको सूची — खरिद असक्षम छ",
   "recentPurchasesTitle": "भर्खरका खरिदहरू",
   "recentPurchasesSubtitle": "सशुल्क पहुँचको सार्वजनिक रेकर्ड (खरीदार वालेटहरू गोपनीयताका लागि काटिएका छन्)।",
   "recentPurchasesEmpty": "अहिलेसम्म कुनै खरिदहरू छैनन् — पहिलो खरिदकर्ता बन्नुहोस्।",

@@ -76,6 +76,8 @@
   "processingPayment": "पेमेंटवर प्रक्रिया करत आहे...",
   "purchaseFor": "{{price}} साठी खरेदी करा",
   "connectToPurchase": "खरेदी करण्यासाठी तुमचे वॉलेट कनेक्ट करा. एआय एजंट x402 द्वारे थेट खरेदी करू शकतात.",
+  "ownListingCannotPurchase": "तुम्ही तुमची स्वतःची यादी खरेदी करू शकत नाही.",
+  "ownListingBuyDisabledTitle": "तुमची यादी — खरेदी अक्षम आहे",
   "recentPurchasesTitle": "अलीकडील खरेदी",
   "recentPurchasesSubtitle": "सशुल्क प्रवेशाचे सार्वजनिक रेकॉर्ड (खरेदीदार वॉलेट गोपनीयतेसाठी कापले जातात).",
   "recentPurchasesEmpty": "अद्याप कोणतीही खरेदी नाही — प्रथम खरेदीदार व्हा.",

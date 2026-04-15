@@ -76,6 +76,8 @@
   "processingPayment": "संसाधन संबंधी भुगतान…",
   "purchaseFor": "{{price}} के लिए खरीदारी",
   "connectToPurchase": "खरीदारी के लिए अपना वॉलेट कनेक्ट करें. एआई एजेंट सीधे x402 के माध्यम से खरीदारी कर सकते हैं।",
+  "ownListingCannotPurchase": "आप अपनी लिस्टिंग नहीं खरीद सकते।",
+  "ownListingBuyDisabledTitle": "आपकी लिस्टिंग — खरीद अक्षम है",
   "recentPurchasesTitle": "हाल की खरीदारी",
   "recentPurchasesSubtitle": "सशुल्क पहुंच का सार्वजनिक रिकॉर्ड (गोपनीयता के लिए खरीदार के बटुए को छोटा कर दिया गया है)।",
   "recentPurchasesEmpty": "अभी तक कोई खरीदारी नहीं - पहले खरीदार बनें।",

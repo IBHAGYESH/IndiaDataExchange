@@ -76,6 +76,8 @@
   "processingPayment": "ચુકવણી પર પ્રક્રિયા કરી રહ્યું છે...",
   "purchaseFor": "{{price}} માટે ખરીદી",
   "connectToPurchase": "ખરીદી કરવા માટે તમારા વૉલેટને કનેક્ટ કરો. AI એજન્ટો x402 દ્વારા સીધી ખરીદી કરી શકે છે.",
+  "ownListingCannotPurchase": "તમે તમારી પોતાની લિસ્ટિંગ ખરીદી શકતા નથી.",
+  "ownListingBuyDisabledTitle": "તમારી લિસ્ટિંગ — ખરીદી અક્ષમ છે",
   "recentPurchasesTitle": "તાજેતરની ખરીદીઓ",
   "recentPurchasesSubtitle": "ચૂકવણીનો જાહેર રેકોર્ડ (ગોપનીયતા માટે વૉલેટ ટૂંકો).",
   "recentPurchasesEmpty": "હજી કોઈ ખરીદી નહીં — પહેલા ખરીદનાર બનો.",

@@ -76,6 +76,8 @@
   "processingPayment": "পেমেন্ট প্ৰক্ৰিয়াকৰণ...",
   "purchaseFor": "{{price}} ৰ বাবে ক্ৰয় কৰক",
   "connectToPurchase": "ক্ৰয় কৰিবলৈ আপোনাৰ মানিবেগ সংযোগ কৰক। AI এজেণ্টে x402 ৰ জৰিয়তে পোনপটীয়াকৈ ক্ৰয় কৰিব পাৰে।",
+  "ownListingCannotPurchase": "আপুনি আপোনাৰ নিজৰ তালিকা ক্ৰয় কৰিব নোৱাৰে।",
+  "ownListingBuyDisabledTitle": "আপোনাৰ তালিকা — ক্ৰয় নিষ্ক্ৰিয়",
   "recentPurchasesTitle": "শেহতীয়াকৈ ক্ৰয় কৰা",
   "recentPurchasesSubtitle": "পেইড এক্সেছৰ ৰাজহুৱা ৰেকৰ্ড (ক্ৰেতাৰ মানিবেগসমূহ গোপনীয়তাৰ বাবে ছেদ কৰা হয়)।",
   "recentPurchasesEmpty": "এতিয়াও কোনো ক্ৰয় কৰা হোৱা নাই — প্ৰথম ক্ৰেতা হওক।",

@@ -76,6 +76,8 @@
   "processingPayment": "ಪಾವತಿಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ...",
   "purchaseFor": "{{price}} ಗಾಗಿ ಖರೀದಿಸಿ",
   "connectToPurchase": "ಖರೀದಿಸಲು ನಿಮ್ಮ ವ್ಯಾಲೆಟ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ. AI ಏಜೆಂಟ್‌ಗಳು ನೇರವಾಗಿ x402 ಮೂಲಕ ಖರೀದಿಸಬಹುದು.",
+  "ownListingCannotPurchase": "ನಿಮ್ಮ ಸ್ವಂತ ಪಟ್ಟಿಯನ್ನು ನೀವು ಖರೀದಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "ownListingBuyDisabledTitle": "ನಿಮ್ಮ ಪಟ್ಟಿ — ಖರೀದಿ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ",
   "recentPurchasesTitle": "ಇತ್ತೀಚಿನ ಖರೀದಿಗಳು",
   "recentPurchasesSubtitle": "ಪಾವತಿಯ ಸಾರ್ವಜನಿಕ ದಾಖಲೆ (ಗೌಪ್ಯತೆಗಾಗಿ ವ್ಯಾಲೆಟ್ ಚಿಕ್ಕದು).",
   "recentPurchasesEmpty": "ಇನ್ನೂ ಖರೀದಿಗಳಿಲ್ಲ — ಮೊದಲ ಖರೀದಿದಾರರಾಗಿ.",

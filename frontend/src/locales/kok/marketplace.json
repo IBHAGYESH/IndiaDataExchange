@@ -76,6 +76,8 @@
   "processingPayment": "फारीकणी प्रक्रिया करप...",
   "purchaseFor": "{{price}} खातीर खरेदी करात.",
   "connectToPurchase": "खरेदी करपाक तुमचें पाकीट जोडचें. एआय एजंट x402 वरवीं थेट खरेदी करूंक शकतात.",
+  "ownListingCannotPurchase": "तुमी तुमची स्वतःची लिस्ट खरेदी करूंक शकना.",
+  "ownListingBuyDisabledTitle": "तुमची लिस्ट — खरेदी निष्क्रिय",
   "recentPurchasesTitle": "हालींच्या काळांत खरेदी केल्ली",
   "recentPurchasesSubtitle": "फारीक केल्ल्या प्रवेशाचो भौशीक नोंद (खरेदीदाराच्या पाकीटां गुप्तताये खातीर कापल्यात).",
   "recentPurchasesEmpty": "अजून खरेदी ना — पयलो खरेदीदार जावचो.",

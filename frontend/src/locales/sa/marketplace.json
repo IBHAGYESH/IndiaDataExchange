@@ -76,6 +76,8 @@
   "processingPayment": "प्रसंस्करण भुगतान...",
   "purchaseFor": "{{price}} कृते क्रयणम्।",
   "connectToPurchase": "क्रयणार्थं स्वस्य बटुकं संयोजयन्तु। एआइ एजेण्ट् प्रत्यक्षतया x402 मार्गेण क्रयणं कर्तुं शक्नुवन्ति ।",
+  "ownListingCannotPurchase": "स्वकीयां सूचिकां क्रयितुं न शक्यते।",
+  "ownListingBuyDisabledTitle": "भवतः सूचिका — क्रयणं निष्क्रियम्",
   "recentPurchasesTitle": "अद्यतनक्रयणानि",
   "recentPurchasesSubtitle": "सशुल्कप्रवेशस्य सार्वजनिक अभिलेखः (क्रेता बटुकाः गोपनीयतायै कटिताः भवन्ति)।",
   "recentPurchasesEmpty": "अद्यापि क्रयणं नास्ति — प्रथमः क्रेता भवतु ।",

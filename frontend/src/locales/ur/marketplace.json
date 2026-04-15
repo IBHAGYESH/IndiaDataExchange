@@ -76,6 +76,8 @@
   "processingPayment": "ادائیگی پر کارروائی ہو رہی ہے…",
   "purchaseFor": "{{price}} کے لیے خریداری",
   "connectToPurchase": "خریداری کے لیے اپنے بٹوے کو جوڑیں۔ AI ایجنٹ براہ راست x402 کے ذریعے خرید سکتے ہیں۔",
+  "ownListingCannotPurchase": "آپ اپنی فہرست نہیں خرید سکتے۔",
+  "ownListingBuyDisabledTitle": "آپ کی فہرست — خریداری غیر فعال ہے",
   "recentPurchasesTitle": "حالیہ خریداریاں",
   "recentPurchasesSubtitle": "بامعاوضہ رسائی کا عوامی ریکارڈ (خریدار کے بٹوے رازداری کے لیے تراشے جاتے ہیں)۔",
   "recentPurchasesEmpty": "ابھی تک کوئی خریداری نہیں ہوئی — پہلے خریدار بنیں۔",

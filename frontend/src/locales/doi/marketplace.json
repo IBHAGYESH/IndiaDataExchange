@@ -76,6 +76,8 @@
   "processingPayment": "भुगतान प्रसंस्करण करना...",
   "purchaseFor": "__पीएच_0__ के लिए खरीदें",
   "connectToPurchase": "खरीदने लेई अपना बटुआ कनेक्ट करो। एआई एजेंट सीधे x402 दे राहें खरीददारी करी सकदे न।",
+  "ownListingCannotPurchase": "तुसां अपनी सूची खरीद नेई सकदे ओ।",
+  "ownListingBuyDisabledTitle": "तुहाड़ी सूची — खरीद अक्षम है",
   "recentPurchasesTitle": "हाल ही में खरीददारी",
   "recentPurchasesSubtitle": "भुगतान कीते गेदे एक्सेस दा सार्वजनिक रिकार्ड (खरीदार दे बटुए गी गोपनीयता आस्तै कटौती कीती जंदी ऐ)।",
   "recentPurchasesEmpty": "अजे तक कोई खरीददारी नहीं — पहला खरीददार बनो।",

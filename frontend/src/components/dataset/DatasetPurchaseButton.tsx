@@ -11,7 +11,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import { useState, useMemo, useCallback } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import config from "@/config";
-import { formatUSDC } from "@/utils";
+import { formatUSDC, sameAlgorandAddress } from "@/utils";
 import { wrapFetchWithPayment, x402Client } from "@x402-avm/fetch";
 import { registerExactAvmScheme } from "@x402-avm/avm/exact/client";
 import type { ClientAvmSigner } from "@x402-avm/avm";
@@ -27,9 +27,13 @@ interface Props {
 export default function DatasetPurchaseButton({
   datasetId,
   priceUSDC,
+  sellerWalletAddress,
 }: Props) {
   const { t } = useTranslation("marketplace");
   const { isConnected, peraWallet, walletAddress, jwt } = useAuth();
+  const isOwnListing =
+    !!walletAddress &&
+    sameAlgorandAddress(walletAddress, sellerWalletAddress);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
@@ -71,6 +75,7 @@ export default function DatasetPurchaseButton({
   }, [signer]);
 
   const handlePurchase = useCallback(async () => {
+    if (isOwnListing) return;
     if (!fetchWithPay || !walletAddress) {
       setError(t("connectWalletFirst"));
       return;
@@ -110,7 +115,7 @@ export default function DatasetPurchaseButton({
     } finally {
       setLoading(false);
     }
-  }, [fetchWithPay, walletAddress, jwt, datasetId, t]);
+  }, [fetchWithPay, walletAddress, jwt, datasetId, t, isOwnListing]);
 
   if (downloadUrl) {
     return (
@@ -152,7 +157,7 @@ export default function DatasetPurchaseButton({
         variant="contained"
         size="large"
         fullWidth
-        disabled={loading || !isConnected}
+        disabled={loading || !isConnected || isOwnListing}
         onClick={handlePurchase}
         startIcon={
           loading ? (
@@ -174,6 +179,15 @@ export default function DatasetPurchaseButton({
           sx={{ mt: 1, display: "block", textAlign: "center" }}
         >
           {t("connectToPurchase")}
+        </Typography>
+      )}
+      {isConnected && isOwnListing && (
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ mt: 1, display: "block", textAlign: "center" }}
+        >
+          {t("ownListingCannotPurchase")}
         </Typography>
       )}
     </Box>
