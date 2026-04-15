@@ -512,11 +512,10 @@ export default function App() {
           <code>{agentBaseUrl()}</code>
         </p>
         <p className="sub hint">
-          Each purchase runs in two steps: pick one relevant catalog match (only
-          genuinely related listings are shown — often fewer than five), then
-          confirm payment. After each download the agent checks whether your goal
-          is met or another dataset may help. Use <strong>New chat</strong> when
-          you change topic.
+          General messages get a short chat reply (no purchase). The catalog flow
+          runs only when your question needs marketplace data — then pick a
+          relevant match, confirm payment, and repeat if needed. Use{" "}
+          <strong>New chat</strong> when you change topic.
         </p>
         <div className="header-actions">
           <button type="button" className="btn-secondary" onClick={newChat}>

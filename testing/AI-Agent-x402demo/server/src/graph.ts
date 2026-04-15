@@ -46,6 +46,19 @@ const RelevantCandidatesSchema = z.object({
     ),
 });
 
+/** Routes general chat vs marketplace dataset purchase flow. */
+const IntentSchema = z.object({
+  needsCatalogData: z
+    .boolean()
+    .describe(
+      "True only if a good answer requires searching/buying India Data Exchange marketplace datasets (tabular/geo/business data files). False for greetings, thanks, small talk, generic Algorand/USDC help, or questions answerable without opening the catalog."
+    ),
+  reason: z
+    .string()
+    .max(180)
+    .describe("One short phrase for logs (not shown to user)"),
+});
+
 const ContinueSchema = z.object({
   satisfied: z
     .boolean()
@@ -62,6 +75,11 @@ const ContinueSchema = z.object({
 
 const AgentState = Annotation.Root({
   userPrompt: Annotation<string>,
+  /** Set by assess_intent: whether to run list_datasets → purchase pipeline. */
+  needsDatasetData: Annotation<boolean>({
+    value: (_prev, next) => next,
+    default: () => false,
+  }),
   datasets: Annotation<DatasetSummary[] | null>,
   chosenDatasetId: Annotation<string | null>,
   purchaseResultJson: Annotation<string | null>,
@@ -87,6 +105,11 @@ const AgentState = Annotation.Root({
   }),
   researchComplete: Annotation<boolean>({
     reducer: (prev, next) => (next === true ? true : prev),
+    default: () => false,
+  }),
+  /** User declined a further purchase/choice but summaries from earlier buys exist — answer from those. */
+  declinedOptionalPurchase: Annotation<boolean>({
+    value: (_prev, next) => next,
     default: () => false,
   }),
   finalAnswer: Annotation<string | null>,
@@ -116,6 +139,14 @@ function marketplacePath(id: string): string {
   return `/marketplace/${id}`;
 }
 
+/** Keep chat-only replies to at most two lines for token/display limits. */
+function clampToTwoLines(text: string, maxChars = 320): string {
+  const t = text.trim().replace(/\r\n/g, "\n");
+  const lines = t.split("\n").filter((l) => l.length > 0);
+  const two = lines.slice(0, 2).join("\n");
+  return two.length > maxChars ? `${two.slice(0, maxChars - 1)}…` : two;
+}
+
 export function buildDatasetAgentGraph(
   deps: BuildGraphDeps,
   checkpointer: MemorySaver
@@ -124,6 +155,108 @@ export function buildDatasetAgentGraph(
     deps;
   const base = stripTrailingSlash(ideBaseUrl);
   const front = stripTrailingSlash(ideFrontendBaseUrl);
+
+  const assessIntent = async (
+    state: AgentStateType
+  ): Promise<Partial<AgentStateType>> => {
+    if (state.error) return {};
+    emit({
+      type: "step",
+      step: "assess_intent",
+      detail: "Checking whether marketplace datasets are required",
+    });
+    const model = new ChatOpenAI({
+      configuration: {
+        apiKey: process.env.OPENAI_API_KEY,
+        baseURL: process.env.OPENAI_BASE_URL,
+      },
+      modelName: "gpt-4o-mini",
+      temperature: 0,
+      maxTokens: 200,
+    });
+    const structured = model.withStructuredOutput(IntentSchema);
+    try {
+      const out = await structured.invoke([
+        {
+          role: "system",
+          content: [
+            "You gate an India Data Exchange assistant.",
+            "needsCatalogData=true ONLY when the user wants data that would come from buying/downloading marketplace datasets (CSVs, regional stats, surveys, etc.).",
+            "needsCatalogData=false for: hi/hello/thanks/bye, chit-chat, jokes, generic crypto/Algorand/USDC help, UI/how-to without data, or vague messages with no data need.",
+            "When unsure but the message is only conversational, choose false.",
+          ].join("\n"),
+        },
+        { role: "user", content: state.userPrompt },
+      ]);
+      emit({
+        type: "step",
+        step: "assess_intent",
+        detail: `${out.needsCatalogData ? "Catalog flow" : "Chat-only"} — ${out.reason}`,
+      });
+      return { needsDatasetData: out.needsCatalogData, error: null };
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      emit({
+        type: "step",
+        step: "assess_intent",
+        detail: `Classification failed: ${msg.slice(0, 120)}`,
+      });
+      return {
+        error: `Intent check failed: ${msg}`,
+        needsDatasetData: false,
+      };
+    }
+  };
+
+  const briefChat = async (
+    state: AgentStateType
+  ): Promise<Partial<AgentStateType>> => {
+    emit({
+      type: "step",
+      step: "brief_chat",
+      detail: "Short LLM reply (max 2 lines, low tokens)",
+    });
+    if (state.error?.trim()) {
+      return {
+        finalAnswer: clampToTwoLines(
+          `Something went wrong: ${state.error.trim().slice(0, 200)}`
+        ),
+      };
+    }
+    const model = new ChatOpenAI({
+      configuration: {
+        apiKey: process.env.OPENAI_API_KEY,
+        baseURL: process.env.OPENAI_BASE_URL,
+      },
+      modelName: "gpt-4o-mini",
+      temperature: 0.4,
+      maxTokens: 90,
+    });
+    const msg = await model.invoke([
+      {
+        role: "system",
+        content: [
+          "You are a friendly India Data Exchange assistant.",
+          "Reply in at most TWO lines total (one newline between lines is OK).",
+          "Hard limit ~280 characters. No bullet lists longer than 2 lines.",
+          "Do not start a dataset search or mention x402 unless the user explicitly asked about buying data.",
+          "If they need marketplace data, say in one line they can ask a question that needs dataset files (e.g. regional sales, surveys).",
+        ].join(" "),
+      },
+      { role: "user", content: state.userPrompt },
+    ]);
+    const raw =
+      typeof msg.content === "string"
+        ? msg.content
+        : Array.isArray(msg.content)
+          ? JSON.stringify(msg.content)
+          : String(msg.content ?? "");
+    return { finalAnswer: clampToTwoLines(raw) };
+  };
+
+  function routeAfterAssess(state: AgentStateType): string {
+    return state.needsDatasetData ? "data" : "chat";
+  }
 
   const listDatasets = async (
     state: AgentStateType
@@ -358,6 +491,22 @@ export function buildDatasetAgentGraph(
       declineChoice?: boolean;
     };
     if (!decision || decision.declineChoice === true) {
+      const hasPriorSummaries = (state.datasetNotes ?? "").trim().length > 0;
+      if (hasPriorSummaries) {
+        emit({
+          type: "step",
+          step: "dataset_choice_declined",
+          detail:
+            "User skipped another listing; answering from already-purchased summaries",
+        });
+        return {
+          error: null,
+          researchComplete: true,
+          declinedOptionalPurchase: true,
+          purchaseCandidates: [],
+          chosenDatasetId: null,
+        };
+      }
       return {
         error: "Dataset selection cancelled.",
         researchComplete: true,
@@ -388,6 +537,7 @@ export function buildDatasetAgentGraph(
 
   function routeAfterDatasetChoice(state: AgentStateType): string {
     if (state.error) return "fail";
+    if (state.declinedOptionalPurchase) return "finish_with_data";
     return "confirm";
   }
 
@@ -428,6 +578,20 @@ export function buildDatasetAgentGraph(
     });
     const decision = interrupt(proposal) as unknown as { confirm: boolean };
     if (!decision || decision.confirm !== true) {
+      const hasPriorSummaries = (state.datasetNotes ?? "").trim().length > 0;
+      if (hasPriorSummaries) {
+        emit({
+          type: "step",
+          step: "extra_purchase_declined",
+          detail:
+            "User declined an additional dataset; using summaries from earlier confirmed purchase(s)",
+        });
+        return {
+          error: null,
+          researchComplete: true,
+          declinedOptionalPurchase: true,
+        };
+      }
       return {
         error: "Purchase cancelled — you declined this dataset.",
         researchComplete: true,
@@ -637,17 +801,23 @@ export function buildDatasetAgentGraph(
     const err = state.error?.trim() ?? "";
     const notes = state.datasetNotes?.trim() ?? "";
     const hasNotes = notes.length > 0;
-    const cancelled = err.includes("declined") || err.includes("cancelled");
+    const partialDecline =
+      state.declinedOptionalPurchase === true && hasNotes && !err;
+    const cancelled =
+      !partialDecline &&
+      (err.includes("declined") || err.includes("cancelled"));
     const pipelineOk = hasNotes && !err;
 
     const userContent = [
       cancelled
-        ? "Pipeline status: USER_CANCELLED — the user declined a purchase confirmation."
-        : pipelineOk
-          ? "Pipeline status: SUCCESS — x402 purchase(s) you confirmed completed (agent wallet); summaries below are from those files."
-          : err
-            ? `Pipeline status: FAILED.\nError:\n${err}`
-            : "Pipeline status: INCOMPLETE — no file summaries produced.",
+        ? "Pipeline status: USER_CANCELLED — the user declined a purchase confirmation before any usable file summaries existed."
+        : partialDecline
+          ? "Pipeline status: PARTIAL_SUCCESS — the user confirmed at least one earlier dataset purchase; summarized file content is below. They declined buying an additional optional dataset. Answer their question using ONLY these summaries; state clearly if something (e.g. exact weekly rupee earnings) is not in the data instead of inventing it."
+          : pipelineOk
+            ? "Pipeline status: SUCCESS — x402 purchase(s) you confirmed completed (agent wallet); summaries below are from those files."
+            : err
+              ? `Pipeline status: FAILED.\nError:\n${err}`
+              : "Pipeline status: INCOMPLETE — no file summaries produced.",
       `User request:\n${state.userPrompt}`,
       state.chosenDatasetId && !hasNotes
         ? `Last focused dataset _id: ${state.chosenDatasetId}`
@@ -658,10 +828,12 @@ export function buildDatasetAgentGraph(
       .join("\n\n");
 
     const system = cancelled
-      ? "The user declined buying a dataset. Acknowledge briefly and invite them to try again with a new request. Do not blame wallet or IDE."
-      : pipelineOk
-        ? "You are the India Data Exchange AI agent. The user explicitly confirmed each purchase. Summarize what was bought and what the combined data shows; answer their question. Do not claim payment failed or mention insufficient balance."
-        : "You are the India Data Exchange AI agent. Explain what went wrong and suggest fixes (agent wallet USDC/ALGO, IDE_API_BASE_URL, IDE_MCP_BASE_URL, keys) where relevant. Be concise.";
+      ? "The user declined buying a dataset before any data was available. Acknowledge briefly and invite them to try again. Do not blame wallet or IDE."
+      : partialDecline
+        ? "You are the India Data Exchange AI agent. The user already has summarized content from dataset(s) they paid for earlier in this conversation. They chose not to buy one more optional dataset. Still give the best possible answer from the summaries provided; note gaps or uncertainty where the summaries do not support a numeric claim (e.g. weekly earnings)."
+        : pipelineOk
+          ? "You are the India Data Exchange AI agent. The user explicitly confirmed each purchase. Summarize what was bought and what the combined data shows; answer their question. Do not claim payment failed or mention insufficient balance."
+          : "You are the India Data Exchange AI agent. Explain what went wrong and suggest fixes (agent wallet USDC/ALGO, IDE_API_BASE_URL, IDE_MCP_BASE_URL, keys) where relevant. Be concise.";
 
     let full = "";
     const stream = await model.stream([
@@ -682,6 +854,7 @@ export function buildDatasetAgentGraph(
   };
 
   function routeAfterConfirm(state: AgentStateType): string {
+    if (state.declinedOptionalPurchase) return "finish_with_data";
     if (state.error) return "cancelled";
     return "purchase";
   }
@@ -703,6 +876,8 @@ export function buildDatasetAgentGraph(
   }
 
   return new StateGraph(AgentState)
+    .addNode("assess_intent", assessIntent)
+    .addNode("brief_chat", briefChat)
     .addNode("list_datasets", listDatasets)
     .addNode("rank_candidates", rankCandidates)
     .addNode("await_dataset_choice", awaitDatasetChoice)
@@ -712,7 +887,12 @@ export function buildDatasetAgentGraph(
     .addNode("merge_results", mergeResults)
     .addNode("decide_continue", decideContinue)
     .addNode("respond", respond)
-    .addEdge(START, "list_datasets")
+    .addEdge(START, "assess_intent")
+    .addConditionalEdges("assess_intent", routeAfterAssess, {
+      data: "list_datasets",
+      chat: "brief_chat",
+    })
+    .addEdge("brief_chat", END)
     .addEdge("list_datasets", "rank_candidates")
     .addConditionalEdges("rank_candidates", routeAfterRank, {
       choice: "await_dataset_choice",
@@ -721,8 +901,10 @@ export function buildDatasetAgentGraph(
     .addConditionalEdges("await_dataset_choice", routeAfterDatasetChoice, {
       confirm: "await_confirm",
       fail: "respond",
+      finish_with_data: "respond",
     })
     .addConditionalEdges("await_confirm", routeAfterConfirm, {
+      finish_with_data: "respond",
       cancelled: "respond",
       purchase: "purchase_and_download",
     })

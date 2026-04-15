@@ -92,6 +92,7 @@ export async function runChatAgent(
         ? new Command({ resume: input.resume })
         : ({
             userPrompt: input.message,
+            needsDatasetData: false,
             datasets: null,
             chosenDatasetId: null,
             purchaseCandidates: [],
@@ -100,6 +101,7 @@ export async function runChatAgent(
             datasetNotes: "",
             purchasedDatasetIds: [],
             researchComplete: false,
+            declinedOptionalPurchase: false,
             finalAnswer: null,
             error: null,
           } satisfies AgentStateType);
