@@ -168,8 +168,8 @@ export default function App() {
   const sweepUnresolvedForThread = useCallback((tid: string) => {
     setTranscript((prev) =>
       prev.map((t) => {
-        if (t.threadId !== tid) return t;
         if (t.kind !== "pending" && t.kind !== "pending_choice") return t;
+        if (t.threadId !== tid) return t;
         if (t.resolved !== undefined) return t;
         return { ...t, resolved: "superseded" as const };
       }),
