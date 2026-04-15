@@ -69,6 +69,7 @@
   "usdcBeforeBounty": "बाउंटी पोस्ट करने से पहले USDC में ऑप्ट-इन आवश्यक है।",
   "sectionBountyDetails": "बाउंटी विवरण",
   "sectionSubmissionDetails": "सबमिशन विवरण",
+  "sectionSubmissionDataset": "डेटासेट प्रोफ़ाइल",
   "sectionSubmissionFiles": "फ़ाइलें",
   "sectionReward": "इनाम",
   "bountyTitleField": "बाउंटी शीर्षक",

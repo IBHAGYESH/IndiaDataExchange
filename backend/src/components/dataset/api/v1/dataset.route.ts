@@ -76,7 +76,7 @@ export class DatasetRoute {
           throw new AppError("ValidationError", 400, "Both sampleFile and fullDataFile are required", true);
         }
 
-        const { title, description, category, tags, priceUSDC, format, recordCount, sizeBytes, sellerAttestationAccepted } =
+        const { title, description, category, tags, priceUSDC, format, recordCount, sellerAttestationAccepted } =
           req.body;
         if (!title || !description || !category || !priceUSDC || !format) {
           throw new AppError("ValidationError", 400, "Missing required fields", true);
@@ -99,8 +99,7 @@ export class DatasetRoute {
             tags: parsedTags,
             priceUSDC: parseFloat(priceUSDC),
             format,
-            recordCount: parseInt(recordCount) || 0,
-            sizeBytes: parseInt(sizeBytes) || 0,
+            recordCount: parseInt(recordCount as string, 10) || 0,
             sellerAttestationAccepted: attestationOk,
           },
           files.sampleFile[0],

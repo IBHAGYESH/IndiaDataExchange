@@ -69,6 +69,7 @@
   "usdcBeforeBounty": "ಬೌಂಟಿಗಳನ್ನು ಪೋಸ್ಟ್ ಮಾಡುವ ಮೊದಲು ನೀವು USDC ಗೆ ಆಯ್ಕೆ ಮಾಡಬೇಕಾಗುತ್ತದೆ.",
   "sectionBountyDetails": "ಬೌಂಟಿ ವಿವರಗಳು",
   "sectionSubmissionDetails": "ಸಲ್ಲಿಕೆ ವಿವರಗಳು",
+  "sectionSubmissionDataset": "ಡೇಟಾಸೆಟ್ ಪ್ರೊಫೈಲ್",
   "sectionSubmissionFiles": "ಫೈಲ್‌ಗಳು",
   "sectionReward": "ಬಹುಮಾನ",
   "bountyTitleField": "ಬೌಂಟಿ ಶೀರ್ಷಿಕೆ",

@@ -11,13 +11,15 @@ import {
 } from "@libraries/algorand.service";
 import { AppError } from "@middlewares/error.middleware";
 import { returnDataObj, getPagination } from "@utils/index";
-import { DatasetCategory } from "@components/dataset/database/models";
+import { DatasetCategory, DatasetFormat } from "@components/dataset/database/models";
 import { FilterQuery } from "mongoose";
 import { IBounty } from "../database/models";
 
 const bountyRepo = new BountyRepository();
 const submissionRepo = new SubmissionRepository();
 const userRepo = new UserRepository();
+
+const DATASET_FORMATS: DatasetFormat[] = ["csv", "json", "images", "audio", "video", "pdf", "other"];
 
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -181,7 +183,13 @@ export class BountyService {
     userId: string,
     walletAddress: string,
     bountyId: string,
-    data: { title: string; description: string; submitterAttestationAccepted: boolean },
+    data: {
+      title: string;
+      description: string;
+      format: string;
+      recordCount: number;
+      submitterAttestationAccepted: boolean;
+    },
     sampleFile: Express.Multer.File,
     fullDataFile: Express.Multer.File
   ) {
@@ -192,6 +200,10 @@ export class BountyService {
         "You must confirm you have the right to share this data and accept responsibility for its content",
         true
       );
+    }
+
+    if (!DATASET_FORMATS.includes(data.format as DatasetFormat)) {
+      throw new AppError("ValidationError", 400, "Invalid dataset format", true);
     }
 
     const bounty = await bountyRepo.findById(bountyId);
@@ -213,11 +225,20 @@ export class BountyService {
       uploadPrivateFile(fullDataFile.buffer, fullDataFile.originalname),
     ]);
 
+    const sizeBytes =
+      typeof fullDataFile.size === "number" && fullDataFile.size >= 0
+        ? fullDataFile.size
+        : fullDataFile.buffer?.length ?? 0;
+
     const submission = await submissionRepo.create({
       bountyId: bountyId as unknown as import("mongoose").Types.ObjectId,
       sellerId: userId as unknown as import("mongoose").Types.ObjectId,
       sellerWalletAddress: walletAddress,
-      ...data,
+      title: data.title,
+      description: data.description,
+      format: data.format as DatasetFormat,
+      recordCount: data.recordCount,
+      sizeBytes,
       sampleIpfsCid: sampleCid,
       sampleFileName: sampleFile.originalname,
       fullDataIpfsCid: fullDataCid,

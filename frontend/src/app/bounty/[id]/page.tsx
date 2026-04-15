@@ -23,6 +23,10 @@ import {
   Link as MuiLink,
   FormControlLabel,
   Checkbox,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
@@ -45,6 +49,10 @@ import { submittedTxIdFromAlgodResponse } from "@/utils/algod";
 import { useTranslation } from "react-i18next";
 import FormSection from "@/components/forms/FormSection";
 import FileDropZone from "@/components/forms/FileDropZone";
+import SubmissionDataChips from "@/components/bounty/SubmissionDataChips";
+import type { DatasetFormat } from "@/types";
+
+const submissionFormats: DatasetFormat[] = ["csv", "json", "images", "audio", "video", "pdf", "other"];
 
 export default function BountyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -60,7 +68,12 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
   const [confirmAcceptance] = useConfirmAcceptanceMutation();
 
   const [submitOpen, setSubmitOpen] = useState(false);
-  const [submitForm, setSubmitForm] = useState({ title: "", description: "" });
+  const [submitForm, setSubmitForm] = useState({
+    title: "",
+    description: "",
+    format: "" as DatasetFormat | "",
+    recordCount: "",
+  });
   const [sampleFile, setSampleFile] = useState<File | null>(null);
   const [fullDataFile, setFullDataFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -112,18 +125,24 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
       setSubmitError(tf("attestationRequired"));
       return;
     }
+    if (!submitForm.format) {
+      setSubmitError(tf("formatRequired"));
+      return;
+    }
     setSubmitting(true);
     setSubmitError(null);
     try {
       const formData = new FormData();
       formData.append("title", submitForm.title);
       formData.append("description", submitForm.description);
+      formData.append("format", submitForm.format);
+      formData.append("recordCount", submitForm.recordCount || "0");
       formData.append("submitterAttestationAccepted", "true");
       formData.append("sampleFile", sampleFile);
       formData.append("fullDataFile", fullDataFile);
       await submitToBounty({ bountyId: id, formData }).unwrap();
       setSubmitOpen(false);
-      setSubmitForm({ title: "", description: "" });
+      setSubmitForm({ title: "", description: "", format: "", recordCount: "" });
       setSampleFile(null);
       setFullDataFile(null);
       setSubmitterAttestation(false);
@@ -266,6 +285,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                             }
                           />
                         </Box>
+                        <SubmissionDataChips format={sub.format} recordCount={sub.recordCount} sizeBytes={sub.sizeBytes} />
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                           {sub.description}
                         </Typography>
@@ -380,6 +400,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
               setSubmitOpen(false);
               setSubmitterAttestation(false);
               setSubmitError(null);
+              setSubmitForm({ title: "", description: "", format: "", recordCount: "" });
             }}
             maxWidth="md"
             fullWidth
@@ -408,6 +429,38 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                     onChange={(e) => setSubmitForm((p) => ({ ...p, description: e.target.value }))}
                   />
                 </Stack>
+              </FormSection>
+              <FormSection title={t("sectionSubmissionDataset")}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                  <FormControl fullWidth required>
+                    <InputLabel>{tf("format")}</InputLabel>
+                    <Select
+                      label={tf("format")}
+                      value={submitForm.format}
+                      onChange={(e) =>
+                        setSubmitForm((p) => ({ ...p, format: e.target.value as DatasetFormat }))
+                      }
+                    >
+                      {submissionFormats.map((f) => (
+                        <MenuItem key={f} value={f}>
+                          {f.toUpperCase()}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <TextField
+                    fullWidth
+                    label={tf("recordCount")}
+                    type="number"
+                    value={submitForm.recordCount}
+                    onChange={(e) => setSubmitForm((p) => ({ ...p, recordCount: e.target.value }))}
+                    placeholder="e.g. 10000"
+                    inputProps={{ min: 0 }}
+                  />
+                </Stack>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
+                  {tf("derivedSizeHint")}
+                </Typography>
               </FormSection>
               <FormSection title={t("sectionSubmissionFiles")}>
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
@@ -462,6 +515,7 @@ export default function BountyDetailPage({ params }: { params: Promise<{ id: str
                   setSubmitOpen(false);
                   setSubmitterAttestation(false);
                   setSubmitError(null);
+                  setSubmitForm({ title: "", description: "", format: "", recordCount: "" });
                 }}
               >
                 {tc("cancel")}

@@ -105,6 +105,11 @@ export interface Submission {
   sellerWalletAddress: string;
   title: string;
   description: string;
+  /** Same enum as marketplace datasets; older API rows may omit. */
+  format?: DatasetFormat;
+  recordCount?: number;
+  /** From uploaded full file at submit time */
+  sizeBytes?: number;
   sampleIpfsCid: string;
   sampleFileName: string;
   status: SubmissionStatus;

@@ -69,6 +69,7 @@
   "usdcBeforeBounty": "You need to opt-in to USDC before posting bounties.",
   "sectionBountyDetails": "Bounty Details",
   "sectionSubmissionDetails": "Submission details",
+  "sectionSubmissionDataset": "Dataset profile",
   "sectionSubmissionFiles": "Files",
   "sectionReward": "Reward",
   "bountyTitleField": "Bounty Title",

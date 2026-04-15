@@ -20,6 +20,7 @@ import { formatDate, formatUSDC } from "@/utils";
 import config from "@/config";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import SubmissionDataChips from "@/components/bounty/SubmissionDataChips";
 
 type PopulatedBounty = { title: string; rewardUSDC: number; _id: string; status?: string; deadline?: string };
 
@@ -93,6 +94,8 @@ export default function SubmissionsPage() {
                   )}
                 </Stack>
               </Box>
+
+              <SubmissionDataChips format={sub.format} recordCount={sub.recordCount} sizeBytes={sub.sizeBytes} />
 
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 {sub.description}

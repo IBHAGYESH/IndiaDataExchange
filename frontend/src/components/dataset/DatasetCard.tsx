@@ -21,20 +21,11 @@ import { formatUSDC, truncateAddress, formatBytes } from "@/utils";
 import config from "@/config";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
+import { DATASET_FORMAT_ICONS } from "@/constants/datasetFormatDisplay";
 
 interface Props {
   dataset: Dataset;
 }
-
-const formatIcons: Record<string, string> = {
-  csv: "📊",
-  json: "📋",
-  images: "🖼️",
-  audio: "🎵",
-  video: "🎬",
-  pdf: "📄",
-  other: "📦",
-};
 
 const categoryGradients: Record<string, string> = {
   agriculture: "linear-gradient(135deg, #10B981, #34D399)",
@@ -156,7 +147,7 @@ export default function DatasetCard({ dataset }: Props) {
 
         <Stack direction="row" spacing={0.75} flexWrap="wrap" sx={{ mb: 1.5, gap: 0.5 }}>
           <Chip
-            label={`${formatIcons[dataset.format] || "📦"} ${dataset.format.toUpperCase()}`}
+            label={`${DATASET_FORMAT_ICONS[dataset.format] || "📦"} ${dataset.format.toUpperCase()}`}
             size="small"
             variant="outlined"
             sx={{ fontSize: "0.7rem", height: 24 }}

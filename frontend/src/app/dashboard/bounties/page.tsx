@@ -36,6 +36,7 @@ import config from "@/config";
 import { submittedTxIdFromAlgodResponse } from "@/utils/algod";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
+import SubmissionDataChips from "@/components/bounty/SubmissionDataChips";
 
 export default function DashboardBountiesPage() {
   const { t } = useTranslation("bounties");
@@ -203,6 +204,7 @@ export default function DashboardBountiesPage() {
                             }
                           />
                         </Box>
+                        <SubmissionDataChips format={sub.format} recordCount={sub.recordCount} sizeBytes={sub.sizeBytes} />
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, whiteSpace: "pre-wrap" }}>
                           {sub.description}
                         </Typography>

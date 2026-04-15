@@ -92,7 +92,7 @@ paths:
           name: fullDataFile
           type: file
           required: true
-          description: Full dataset file (private on IPFS)
+          description: Full dataset file (private on IPFS). Stored sizeBytes is derived from this upload, not from a separate form field.
         - in: formData
           name: title
           type: string
@@ -120,9 +120,6 @@ paths:
           required: true
         - in: formData
           name: recordCount
-          type: integer
-        - in: formData
-          name: sizeBytes
           type: integer
       responses:
         '201':

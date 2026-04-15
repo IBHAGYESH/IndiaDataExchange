@@ -108,9 +108,20 @@ export class BountyRoute {
         const body = req.body as Record<string, unknown>;
         const title = typeof body.title === "string" ? body.title : "";
         const description = typeof body.description === "string" ? body.description : "";
+        const format = typeof body.format === "string" ? body.format : "";
+        const recordCountRaw = body.recordCount;
+        const recordCount =
+          typeof recordCountRaw === "string"
+            ? parseInt(recordCountRaw, 10)
+            : typeof recordCountRaw === "number"
+              ? recordCountRaw
+              : 0;
         const submitterAttestationAccepted = body.submitterAttestationAccepted;
         if (!title || !description) {
           throw new AppError("ValidationError", 400, "Title and description required", true);
+        }
+        if (!format) {
+          throw new AppError("ValidationError", 400, "Format is required", true);
         }
         const attestationOk =
           submitterAttestationAccepted === true ||
@@ -120,7 +131,13 @@ export class BountyRoute {
           req.user!.userId,
           req.user!.walletAddress,
           id,
-          { title, description, submitterAttestationAccepted: attestationOk },
+          {
+            title,
+            description,
+            format,
+            recordCount: Number.isFinite(recordCount) && recordCount >= 0 ? recordCount : 0,
+            submitterAttestationAccepted: attestationOk,
+          },
           files.sampleFile[0],
           files.fullDataFile[0]
         );

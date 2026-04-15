@@ -203,6 +203,16 @@ paths:
           type: string
           required: true
         - in: formData
+          name: format
+          type: string
+          required: true
+          description: Dataset format (csv, json, images, audio, video, pdf, other) — same as marketplace listings
+        - in: formData
+          name: recordCount
+          type: integer
+          required: false
+          description: Approximate number of records (0 if unknown)
+        - in: formData
           name: submitterAttestationAccepted
           type: boolean
           description: Must be true — legal attestation for uploaded data (DPDP / platform policy)

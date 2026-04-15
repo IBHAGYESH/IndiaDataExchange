@@ -137,7 +137,6 @@ export class DatasetService {
       priceUSDC: number;
       format: DatasetFormat;
       recordCount: number;
-      sizeBytes: number;
       sellerAttestationAccepted: boolean;
     },
     sampleFile: Express.Multer.File,
@@ -170,10 +169,16 @@ export class DatasetService {
       uploadPrivateFile(fullDataFile.buffer, fullDataFile.originalname),
     ]);
 
+    const sizeBytes =
+      typeof fullDataFile.size === "number" && fullDataFile.size >= 0
+        ? fullDataFile.size
+        : fullDataFile.buffer?.length ?? 0;
+
     const dataset = await datasetRepo.create({
       sellerId: userId as unknown as import("mongoose").Types.ObjectId,
       sellerWalletAddress: walletAddress,
       ...data,
+      sizeBytes,
       sampleIpfsCid: sampleCid,
       sampleFileName: sampleFile.originalname,
       fullDataIpfsCid: fullDataCid,

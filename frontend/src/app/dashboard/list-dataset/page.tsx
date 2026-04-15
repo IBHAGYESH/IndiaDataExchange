@@ -48,7 +48,6 @@ export default function ListDatasetPage() {
     priceUSDC: "",
     format: "" as DatasetFormat,
     recordCount: "",
-    sizeBytes: "",
   });
   const [sampleFile, setSampleFile] = useState<File | null>(null);
   const [fullDataFile, setFullDataFile] = useState<File | null>(null);
@@ -89,7 +88,6 @@ export default function ListDatasetPage() {
     formData.append("priceUSDC", form.priceUSDC);
     formData.append("format", form.format);
     formData.append("recordCount", form.recordCount || "0");
-    formData.append("sizeBytes", form.sizeBytes || "0");
     formData.append("sampleFile", sampleFile);
     formData.append("fullDataFile", fullDataFile);
     formData.append("sellerAttestationAccepted", "true");
@@ -181,11 +179,10 @@ export default function ListDatasetPage() {
               onChange={(e) => setForm(p => ({ ...p, recordCount: e.target.value }))}
               placeholder="e.g. 10000"
             />
-            <TextField fullWidth label={t("sizeBytes")} type="number" value={form.sizeBytes}
-              onChange={(e) => setForm(p => ({ ...p, sizeBytes: e.target.value }))}
-              placeholder="e.g. 5242880"
-            />
           </Box>
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
+            {t("derivedSizeHint")}
+          </Typography>
 
           <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
             <LocalOfferIcon sx={{ color: "text.disabled", fontSize: 18 }} />

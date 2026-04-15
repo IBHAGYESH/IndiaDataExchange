@@ -12,6 +12,7 @@
   "description": "Description",
   "priceUsdc": "Price (USDC)",
   "recordCount": "Records",
+  "derivedSizeHint": "Listing size is taken from your full dataset file automatically so it always matches what buyers receive.",
   "sizeBytes": "Size (bytes)",
   "sampleFile": "Sample File (Public Preview)",
   "fullFile": "Full Dataset (Private)",
@@ -28,5 +29,6 @@
   "hintSample": "Max 10MB — Users see this before buying",
   "hintFull": "Max 500MB — Only accessible after purchase",
   "priceHelper": "$0.10 - $100.00",
-  "attestationRequired": "You must confirm the data responsibility statement before continuing."
+  "attestationRequired": "You must confirm the data responsibility statement before continuing.",
+  "formatRequired": "Please select a data format."
 }
