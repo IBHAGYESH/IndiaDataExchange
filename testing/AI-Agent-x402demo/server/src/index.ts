@@ -27,14 +27,32 @@ app.post("/api/chat", async (req, res) => {
 
   const resume = body.resume;
   if (resume != null && typeof resume === "object" && resume !== null) {
-    const confirm = (resume as { confirm?: unknown }).confirm;
-    if (typeof confirm !== "boolean") {
-      res.status(400).json({
-        error: 'Resume requests require { "threadId": string, "resume": { "confirm": boolean } }',
-      });
+    const r = resume as Record<string, unknown>;
+    if (r.declineChoice === true) {
+      await runChatAgent(
+        { kind: "resume", threadId, resume: { declineChoice: true } },
+        res
+      );
       return;
     }
-    await runChatAgent({ kind: "resume", threadId, confirm }, res);
+    if (typeof r.datasetId === "string" && r.datasetId.trim()) {
+      await runChatAgent(
+        { kind: "resume", threadId, resume: { datasetId: r.datasetId.trim() } },
+        res
+      );
+      return;
+    }
+    if (typeof r.confirm === "boolean") {
+      await runChatAgent(
+        { kind: "resume", threadId, resume: { confirm: r.confirm } },
+        res
+      );
+      return;
+    }
+    res.status(400).json({
+      error:
+        'Resume requires one of: { "confirm": boolean }, { "datasetId": string }, { "declineChoice": true }',
+    });
     return;
   }
 
@@ -42,7 +60,7 @@ app.post("/api/chat", async (req, res) => {
   if (!message) {
     res.status(400).json({
       error:
-        'Body must include { "message": string, "threadId"?: string } or { "threadId": string, "resume": { "confirm": boolean } }',
+        'Body must include { "message": string, "threadId"?: string } or { "threadId": string, "resume": { ... } }',
     });
     return;
   }

@@ -25,9 +25,15 @@ function getIdeFrontendBaseUrl(): string {
   );
 }
 
+/** Payload passed to LangGraph `Command({ resume })` — must match the waiting `interrupt()`. */
+export type GraphResumePayload =
+  | { confirm: boolean }
+  | { datasetId: string }
+  | { declineChoice: true };
+
 export type RunChatInput =
   | { kind: "start"; threadId: string; message: string }
-  | { kind: "resume"; threadId: string; confirm: boolean };
+  | { kind: "resume"; threadId: string; resume: GraphResumePayload };
 
 function isInterruptPayload(payload: unknown): boolean {
   return (
@@ -83,11 +89,12 @@ export async function runChatAgent(
 
     const streamInput =
       input.kind === "resume"
-        ? new Command({ resume: { confirm: input.confirm } })
+        ? new Command({ resume: input.resume })
         : ({
             userPrompt: input.message,
             datasets: null,
             chosenDatasetId: null,
+            purchaseCandidates: [],
             purchaseResultJson: null,
             processedSummary: null,
             datasetNotes: "",

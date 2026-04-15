@@ -9,6 +9,17 @@ export type PurchaseProposal = {
   category?: string;
 };
 
+export type DatasetChoiceCandidate = {
+  datasetId: string;
+  title: string;
+  priceUSDC: number;
+  publicUrl: string;
+  category?: string;
+  matchNote: string;
+};
+
+type PendingResolution = "confirmed" | "declined" | "superseded";
+
 type TranscriptItem =
   | { id: string; kind: "user"; content: string }
   | { id: string; kind: "assistant"; content: string }
@@ -24,12 +35,26 @@ type TranscriptItem =
       kind: "pending";
       threadId: string;
       proposal: PurchaseProposal;
-      resolved?: "confirmed" | "declined";
+      resolved?: PendingResolution;
+    }
+  | {
+      id: string;
+      kind: "pending_choice";
+      threadId: string;
+      candidates: DatasetChoiceCandidate[];
+      resolved?: PendingResolution;
+      /** Set when user confirms a row (for display) */
+      chosenDatasetId?: string;
     };
 
 type SseEvent =
   | { type: "step"; step: string; detail?: string }
   | { type: "thread"; threadId: string }
+  | {
+      type: "pending_dataset_choice";
+      threadId: string;
+      candidates: DatasetChoiceCandidate[];
+    }
   | {
       type: "pending_confirmation";
       threadId: string;
@@ -70,6 +95,10 @@ async function consumeSseResponse(
   handlers: {
     onStep: (step: string, detail?: string) => void;
     onThread: (threadId: string) => void;
+    onPendingChoice: (
+      threadId: string,
+      candidates: DatasetChoiceCandidate[],
+    ) => void;
     onPending: (threadId: string, proposal: PurchaseProposal) => void;
     onAssistant: (content: string) => void;
     onError: (message: string) => void;
@@ -94,7 +123,9 @@ async function consumeSseResponse(
     for (const ev of events) {
       if (ev.type === "step") handlers.onStep(ev.step, ev.detail);
       else if (ev.type === "thread") handlers.onThread(ev.threadId);
-      else if (ev.type === "pending_confirmation") {
+      else if (ev.type === "pending_dataset_choice") {
+        handlers.onPendingChoice(ev.threadId, ev.candidates);
+      } else if (ev.type === "pending_confirmation") {
         handlers.onPending(ev.threadId, ev.proposal);
       } else if (ev.type === "message" && ev.role === "assistant") {
         handlers.onAssistant(ev.content);
@@ -134,6 +165,17 @@ export default function App() {
   const idRef = useRef(0);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
 
+  const sweepUnresolvedForThread = useCallback((tid: string) => {
+    setTranscript((prev) =>
+      prev.map((t) => {
+        if (t.threadId !== tid) return t;
+        if (t.kind !== "pending" && t.kind !== "pending_choice") return t;
+        if (t.resolved !== undefined) return t;
+        return { ...t, resolved: "superseded" as const };
+      }),
+    );
+  }, []);
+
   const pushUser = useCallback((content: string) => {
     idRef.current += 1;
     setTranscript((prev) => [
@@ -159,6 +201,56 @@ export default function App() {
     ]);
   }, []);
 
+  const pushPendingChoice = useCallback(
+    (tid: string, candidates: DatasetChoiceCandidate[]) => {
+      setTranscript((prev) => {
+        const time = new Date().toLocaleTimeString();
+        const next: TranscriptItem[] = [];
+        for (const t of prev) {
+          if (t.kind !== "pending_choice" || t.threadId !== tid) {
+            next.push(t);
+            continue;
+          }
+          if (t.resolved === "confirmed" || t.resolved === "declined") {
+            idRef.current += 1;
+            next.push({
+              id: `s-${idRef.current}`,
+              kind: "activity",
+              time,
+              step: t.resolved === "confirmed" ? "selected" : "declined",
+              detail:
+                t.resolved === "confirmed" && t.chosenDatasetId
+                  ? `Chose dataset ${t.chosenDatasetId}`
+                  : "Cancelled dataset selection",
+            });
+            continue;
+          }
+          if (t.resolved === "superseded") {
+            next.push(t);
+            continue;
+          }
+          idRef.current += 1;
+          next.push({
+            id: `s-${idRef.current}`,
+            kind: "activity",
+            time,
+            step: "superseded",
+            detail: "New dataset shortlist replaced this step.",
+          });
+        }
+        idRef.current += 1;
+        next.push({
+          id: `c-${idRef.current}`,
+          kind: "pending_choice",
+          threadId: tid,
+          candidates,
+        });
+        return next;
+      });
+    },
+    [],
+  );
+
   const pushPending = useCallback((tid: string, proposal: PurchaseProposal) => {
     setTranscript((prev) => {
       const time = new Date().toLocaleTimeString();
@@ -174,8 +266,7 @@ export default function App() {
             id: `s-${idRef.current}`,
             kind: "activity",
             time,
-            step:
-              t.resolved === "confirmed" ? "confirmed" : "declined",
+            step: t.resolved === "confirmed" ? "confirmed" : "declined",
             detail:
               t.resolved === "confirmed"
                 ? `Proceeding with x402 for "${t.proposal.title}"`
@@ -183,14 +274,17 @@ export default function App() {
           });
           continue;
         }
-        // Same thread, still unresolved — server sent a new interrupt; keep latest proposal only
+        if (t.resolved === "superseded") {
+          next.push(t);
+          continue;
+        }
         idRef.current += 1;
         next.push({
           id: `s-${idRef.current}`,
           kind: "activity",
           time,
-            step: "updated",
-          detail: `Updated confirmation request (was "${t.proposal.title}")`,
+          step: "superseded",
+          detail: `Previous purchase confirmation replaced (was "${t.proposal.title}")`,
         });
       }
       idRef.current += 1;
@@ -217,6 +311,23 @@ export default function App() {
     [],
   );
 
+  const resolvePendingChoice = useCallback(
+    (
+      choiceItemId: string,
+      resolved: "confirmed" | "declined",
+      chosenDatasetId?: string,
+    ) => {
+      setTranscript((prev) =>
+        prev.map((t) =>
+          t.id === choiceItemId && t.kind === "pending_choice"
+            ? { ...t, resolved, chosenDatasetId }
+            : t,
+        ),
+      );
+    },
+    [],
+  );
+
   useEffect(() => {
     transcriptEndRef.current?.scrollIntoView({
       behavior: "smooth",
@@ -226,7 +337,11 @@ export default function App() {
 
   const awaitingUserConfirm = useMemo(
     () =>
-      transcript.some((t) => t.kind === "pending" && t.resolved === undefined),
+      transcript.some(
+        (t) =>
+          (t.kind === "pending" || t.kind === "pending_choice") &&
+          t.resolved === undefined,
+      ),
     [transcript],
   );
 
@@ -253,6 +368,7 @@ export default function App() {
         onThread: (tid) => {
           setThreadId(tid);
         },
+        onPendingChoice: (tid, candidates) => pushPendingChoice(tid, candidates),
         onPending: (tid, proposal) => pushPending(tid, proposal),
         onAssistant: (content) => {
           finalAssistant = content;
@@ -261,8 +377,11 @@ export default function App() {
           sawError = true;
           pushAssistant(`Error: ${msg}`);
         },
-        onDone: (_tid, awaiting) => {
+        onDone: (tid, awaiting) => {
           doneAwaiting = awaiting;
+          if (!awaiting) {
+            sweepUnresolvedForThread(tid);
+          }
         },
       });
 
@@ -276,7 +395,13 @@ export default function App() {
         }
       }
     },
-    [pushActivity, pushAssistant, pushPending],
+    [
+      pushActivity,
+      pushAssistant,
+      pushPending,
+      pushPendingChoice,
+      sweepUnresolvedForThread,
+    ],
   );
 
   const send = useCallback(async () => {
@@ -304,6 +429,42 @@ export default function App() {
     runStream,
     threadId,
   ]);
+
+  const submitDatasetChoice = useCallback(
+    async (
+      choiceItemId: string,
+      payload: { datasetId: string } | { declineChoice: true },
+    ) => {
+      if (busy) return;
+      const row = transcript.find(
+        (t) => t.id === choiceItemId && t.kind === "pending_choice",
+      );
+      if (!row || row.kind !== "pending_choice" || row.resolved) return;
+      if ("datasetId" in payload) {
+        resolvePendingChoice(choiceItemId, "confirmed", payload.datasetId);
+      } else {
+        resolvePendingChoice(choiceItemId, "declined");
+      }
+      setBusy(true);
+      try {
+        await runStream(
+          {
+            threadId: row.threadId,
+            resume:
+              "declineChoice" in payload
+                ? { declineChoice: true }
+                : { datasetId: payload.datasetId },
+          },
+          { expectAssistantIfNotWaiting: true },
+        );
+      } catch (e) {
+        pushAssistant(e instanceof Error ? e.message : String(e));
+      } finally {
+        setBusy(false);
+      }
+    },
+    [busy, pushAssistant, resolvePendingChoice, runStream, transcript],
+  );
 
   const confirmPurchase = useCallback(
     async (pendingItemId: string, confirm: boolean) => {
@@ -335,6 +496,13 @@ export default function App() {
     setInput("");
   }, [busy]);
 
+  function resolvedPurchaseLabel(resolved: PendingResolution): string {
+    if (resolved === "confirmed")
+      return "You confirmed — proceeding with x402 payment.";
+    if (resolved === "declined") return "You declined — purchase skipped.";
+    return "This step was closed automatically (conversation continued).";
+  }
+
   return (
     <div className="layout">
       <header className="header">
@@ -344,9 +512,9 @@ export default function App() {
           <code>{agentBaseUrl()}</code>
         </p>
         <p className="sub hint">
-          Each dataset purchase requires your confirmation. Multi-dataset goals
-          ask again for every additional purchase. After a finished run, click{" "}
-          <strong>New chat</strong> before another catalog search (fresh thread).
+          Each purchase runs in two steps: pick one of the top catalog matches,
+          then confirm payment. Every extra dataset repeats both steps. Use{" "}
+          <strong>New chat</strong> for a fresh thread when you change topic.
         </p>
         <div className="header-actions">
           <button type="button" className="btn-secondary" onClick={newChat}>
@@ -364,8 +532,8 @@ export default function App() {
         >
           {transcript.length === 0 ? (
             <p className="empty-hint">
-              Send a message to browse the catalog. You will be asked to
-              confirm each x402 purchase before it runs.
+              Send a message to search the catalog. You will choose a dataset
+              from the top matches, then confirm each x402 purchase.
             </p>
           ) : null}
           {transcript.map((item) => {
@@ -380,6 +548,77 @@ export default function App() {
               return (
                 <div key={item.id} className="bubble assistant">
                   {item.content}
+                </div>
+              );
+            }
+            if (item.kind === "pending_choice") {
+              return (
+                <div key={item.id} className="choice-card">
+                  <div className="choice-title">Choose a dataset</div>
+                  <p className="choice-sub">
+                    Pick one of the top matches (then you will confirm payment on
+                    the next card).
+                  </p>
+                  <ol className="choice-list">
+                    {item.candidates.map((c) => (
+                      <li key={c.datasetId} className="choice-row">
+                        <div className="choice-row-head">
+                          <strong>{c.title}</strong>
+                          <span className="choice-price">
+                            {typeof c.priceUSDC === "number"
+                              ? `${c.priceUSDC} USDC`
+                              : "—"}
+                          </span>
+                        </div>
+                        <p className="choice-note">{c.matchNote}</p>
+                        <p className="choice-links">
+                          <a
+                            href={c.publicUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Open listing
+                          </a>
+                        </p>
+                        {!item.resolved ? (
+                          <button
+                            type="button"
+                            className="btn-pick"
+                            disabled={busy}
+                            onClick={() =>
+                              void submitDatasetChoice(item.id, {
+                                datasetId: c.datasetId,
+                              })
+                            }
+                          >
+                            Select for purchase
+                          </button>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ol>
+                  {!item.resolved ? (
+                    <div className="choice-footer">
+                      <button
+                        type="button"
+                        className="btn-decline"
+                        disabled={busy}
+                        onClick={() =>
+                          void submitDatasetChoice(item.id, {
+                            declineChoice: true,
+                          })
+                        }
+                      >
+                        Cancel selection
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="pending-resolved">
+                      {item.resolved === "confirmed" && item.chosenDatasetId
+                        ? `Selected dataset ${item.chosenDatasetId} — waiting for payment confirmation…`
+                        : resolvedPurchaseLabel(item.resolved)}
+                    </p>
+                  )}
                 </div>
               );
             }
@@ -406,9 +645,7 @@ export default function App() {
                   </p>
                   {item.resolved ? (
                     <p className="pending-resolved">
-                      {item.resolved === "confirmed"
-                        ? "You confirmed — proceeding with x402 payment."
-                        : "You declined — purchase skipped."}
+                      {resolvedPurchaseLabel(item.resolved)}
                     </p>
                   ) : (
                     <div className="pending-actions">

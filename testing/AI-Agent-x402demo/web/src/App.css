@@ -136,6 +136,99 @@
   font-weight: 400;
 }
 
+.choice-card {
+  align-self: stretch;
+  max-width: 100%;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  border: 2px solid #2563eb;
+  background: #eff6ff;
+}
+
+.choice-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1e3a8a;
+  margin-bottom: 0.25rem;
+}
+
+.choice-sub {
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  color: #475569;
+  line-height: 1.35;
+}
+
+.choice-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.choice-row {
+  padding: 0.5rem 0.45rem 0.5rem 0;
+  border-bottom: 1px solid #bfdbfe;
+  list-style-position: outside;
+}
+
+.choice-row:last-child {
+  border-bottom: none;
+}
+
+.choice-row-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.35rem;
+  align-items: baseline;
+}
+
+.choice-price {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.choice-note {
+  margin: 0.35rem 0 0.25rem;
+  font-size: 0.8rem;
+  color: #475569;
+  line-height: 1.35;
+}
+
+.choice-links {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+}
+
+.choice-links a {
+  color: #1d4ed8;
+}
+
+.btn-pick {
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid #1d4ed8;
+  background: #fff;
+  font-weight: 600;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: #1e3a8a;
+}
+
+.btn-pick:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.choice-footer {
+  margin-top: 0.65rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #bfdbfe;
+}
+
 .pending-card {
   align-self: stretch;
   max-width: 100%;

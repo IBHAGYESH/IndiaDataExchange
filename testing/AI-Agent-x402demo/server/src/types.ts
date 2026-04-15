@@ -6,9 +6,25 @@ export type PurchaseProposal = {
   category?: string;
 };
 
+/** One row in the “pick from top matches” step (before purchase confirmation). */
+export type DatasetChoiceCandidate = {
+  datasetId: string;
+  title: string;
+  priceUSDC: number;
+  publicUrl: string;
+  category?: string;
+  /** Short model-written reason this row matches the user goal */
+  matchNote: string;
+};
+
 export type SsePayload =
   | { type: "step"; step: string; detail?: string }
   | { type: "thread"; threadId: string }
+  | {
+      type: "pending_dataset_choice";
+      threadId: string;
+      candidates: DatasetChoiceCandidate[];
+    }
   | {
       type: "pending_confirmation";
       threadId: string;
