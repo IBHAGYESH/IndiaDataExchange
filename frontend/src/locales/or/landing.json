@@ -1,0 +1,132 @@
+{
+  "heroTitle": "ଇଣ୍ଡିଆ ଡାଟା ଏକ୍ସଚେଞ୍ଜ |",
+  "heroSubtitle": "ଯେଉଁଠାରେ ଭାରତୀୟ ଜ୍ଞାନ ହୁଏ |",
+  "heroHighlight": "AI ଇନ୍ଧନ |",
+  "heroDescription": "Buy and sell datasets using USDC on Algorand. Instant payments. Zero friction. AI agents welcome.",
+  "browseMarketplace": "ମାର୍କେଟପ୍ଲେସ୍ ବ୍ରାଉଜ୍ କରନ୍ତୁ |",
+  "monetizeData": "ଆପଣଙ୍କର ତଥ୍ୟକୁ ମୋନେଟାଇଜ୍ କରନ୍ତୁ |",
+  "x402Overline": "x402 ପ୍ରୋଟୋକଲ୍ - AI ଏଜେଣ୍ଟ କ୍ରୟ ପ୍ରବାହ |",
+  "x402Caption": "AI ଏଜେଣ୍ଟମାନେ x402 ପ୍ରୋଟୋକଲ୍ ମାଧ୍ୟମରେ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ଦେୟ ଦିଅନ୍ତି - କ wal ଣସି ୱାଲେଟ୍ ସଂଯୋଗ ଆବଶ୍ୟକ ନାହିଁ |",
+  "whyTitle": "ଭାରତ ଡାଟା ବିନିମୟ କାହିଁକି?",
+  "whySubtitle": "ଗତି, ଅନ୍ତିମତା ଏବଂ ପାଖାପାଖି ଶୂନ ଫି ପାଇଁ ଆଲଗୋରାଣ୍ଡରେ ନିର୍ମିତ |",
+  "categoriesTitle": "ଡାଟା ବର୍ଗଗୁଡିକ",
+  "categoriesSubtitle": "ଜଟିଳ କ୍ଷେତ୍ରଗୁଡିକରେ ଭାରତ ନିର୍ଦ୍ଦିଷ୍ଟ ଡାଟାବେସ୍ |",
+  "ctaTitleLine1": "ମୋନେଟାଇଜ୍ କରିବାକୁ ପ୍ରସ୍ତୁତ |",
+  "ctaTitleLine2": "ତୁମର ତଥ୍ୟ?",
+  "ctaBody": "ତୁମର ପେରା ୱାଲେଟକୁ ସଂଯୋଗ କର ଏବଂ ଆଜି ତୁମର ଭାରତୀୟ ଡାଟାସେଟରୁ USDC ରୋଜଗାର ଆରମ୍ଭ କର |",
+  "listDataset": "ଏକ ଡାଟାବେସ୍ ତାଲିକା କର |",
+  "viewBounties": "ବାଉଣ୍ଟିଜ୍ ଦେଖନ୍ତୁ |",
+  "footerBuilt": "ଆଲଗୋରାଣ୍ଡରେ ନିର୍ମିତ · x402 ପ୍ରୋଟୋକଲ୍ ଦ୍ୱାରା ଚାଳିତ |",
+  "footerCredit": "ସହିତ ତିଆରି",
+  "footerBy": "ଦ୍ .ାରା",
+  "stats": [
+    {
+      "label": "ଡାଟାବେସ୍ ତାଲିକାଭୁକ୍ତ |",
+      "value": "500+",
+      "icon": "📦"
+    },
+    {
+      "label": "USDC ପେଡ୍ ଆଉଟ୍ |",
+      "value": "$12K+",
+      "icon": "💵"
+    },
+    {
+      "label": "ସକ୍ରିୟ ବିକ୍ରେତା |",
+      "value": "200+",
+      "icon": "👥"
+    },
+    {
+      "label": "AI ଏଜେଣ୍ଟ କ୍ରୟ |",
+      "value": "1K+",
+      "icon": "🤖"
+    }
+  ],
+  "features": [
+    {
+      "title": "ତତକ୍ଷଣାତ୍ USDC ଦେୟ |",
+      "desc": "ଆଲଗୋରାଣ୍ଡ 3 ସେକେଣ୍ଡ ତଳେ ସ୍ଥିର ହୁଏ | ବିକ୍ରେତାମାନେ ସିଧାସଳଖ USDC ଗ୍ରହଣ କରନ୍ତି - କ es ଣସି ଏସ୍କ୍ରୋ ନାହିଁ, ଅପେକ୍ଷା ନାହିଁ |"
+    },
+    {
+      "title": "AI ଏଜେଣ୍ଟ ଦେଶୀ |",
+      "desc": "AI ଏଜେଣ୍ଟମାନେ x402 HTTP ଦେୟ ମାଧ୍ୟମରେ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ଡାଟାସେଟ୍ ବ୍ରାଉଜ୍ ଏବଂ କ୍ରୟ କରନ୍ତି | କ account ଣସି ଖାତା ଆବଶ୍ୟକ ନାହିଁ |"
+    },
+    {
+      "title": "ବାଉଣ୍ଟି ସିଷ୍ଟମ୍ |",
+      "desc": "ସ୍ମାର୍ଟ କଣ୍ଟ୍ରାକ୍ଟ ଏସ୍କ୍ରୋରେ ଲକ୍ ହୋଇଥିବା USDC ସହିତ ବାଉଣ୍ଟି ପୋଷ୍ଟ କରନ୍ତୁ | କେବଳ ଗ୍ରହଣ ଉପରେ ମୁକ୍ତ |"
+    },
+    {
+      "title": "ଅଣ କଷ୍ଟୋଡିଆଲ୍ |",
+      "desc": "ତୁମର ଚାବି, ତୁମର ତଥ୍ୟ | ଆଲଗୋରାଣ୍ଡ ୱାଲେଟ୍ ସହିତ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ | କ No ଣସି ଇମେଲ ନାହିଁ, ପାସୱାର୍ଡ ନାହିଁ |"
+    }
+  ],
+  "categories": [
+    {
+      "key": "agriculture",
+      "label": "କୃଷି",
+      "emoji": null,
+      "description": "ଫସଲ ତଥ୍ୟ, ରୋଗ ଚିତ୍ର, ପାଣିପାଗ s ାଞ୍ଚା |"
+    },
+    {
+      "key": "language",
+      "label": "ଭାଷା",
+      "emoji": null,
+      "description": "ଭଏସ୍ ରେକର୍ଡିଂ, ପାଠ୍ୟ କର୍ପୋରା, ଅନୁବାଦ |"
+    },
+    {
+      "key": "traffic",
+      "label": "ଟ୍ରାଫିକ୍",
+      "emoji": null,
+      "description": "ସହରୀ ଗତିଶୀଳତା, ଛକ ତଥ୍ୟ, ପ୍ରବାହ s ାଞ୍ଚା |"
+    },
+    {
+      "key": "healthcare",
+      "label": "ସ୍ୱାସ୍ଥ୍ୟସେବା",
+      "emoji": null,
+      "description": "ଆୟୁର୍ବେଦିକ ଉଦ୍ଭିଦ, ଚିକିତ୍ସା ଚିତ୍ର, ରେକର୍ଡ |"
+    },
+    {
+      "key": "cultural",
+      "label": "ସାଂସ୍କୃତିକ",
+      "emoji": null,
+      "description": "ହେରିଟେଜ୍ ସାଇଟ୍, ଫେଷ୍ଟିଭାଲ୍, କାରିଗର ତଥ୍ୟ |"
+    },
+    {
+      "key": "financial",
+      "label": "ଆର୍ଥିକ",
+      "emoji": null,
+      "description": "ବଜାର ତଥ୍ୟ, କାରବାର, ଅର୍ଥନ economic ତିକ ସୂଚକ |"
+    }
+  ],
+  "x402Steps": [
+    {
+      "label": "ଆବିଷ୍କାର |",
+      "title": "ଏଜେଣ୍ଟ ଡାଟାବେସ୍ ଆଣେ |",
+      "code": "GET /api/datasets?category=agriculture",
+      "response": "200 ଠିକ ଅଛି - 12 ଡାଟାସେଟ ମିଳିଲା |"
+    },
+    {
+      "label": "ଅନୁରୋଧ",
+      "title": "ଏଜେଣ୍ଟ ଡାଉନଲୋଡ୍ ଅନୁରୋଧ |",
+      "code": "GET /api/datasets/abc123/download",
+      "response": "ହେଡର୍ସ: ଗ୍ରହଣ: ପ୍ରୟୋଗ / json |"
+    },
+    {
+      "label": "ପେୱାଲ୍ |",
+      "title": "ସର୍ଭର 402 ଫେରସ୍ତ କରେ |",
+      "code": "HTTP 402 Payment Required",
+      "response": "ଏକ୍ସ-ପେମେଣ୍ଟ: ଆଲଗୋରାଣ୍ଡରେ USDC $ 2.50 |"
+    },
+    {
+      "label": "Payment",
+      "title": "ଏଜେଣ୍ଟ x402 ମାଧ୍ୟମରେ ଦେୟ ପ୍ରଦାନ କରେ |",
+      "code": "USDC Transfer → Algorand Testnet",
+      "response": "Tx 3.2s ରେ ନିଶ୍ଚିତ ହୋଇଛି - ରାଉଣ୍ଡ 45892 |"
+    },
+    {
+      "label": "ବିତରଣ",
+      "title": "ଏଜେଣ୍ଟ ଡାଟାସେଟ ପାଇଥାଏ |",
+      "code": "GET /api/datasets/abc123/download",
+      "response": "200 ଠିକ ଅଛି - dataset.csv (2.4MB)"
+    }
+  ]
+}

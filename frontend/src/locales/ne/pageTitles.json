@@ -1,0 +1,23 @@
+{
+  "suffix": "भारत डाटा एक्सचेंज",
+  "home": "घर",
+  "marketplace": "डाटा मार्केटप्लेस",
+  "dataset": "डाटासेट",
+  "bounties": "डाटा बाउन्टीहरू",
+  "bounty": "बाउन्टी",
+  "dashboard": "ड्यासबोर्ड",
+  "listDataset": "सूची डाटासेट",
+  "listings": "मेरो सूची",
+  "purchases": "मेरो खरिदहरू",
+  "myBounties": "मेरो बाउन्टीहरू",
+  "submissions": "मेरा सबमिशनहरू",
+  "postBounty": "पोस्ट बाउन्टी",
+  "account": "खाता",
+  "docsApi": "API सन्दर्भ",
+  "docsMcp": "MCP सर्भर",
+  "terms": "सर्तहरू",
+  "privacy": "गोपनीयता",
+  "admin": "व्यवस्थापक",
+  "adminDatasets": "प्रशासन · डाटासेट",
+  "adminBounties": "प्रशासन · बाउन्टीहरू"
+}

@@ -1,0 +1,22 @@
+{
+  "sidebarHeading": "ড্যাশবোর্ড",
+  "adminSection": "অ্যাডমিন",
+  "platformOverview": "প্ল্যাটফর্ম ওভারভিউ",
+  "docs": "ডক্স",
+  "marketplace": "মার্কেটপ্লেস",
+  "bounties": "অনুগ্রহ",
+  "dashboard": "ড্যাশবোর্ড",
+  "navigation": "নেভিগেশন",
+  "overview": "ওভারভিউ",
+  "myListings": "আমার তালিকা",
+  "myPurchases": "আমার কেনাকাটা",
+  "myBounties": "আমার অনুগ্রহ",
+  "mySubmissions": "আমার জমা",
+  "listDataset": "তালিকা ডেটাসেট",
+  "postBounty": "পোস্ট বাউন্টি",
+  "admin": "অ্যাডমিন",
+  "adminOverview": "অ্যাডমিন ওভারভিউ",
+  "adminDatasets": "ডেটাসেট পরিচালনা করুন",
+  "adminBounties": "বাউন্টি পরিচালনা করুন",
+  "accountPrivacy": "অ্যাকাউন্ট এবং গোপনীয়তা"
+}

@@ -96,3 +96,133 @@
   pageTitles.json
 === ne -> ne ===
   admin.json
+  batch fail, falling back to single: Active vs unlisted datasets in the sample — moderation and catalog health. --> No translation was found using the current translator. Try another translator?
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  landing.json
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== or -> or ===
+  admin.json
+  auth.json
+  bounties.json
+  batch fail, falling back to single: Both sample and full data files are required --> No translation was found using the current translator. Try another translator?
+  single fail 'Reward must be between $1.00 and $1000.0': Reward must be between $1.00 and $1000.00 USDC --> No translation was found using the current translator. Try another translator?
+  common.json
+  dashboard.json
+  documentation.json
+  batch fail, falling back to single: Positive integer, max 200 --> No translation was found using the current translator. Try another translator?
+  batch fail, falling back to single: Interactive OpenAPI (Scalar) for listing datasets and the x402 purchase flow. --> No translation was found using the current translator. Try another translator?
+  single fail 'Interactive OpenAPI (Scalar) for listing': Interactive OpenAPI (Scalar) for listing datasets and the x402 purchase flow. --> No translation was found using the current translator. Try another translator?
+  forms.json
+  landing.json
+  batch fail, falling back to single: Algorand settles in under 3 seconds. Sellers receive USDC directly — no escrow, no waiting. --> No translation was found using the current translator. Try another translator?
+  single fail 'Buy and sell datasets using USDC on Algo': Buy and sell datasets using USDC on Algorand. Instant payments. Zero friction. AI agents welcome. --> No translation was found using the current translator. Try another translator?
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== pa -> pa ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  landing.json
+  legal.json
+  batch fail, falling back to single: To the maximum extent permitted by law, IDE and its operators are not liable for indirect damages, loss of profits, or issues arising from third-party networks (including Algorand), IPFS providers, or buyer/seller disputes. Nothing excludes liability that cannot be excluded under applicable law. --> No translation was found using the current translator. Try another translator?
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== sa -> sa ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  landing.json
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== sat -> bn ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  batch fail, falling back to single: I confirm I have the legal right to share this data, that it does not contain personal data of individuals without their consent, and I accept full responsibility for the content I upload. --> No translation was found using the current translator. Try another translator?
+  landing.json
+  legal.json
+  batch fail, falling back to single: To the maximum extent permitted by law, IDE and its operators are not liable for indirect damages, loss of profits, or issues arising from third-party networks (including Algorand), IPFS providers, or buyer/seller disputes. Nothing excludes liability that cannot be excluded under applicable law. --> No translation was found using the current translator. Try another translator?
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== sd -> sd ===
+  admin.json
+  batch fail, falling back to single: Aggregations from admin dataset and bounty lists (up to __PH_0__ rows each). --> No translation was found using the current translator. Try another translator?
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  batch fail, falling back to single: Where your purchase volume went — sums payment amounts. --> No translation was found using the current translator. Try another translator?
+  documentation.json
+  forms.json
+  landing.json
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== ta -> ta ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  landing.json
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== te -> te ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  landing.json
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+=== ur -> ur ===
+  admin.json
+  auth.json
+  bounties.json
+  common.json
+  dashboard.json
+  documentation.json
+  forms.json
+  landing.json
+  legal.json
+  marketplace.json
+  nav.json
+  pageTitles.json
+done.
+EXIT_CODE=0

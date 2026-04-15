@@ -1,0 +1,132 @@
+{
+  "heroTitle": "انڊيا ڊيٽا مٽائي",
+  "heroSubtitle": "جتي هندستاني علم حاصل ٿئي ٿو",
+  "heroHighlight": "AI ٻارڻ",
+  "heroDescription": "Algorand تي USDC استعمال ڪندي ڊيٽا سيٽ خريد ڪريو ۽ وڪرو ڪريو. فوري ادائيگيون. صفر رگڙ. AI ايجنٽ ڀليڪار.",
+  "browseMarketplace": "براؤز ڪريو بازار",
+  "monetizeData": "پنھنجي ڊيٽا کي منيٽ ڪريو",
+  "x402Overline": "x402 پروٽوڪول - AI ايجنٽ خريداري فلو",
+  "x402Caption": "AI ايجنٽ خود بخود ادا ڪندا آهن x402 پروٽوڪول ذريعي - والٽ ڪنيڪشن گهربل ناهي",
+  "whyTitle": "هندستان ڊيٽا مٽائي ڇو؟",
+  "whySubtitle": "رفتار، فائنل، ۽ ويجھي صفر فيس لاءِ Algorand تي ٺهيل",
+  "categoriesTitle": "ڊيٽا ڪيٽيگريز",
+  "categoriesSubtitle": "هندستان جي مخصوص ڊيٽا سيٽس نازڪ شعبن ۾",
+  "ctaTitleLine1": "پئسا ڏيڻ لاءِ تيار",
+  "ctaTitleLine2": "توهان جي ڊيٽا؟",
+  "ctaBody": "پنهنجي پيرا والٽ سان ڳنڍيو ۽ اڄ پنهنجي هندستاني ڊيٽا سيٽن مان USDC ڪمائڻ شروع ڪريو.",
+  "listDataset": "ڊيٽا سيٽ جي لسٽ ڪريو",
+  "viewBounties": "ڏسو انعام",
+  "footerBuilt": "Algorand تي ٺهيل · x402 پروٽوڪول طرفان طاقتور",
+  "footerCredit": "سان ٺهيل",
+  "footerBy": "پاران",
+  "stats": [
+    {
+      "label": "درج ٿيل ڊيٽا سيٽ",
+      "value": "500+",
+      "icon": "📦"
+    },
+    {
+      "label": "USDC ادا ڪيو",
+      "value": "$12K+",
+      "icon": "💵"
+    },
+    {
+      "label": "فعال وڪرو ڪندڙ",
+      "value": "200+",
+      "icon": "👥"
+    },
+    {
+      "label": "AI ايجنٽ جي خريداري",
+      "value": "1K+",
+      "icon": "🤖"
+    }
+  ],
+  "features": [
+    {
+      "title": "فوري USDC ادائيگيون",
+      "desc": "Algorand 3 سيڪنڊن کان گهٽ ۾ آباد ٿيو. وڪڻڻ وارا سڌو سنئون USDC وصول ڪن ٿا - نه ايسڪرو، نه انتظار."
+    },
+    {
+      "title": "AI ايجنٽ اصلي",
+      "desc": "AI ايجنٽ براؤز ۽ خريد ڪندا ڊيٽا سيٽن کي خودمختيار طور تي x402 HTTP ادائيگين ذريعي. اڪائونٽ جي ضرورت ناهي."
+    },
+    {
+      "title": "فضل نظام",
+      "desc": "USDC سان پوسٽ باؤنٽس سمارٽ ڪانٽريڪٽ ايسڪرو ۾ بند ٿيل. صرف قبوليت تي آزاد ٿيو."
+    },
+    {
+      "title": "غير سنڀاليندڙ",
+      "desc": "توهان جون چاٻيون، توهان جي ڊيٽا. Algorand Wallet سان سائن ان ڪريو. نه اي ميلون، نه پاسورڊ."
+    }
+  ],
+  "categories": [
+    {
+      "key": "agriculture",
+      "label": "زراعت",
+      "emoji": null,
+      "description": "فصل جي ڊيٽا، بيمارين جون تصويرون، موسم جا نمونا"
+    },
+    {
+      "key": "language",
+      "label": "ٻولي",
+      "emoji": null,
+      "description": "وائس رڪارڊنگ، ٽيڪسٽ ڪارپورا، ترجمو"
+    },
+    {
+      "key": "traffic",
+      "label": "ٽريفڪ",
+      "emoji": null,
+      "description": "شهري متحرڪ، چونڪ ڊيٽا، وهڪري جا نمونا"
+    },
+    {
+      "key": "healthcare",
+      "label": "صحت جي سار سنڀار",
+      "emoji": null,
+      "description": "Ayurvedic نباتات، طبي تصويرون، رڪارڊ"
+    },
+    {
+      "key": "cultural",
+      "label": "ثقافتي",
+      "emoji": null,
+      "description": "ورثي جا ماڳ، تہوار، ڪاريگر ڊيٽا"
+    },
+    {
+      "key": "financial",
+      "label": "مالي",
+      "emoji": null,
+      "description": "مارڪيٽ ڊيٽا، ٽرانزيڪشن، اقتصادي اشارا"
+    }
+  ],
+  "x402Steps": [
+    {
+      "label": "دريافت",
+      "title": "ايجنٽ ڊيٽا سيٽ حاصل ڪري ٿو",
+      "code": "GET /api/datasets?category=agriculture",
+      "response": "200 OK - 12 ڊيٽا سيٽ مليا"
+    },
+    {
+      "label": "درخواست",
+      "title": "ايجنٽ درخواستون ڊائون لوڊ",
+      "code": "GET /api/datasets/abc123/download",
+      "response": "هيڊر: قبول ڪريو: ايپليڪيشن/جيسن"
+    },
+    {
+      "label": "پائي وال",
+      "title": "سرور واپسي 402",
+      "code": "HTTP 402 Payment Required",
+      "response": "ايڪس ادائگي: USDC $2.50 Algorand تي"
+    },
+    {
+      "label": "Payment",
+      "title": "ايجنٽ x402 ذريعي ادا ڪري ٿو",
+      "code": "USDC Transfer → Algorand Testnet",
+      "response": "Tx 3.2s ۾ تصديق ڪئي وئي - گول 45892"
+    },
+    {
+      "label": "پهچائڻ",
+      "title": "ايجنٽ ڊيٽا سيٽ حاصل ڪري ٿو",
+      "code": "GET /api/datasets/abc123/download",
+      "response": "200 ٺيڪ — dataset.csv (2.4MB)"
+    }
+  ]
+}

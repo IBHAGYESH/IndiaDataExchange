@@ -1,0 +1,23 @@
+{
+  "suffix": "ইন্ডিয়া ডেটা এক্সচেঞ্জ",
+  "home": "বাড়ি",
+  "marketplace": "ডেটা মার্কেটপ্লেস",
+  "dataset": "ডেটাসেট",
+  "bounties": "ডেটা বাউন্টি",
+  "bounty": "অনুগ্রহ",
+  "dashboard": "ড্যাশবোর্ড",
+  "listDataset": "তালিকা ডেটাসেট",
+  "listings": "আমার তালিকা",
+  "purchases": "আমার কেনাকাটা",
+  "myBounties": "আমার অনুগ্রহ",
+  "submissions": "আমার জমা",
+  "postBounty": "পোস্ট বাউন্টি",
+  "account": "হিসাব",
+  "docsApi": "API রেফারেন্স",
+  "docsMcp": "MCP সার্ভার",
+  "terms": "শর্তাবলী",
+  "privacy": "গোপনীয়তা",
+  "admin": "অ্যাডমিন",
+  "adminDatasets": "অ্যাডমিন · ডেটাসেট",
+  "adminBounties": "প্রশাসক · অনুদান"
+}
