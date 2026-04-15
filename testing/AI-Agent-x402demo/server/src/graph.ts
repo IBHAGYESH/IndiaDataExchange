@@ -19,28 +19,45 @@ import type {
   PurchaseProposal,
 } from "./types.js";
 
-const Top5Schema = z.object({
-  ranked: z
+/** Model proposes only genuinely relevant listings; we filter by fitScore before showing the user. */
+const RelevantCandidatesSchema = z.object({
+  relevantDatasets: z
     .array(
       z.object({
         datasetId: z.string(),
         matchNote: z
           .string()
-          .describe("One short line why this dataset matches the user goal"),
+          .describe(
+            "One concrete sentence linking this listing (topic, region, time, format) to the user's request"
+          ),
+        fitScore: z
+          .number()
+          .int()
+          .min(1)
+          .max(10)
+          .describe(
+            "Honest 1–10 fit to the user's request; only include rows you would score 7+ (clear plausible value)"
+          ),
       })
     )
-    .min(1)
     .max(5)
-    .describe("Best-matching datasets first; every datasetId must exist in the catalog JSON"),
+    .describe(
+      "ONLY datasets that plausibly help the user's request. Best match first. Return FEWER than 5 if only 1–2 qualify — never pad with unrelated or tangential listings. Return an empty array if nothing in the catalog is a reasonable match. IMPORTANT: If several listings are ALL needed for one combined answer (e.g. compare A vs B), return ONLY the single best one to buy FIRST — the user buys one per round; later rounds will offer the rest."
+    ),
 });
 
 const ContinueSchema = z.object({
   satisfied: z
     .boolean()
     .describe(
-      "True if the user's goal is fully met using ONLY the data summaries collected so far"
+      "True only if summaries from already-purchased files are enough to answer the user's specific request fully and on-topic"
     ),
-  rationale: z.string().describe("Brief reasoning"),
+  postPurchaseAnalysis: z
+    .string()
+    .describe(
+      "2–5 sentences comparing what the user asked for to what the downloaded summaries actually show; state gaps, wrong topic, or missing dimensions if any"
+    ),
+  rationale: z.string().describe("One-line conclusion (why stop or why buy another dataset)"),
 });
 
 const AgentState = Annotation.Root({
@@ -150,7 +167,7 @@ export function buildDatasetAgentGraph(
     emit({
       type: "step",
       step: "rank_candidates",
-      detail: "Ranking up to 5 catalog matches (gpt-4o-mini)",
+      detail: "Filtering catalog for relevant matches only (gpt-4o-mini)",
     });
     const datasets = state.datasets ?? [];
     if (datasets.length === 0) {
@@ -172,6 +189,37 @@ export function buildDatasetAgentGraph(
       category: d.category,
       priceUSDC: d.priceUSDC,
     }));
+    const poolById = new Map(pool.map((d) => [d._id, d]));
+    const priorPurchaseCount = state.purchasedDatasetIds?.length ?? 0;
+
+    /** Only one listing left — always offer it (LLM strict pass often wrongly drops the last piece). */
+    if (pool.length === 1) {
+      const d = pool[0]!;
+      const candidates: DatasetChoiceCandidate[] = [
+        {
+          datasetId: d._id,
+          title: d.title ?? d._id,
+          priceUSDC: d.priceUSDC ?? 0,
+          publicUrl: `${front}${marketplacePath(d._id)}`,
+          category: d.category,
+          matchNote:
+            priorPurchaseCount > 0
+              ? "Only unpurchased dataset left in this catalog — use it to cover the remaining part of your question after your earlier purchase(s)."
+              : "Only dataset in the current catalog for your filters — confirm if it fits your goal.",
+        },
+      ];
+      emit({
+        type: "step",
+        step: "rank_candidates",
+        detail: "Single remaining listing — offering it for purchase",
+      });
+      return {
+        purchaseCandidates: candidates,
+        chosenDatasetId: null,
+        error: null,
+      };
+    }
+
     const model = new ChatOpenAI({
       configuration: {
         apiKey: process.env.OPENAI_API_KEY,
@@ -180,52 +228,102 @@ export function buildDatasetAgentGraph(
       modelName: "gpt-4o-mini",
       temperature: 0,
     });
-    const structured = model.withStructuredOutput(Top5Schema);
+    const structured = model.withStructuredOutput(RelevantCandidatesSchema);
     const contextBlock =
       (state.datasetNotes ?? "").trim().length > 0
-        ? `\n\nData gathered so far (summaries from datasets already purchased in this session):\n${state.datasetNotes}\n`
+        ? `\n\nSummaries from datasets ALREADY purchased in this session (do not suggest these again; suggest only what adds missing information):\n${state.datasetNotes}\n`
         : "";
+    const MIN_FIT = 7;
+    const MIN_FIT_RELAXED = 5;
     try {
       const out = await structured.invoke([
         {
           role: "system",
           content: [
-            "Return up to 5 best-matching dataset _id values from the catalog JSON for the user's goal.",
-            "Order best match first. Every datasetId MUST appear in the catalog.",
-            `Return at most ${Math.min(5, pool.length)} entries (catalog has ${pool.length} unpurchased dataset(s)).`,
-          ].join(" "),
+            "You curate a SHORTLIST for an India Data Exchange buyer.",
+            "The buyer selects ONE dataset per round, pays, then may see another shortlist.",
+            "If their question needs MULTIPLE different listings (e.g. compare kirana vs street food), return ONLY the single best listing to buy FIRST; another round will offer the rest after summaries exist. Do not force the user to pick between two both-required options in one list.",
+            "From the catalog JSON, include ONLY dataset _id values that plausibly help the user's request.",
+            "Do NOT fill slots with unrelated listings — fewer rows is better than noisy rows.",
+            "Order best match first. At most 5 ids. If only one or two qualify, return only those.",
+            "If nothing reasonably matches, return relevantDatasets: [].",
+            `Every datasetId MUST appear in the catalog (unpurchased pool size: ${pool.length}).`,
+          ].join("\n"),
         },
         {
           role: "user",
           content: `User message:\n${state.userPrompt}${contextBlock}\n\nCatalog (JSON):\n${JSON.stringify(catalog, null, 2)}`,
         },
       ]);
-      const poolById = new Map(pool.map((d) => [d._id, d]));
-      const seen = new Set<string>();
-      const candidates: DatasetChoiceCandidate[] = [];
-      for (const row of out.ranked) {
-        if (!poolById.has(row.datasetId) || seen.has(row.datasetId)) continue;
-        seen.add(row.datasetId);
-        const d = poolById.get(row.datasetId)!;
-        candidates.push({
-          datasetId: d._id,
-          title: d.title ?? d._id,
-          priceUSDC: d.priceUSDC ?? 0,
-          publicUrl: `${front}${marketplacePath(d._id)}`,
-          category: d.category,
-          matchNote: row.matchNote,
-        });
-        if (candidates.length >= 5) break;
+      const buildCandidates = (minFit: number) => {
+        const scored = (out.relevantDatasets ?? [])
+          .filter(
+            (row) =>
+              poolById.has(row.datasetId) &&
+              typeof row.fitScore === "number" &&
+              row.fitScore >= minFit
+          )
+          .sort((a, b) => b.fitScore - a.fitScore);
+        const seen = new Set<string>();
+        const list: DatasetChoiceCandidate[] = [];
+        for (const row of scored) {
+          if (seen.has(row.datasetId)) continue;
+          seen.add(row.datasetId);
+          const d = poolById.get(row.datasetId)!;
+          list.push({
+            datasetId: d._id,
+            title: d.title ?? d._id,
+            priceUSDC: d.priceUSDC ?? 0,
+            publicUrl: `${front}${marketplacePath(d._id)}`,
+            category: d.category,
+            matchNote: row.matchNote,
+          });
+          if (list.length >= 5) break;
+        }
+        return list;
+      };
+
+      let candidates = buildCandidates(MIN_FIT);
+      let usedRelaxedFollowUp = false;
+      if (
+        candidates.length === 0 &&
+        priorPurchaseCount > 0 &&
+        pool.length > 0
+      ) {
+        candidates = buildCandidates(MIN_FIT_RELAXED);
+        usedRelaxedFollowUp = candidates.length > 0;
       }
       if (candidates.length === 0) {
         return {
-          error: "Model did not return any valid dataset ids from the catalog.",
+          error:
+            "No remaining catalog listings pass the relevance bar for your request (or none scored high enough). Try different keywords, a broader or narrower topic, or start a New chat.",
+          researchComplete: true,
+          purchaseCandidates: [],
+          chosenDatasetId: null,
         };
       }
+
+      /** Do not make the user pick between two legs of one combined answer on round 1. */
+      let sequentialNote = "";
+      const looksLikeMultiPartCommerceQuestion =
+        priorPurchaseCount === 0 &&
+        pool.length >= 2 &&
+        candidates.length > 1 &&
+        /\b(should i|which one|which option|vs\.?|versus|compare|or a|or an)\b/i.test(
+          state.userPrompt
+        );
+      if (looksLikeMultiPartCommerceQuestion) {
+        candidates = candidates.slice(0, 1);
+        sequentialNote = " — first of a sequential plan (one purchase per round)";
+      }
+
+      const fitLabel = usedRelaxedFollowUp
+        ? `fit≥${MIN_FIT_RELAXED} (follow-up round)`
+        : `fit≥${MIN_FIT}`;
       emit({
         type: "step",
         step: "rank_candidates",
-        detail: `Top ${candidates.length} candidate(s) for user choice`,
+        detail: `${candidates.length} relevant match(es) for user choice (${fitLabel})${sequentialNote}`,
       });
       return {
         purchaseCandidates: candidates,
@@ -234,7 +332,11 @@ export function buildDatasetAgentGraph(
       };
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      return { error: `Dataset ranking failed: ${msg}` };
+      return {
+        error: `Dataset ranking failed: ${msg}`,
+        purchaseCandidates: [],
+        chosenDatasetId: null,
+      };
     }
   };
 
@@ -476,18 +578,36 @@ export function buildDatasetAgentGraph(
       const out = await structured.invoke([
         {
           role: "system",
-          content:
-            "You plan the next step for an India Data Exchange agent. If the user's goal is fully answered using ONLY the summaries collected so far, set satisfied=true. If not satisfied, the human will pick the next dataset from a ranked list — do not pick an id; only say whether more data is needed.",
+          content: [
+            "You are the post-purchase analyst for an India Data Exchange agent.",
+            "The agent downloaded dataset files and produced TEXT summaries of their contents (not the full raw files).",
+            "Compare the user's ORIGINAL request to what those summaries actually show.",
+            "Set satisfied=true ONLY if the combined summaries already answer the user's question in substance (correct topic, enough coverage) without needing more files.",
+            "If summaries are off-topic, too thin, missing requested geography/time/metrics, or leave important parts of the question unanswered, set satisfied=false.",
+            "If not satisfied, the human will pick another dataset from a relevance-ranked shortlist — you do not choose ids.",
+          ].join("\n"),
         },
         {
           role: "user",
-          content: `User goal:\n${state.userPrompt}\n\nSummaries from purchased datasets so far:\n${state.datasetNotes || "(none)"}\n\nRemaining datasets (JSON):\n${JSON.stringify(catalog, null, 2)}`,
+          content: [
+            `User goal:\n${state.userPrompt}`,
+            "",
+            "Summaries from purchased & processed files so far:",
+            state.datasetNotes || "(none)",
+            "",
+            "Remaining unpurchased catalog entries (for context only — you already judged purchased content):",
+            JSON.stringify(catalog, null, 2),
+          ].join("\n"),
         },
       ]);
+      const analysisPreview =
+        out.postPurchaseAnalysis.length > 420
+          ? `${out.postPurchaseAnalysis.slice(0, 420)}…`
+          : out.postPurchaseAnalysis;
       emit({
         type: "step",
         step: "plan",
-        detail: `${out.satisfied ? "Done researching" : "Another dataset may help"} — ${out.rationale}`,
+        detail: `${out.satisfied ? "Goal appears met by purchased data" : "Goal may need another dataset"}\n${analysisPreview}\n— ${out.rationale}`,
       });
       if (out.satisfied) {
         return { researchComplete: true };
@@ -576,6 +696,12 @@ export function buildDatasetAgentGraph(
     return "more";
   }
 
+  function routeAfterRank(state: AgentStateType): string {
+    if (state.error) return "fail";
+    if (!state.purchaseCandidates?.length) return "fail";
+    return "choice";
+  }
+
   return new StateGraph(AgentState)
     .addNode("list_datasets", listDatasets)
     .addNode("rank_candidates", rankCandidates)
@@ -588,7 +714,10 @@ export function buildDatasetAgentGraph(
     .addNode("respond", respond)
     .addEdge(START, "list_datasets")
     .addEdge("list_datasets", "rank_candidates")
-    .addEdge("rank_candidates", "await_dataset_choice")
+    .addConditionalEdges("rank_candidates", routeAfterRank, {
+      choice: "await_dataset_choice",
+      fail: "respond",
+    })
     .addConditionalEdges("await_dataset_choice", routeAfterDatasetChoice, {
       confirm: "await_confirm",
       fail: "respond",

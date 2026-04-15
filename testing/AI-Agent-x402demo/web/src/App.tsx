@@ -512,9 +512,11 @@ export default function App() {
           <code>{agentBaseUrl()}</code>
         </p>
         <p className="sub hint">
-          Each purchase runs in two steps: pick one of the top catalog matches,
-          then confirm payment. Every extra dataset repeats both steps. Use{" "}
-          <strong>New chat</strong> for a fresh thread when you change topic.
+          Each purchase runs in two steps: pick one relevant catalog match (only
+          genuinely related listings are shown — often fewer than five), then
+          confirm payment. After each download the agent checks whether your goal
+          is met or another dataset may help. Use <strong>New chat</strong> when
+          you change topic.
         </p>
         <div className="header-actions">
           <button type="button" className="btn-secondary" onClick={newChat}>
@@ -532,8 +534,8 @@ export default function App() {
         >
           {transcript.length === 0 ? (
             <p className="empty-hint">
-              Send a message to search the catalog. You will choose a dataset
-              from the top matches, then confirm each x402 purchase.
+              Send a message to search the catalog. You will choose from relevant
+              matches only (not padded to five), then confirm each x402 purchase.
             </p>
           ) : null}
           {transcript.map((item) => {
@@ -556,8 +558,9 @@ export default function App() {
                 <div key={item.id} className="choice-card">
                   <div className="choice-title">Choose a dataset</div>
                   <p className="choice-sub">
-                    Pick one of the top matches (then you will confirm payment on
-                    the next card).
+                    Only listings that plausibly fit your request are shown (one
+                    to a few — never padded). Pick one, then confirm payment on
+                    the next card.
                   </p>
                   <ol className="choice-list">
                     {item.candidates.map((c) => (
