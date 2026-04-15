@@ -21,7 +21,9 @@ export class AuthService {
     const nonce = uuidv4();
     await nonceRepo.create(walletAddress, nonce);
     const expiresAt = Date.now() + 5 * 60 * 1000;
-    return returnDataObj({ nonce, expiresAt });
+    const existing = await userRepo.findByWallet(walletAddress);
+    const privacyConsentRequired = !existing?.consentGivenAt;
+    return returnDataObj({ nonce, expiresAt, privacyConsentRequired });
   }
 
   async verifyAndIssueJWT(

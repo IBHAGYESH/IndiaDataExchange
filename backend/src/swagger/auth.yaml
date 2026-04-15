@@ -8,7 +8,9 @@ paths:
       tags:
         - auth
       summary: Get authentication nonce
-      description: Returns a unique nonce for the given wallet address. The nonce is valid for 5 minutes and must be signed and returned via /auth/verify.
+      description: >
+        Returns a unique nonce for the given wallet address. The nonce is valid for 5 minutes and must be signed and returned via /auth/verify.
+        Also returns privacyConsentRequired — false when this wallet already has consentGivenAt on file (no privacy/terms modal needed before signing).
       parameters:
         - in: path
           name: walletAddress
@@ -25,6 +27,9 @@ paths:
                 type: string
               expiresAt:
                 type: number
+              privacyConsentRequired:
+                type: boolean
+                description: True if the wallet must accept privacy/terms before verify (first-time or legacy account without consent timestamp).
         '400':
           description: walletAddress is required
 

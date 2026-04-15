@@ -171,22 +171,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!accounts?.length) throw new Error("No accounts returned");
       const address = accounts[0];
 
-      const consentOk = await waitForPrivacyConsent();
-      if (!consentOk) {
-        try {
-          pera.disconnect();
-        } catch {
-          /* ignore */
-        }
-        setLoading(false);
-        throw new Error("Consent declined");
-      }
-
-      const nonceRes = await fetch(
-        `${config.apiUrl}/auth/nonce/${address}`
-      );
+      const nonceRes = await fetch(`${config.apiUrl}/auth/nonce/${address}`);
       if (!nonceRes.ok) throw new Error("Failed to get nonce from server");
-      const { nonce } = await nonceRes.json();
+      const { nonce, privacyConsentRequired } = (await nonceRes.json()) as {
+        nonce: string;
+        privacyConsentRequired?: boolean;
+      };
+
+      let privacyConsentAccepted = false;
+      if (privacyConsentRequired !== false) {
+        const consentOk = await waitForPrivacyConsent();
+        if (!consentOk) {
+          try {
+            pera.disconnect();
+          } catch {
+            /* ignore */
+          }
+          setLoading(false);
+          throw new Error("Consent declined");
+        }
+        privacyConsentAccepted = true;
+      }
 
       const algodClient = new algosdk.Algodv2("", ALGOD_URL, "");
       const suggestedParams = await algodClient.getTransactionParams().do();
@@ -209,7 +214,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           walletAddress: address,
           signedTxnBase64,
           nonce,
-          privacyConsentAccepted: true,
+          privacyConsentAccepted,
         }),
       });
 
