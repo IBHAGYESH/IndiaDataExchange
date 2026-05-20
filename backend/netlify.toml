@@ -5,7 +5,7 @@
 #   (Netlify will pick up this netlify.toml automatically.)
 #
 # Set all env vars from .env.sample in the Netlify UI (Site → Environment variables).
-# Required: API_PUBLIC_BASE_URL=https://your-api-site.netlify.app
+# Required: API_PUBLIC_BASE_URL=https://ideapi.ibhagyesh.com
 
 [build]
   command = "npm ci && npm run build"

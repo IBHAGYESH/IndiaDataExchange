@@ -4,7 +4,8 @@
 #   Site settings → Build & deploy → Base directory: frontend
 #
 # Set NEXT_PUBLIC_* vars in Netlify UI (see .env.local.sample).
-# NEXT_PUBLIC_API_BASE_URL must point at your BACKEND Netlify site URL.
+# NEXT_PUBLIC_API_BASE_URL=https://ideapi.ibhagyesh.com
+# Custom domain example: https://indiadataexchange.ibhagyesh.com
 
 [build]
   command = "npm ci && npm run build"

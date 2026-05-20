@@ -8,13 +8,15 @@ India Data Exchange (IDE) is a **decentralized data marketplace** on **Algorand*
 
 ## 🔗 Live Links
 
-_Deployment URLs._
+_Production deployment (Netlify + custom domains)._
 
-| Resource                   | URL                                                     |
-| -------------------------- | ------------------------------------------------------- |
-| **Marketplace (frontend)** | `Will be Deployed soon`                                 |
-| **API (backend)**          | `Will be Deployed soon`                                 |
-| **BountyEscrow (testnet)** | `https://lora.algokit.io/testnet/application/758618118` |
+| Resource                   | URL                                                                 |
+| -------------------------- | ------------------------------------------------------------------- |
+| **Marketplace (frontend)** | [https://indiadataexchange.ibhagyesh.com](https://indiadataexchange.ibhagyesh.com/) |
+| **API (backend)**          | [https://ideapi.ibhagyesh.com](https://ideapi.ibhagyesh.com)        |
+| **BountyEscrow (testnet)** | [https://lora.algokit.io/testnet/application/758618118](https://lora.algokit.io/testnet/application/758618118) |
+
+_Local development:_ frontend `http://localhost:3000`, API `http://localhost:5001` (see [Quick Start](#-quick-start-core-app)).
 
 ---
 
@@ -151,7 +153,8 @@ npm run seed
 cd frontend
 npm install
 cp .env.local.sample .env.local
-# Point NEXT_PUBLIC_API_BASE_URL at your running API (default sample uses port 5001)
+# Local: NEXT_PUBLIC_API_BASE_URL=http://localhost:5001
+# Production: https://ideapi.ibhagyesh.com
 npm run dev
 ```
 
@@ -229,6 +232,8 @@ Use the Vite URL, send a chat message, **confirm** or **decline** purchase promp
 
 ## 🌐 Deploy to Netlify
 
+**Production:** [Marketplace](https://indiadataexchange.ibhagyesh.com/) · [API](https://ideapi.ibhagyesh.com) (custom domains on two Netlify sites).
+
 Netlify does **not** run a 24/7 Node server. The **backend** runs as a **serverless function** (`serverless-http` + Express). The **frontend** uses **`@netlify/plugin-nextjs`** (official Next.js 15 support).
 
 Use **two Netlify sites** from this monorepo (one repo, two base directories):
@@ -245,9 +250,9 @@ Use **two Netlify sites** from this monorepo (one repo, two base directories):
 3. In **Site configuration → Environment variables**, copy every key from `backend/.env.sample`. **Required for production:**
    - `MONGODB_URI` — use **MongoDB Atlas** (serverless cannot use `localhost`).
    - `JWT_SECRET`, Pinata keys, `ADMIN_WALLET_ADDRESS`, Algorand URLs, `USDC_ASSET_ID`, `FACILITATOR_URL`, `BOUNTY_CONTRACT_APP_ID`.
-   - **`API_PUBLIC_BASE_URL`** — your API site URL, e.g. `https://your-ide-api.netlify.app` (no trailing slash). Used in `purchaseApiUrl` for x402.
+   - **`API_PUBLIC_BASE_URL`** — public API origin, e.g. `https://ideapi.ibhagyesh.com` (no trailing slash). Used in `purchaseApiUrl` for x402. Must match your custom domain or Netlify site URL.
 4. `NETLIFY=true` is set in `netlify.toml` automatically → **~6 MB** request/upload limit (Netlify payload cap). Large dataset uploads need a dedicated host or direct Pinata workflow.
-5. Deploy. Test: `https://your-ide-api.netlify.app/healthz`
+5. Deploy. Test: `https://ideapi.ibhagyesh.com/healthz`
 
 If the build fails on **secrets scanning** (public testnet URLs, USDC ASA id, `.env.sample`), `backend/netlify.toml` already sets `SECRETS_SCAN_OMIT_PATHS` / `SECRETS_SCAN_OMIT_KEYS`. Commit that file before redeploying.
 
@@ -256,9 +261,9 @@ If the build fails on **secrets scanning** (public testnet URLs, USDC ASA id, `.
 1. **Second Netlify site** → same repo → **Base directory:** `frontend`.
 2. **Publish directory:** leave empty in the UI, or set to `.next` — `frontend/netlify.toml` sets `publish = ".next"`. Do **not** set publish to `frontend` or `.` (same as base → plugin error).
 3. Env vars from `frontend/.env.local.sample`:
-   - **`NEXT_PUBLIC_API_BASE_URL`** = backend site URL from step 5 above.
+   - **`NEXT_PUBLIC_API_BASE_URL`** = `https://ideapi.ibhagyesh.com` (same origin as backend `API_PUBLIC_BASE_URL`).
    - `NEXT_PUBLIC_ALGORAND_NETWORK`, `NEXT_PUBLIC_USDC_ASSET_ID`, `NEXT_PUBLIC_PINATA_GATEWAY`.
-4. Deploy. Open the frontend URL and connect Pera (testnet).
+4. Deploy. Custom domain example: [https://indiadataexchange.ibhagyesh.com](https://indiadataexchange.ibhagyesh.com/). Connect Pera (testnet).
 
 ### Local vs Netlify
 
@@ -283,7 +288,7 @@ Copy from each package’s `**.env.sample**` / `**.env.example**`. Never commit 
 | ----------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------- |
 | `PORT`                                    | Yes              | HTTP port (sample: **5001**).                                                                     |
 | `NODE_ENV`                                | No               | e.g. `development` / `production`.                                                                |
-| `API_PUBLIC_BASE_URL`                     | **Yes on Netlify** | Public API URL (e.g. `https://your-ide-api.netlify.app`). |
+| `API_PUBLIC_BASE_URL`                     | **Yes on Netlify** | Public API URL — production: `https://ideapi.ibhagyesh.com`; local: `http://localhost:5001`. |
 | `NETLIFY`                                 | Auto on Netlify  | Set in `backend/netlify.toml`; enables serverless upload/body limits. |
 | `MONGODB_URI`                             | Yes              | Mongo connection string.                                                                          |
 | `JWT_SECRET`                              | Yes              | Min ~32 chars; signs SIWA session JWT.                                                            |
@@ -304,7 +309,7 @@ Copy from each package’s `**.env.sample**` / `**.env.example**`. Never commit 
 
 | Variable                       | Required | Description                                                                   |
 | ------------------------------ | -------- | ----------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_API_BASE_URL`     | Yes      | IDE API origin (**must match** backend `PORT`, e.g. `http://localhost:5001`). |
+| `NEXT_PUBLIC_API_BASE_URL`     | Yes      | IDE API origin — production: `https://ideapi.ibhagyesh.com`; local: `http://localhost:5001`. |
 | `NEXT_PUBLIC_ALGORAND_NETWORK` | Yes      | e.g. `testnet`.                                                               |
 | `NEXT_PUBLIC_USDC_ASSET_ID`    | Yes      | Same ASA as backend.                                                          |
 | `NEXT_PUBLIC_PINATA_GATEWAY`   | Yes      | Public IPFS gateway prefix for samples (e.g. Pinata gateway).                 |
@@ -313,7 +318,7 @@ Copy from each package’s `**.env.sample**` / `**.env.example**`. Never commit 
 
 | Variable           | Required | Description                                                        |
 | ------------------ | -------- | ------------------------------------------------------------------ |
-| `IDE_API_BASE_URL` | Yes      | Same as `**NEXT_PUBLIC_API_BASE_URL`** — IDE **backend\*\* origin. |
+| `IDE_API_BASE_URL` | Yes      | IDE **backend** origin — production: `https://ideapi.ibhagyesh.com`; local: `http://localhost:5001`. |
 | `PORT`             | No       | Default **5056**.                                                  |
 | `BIND_HOST`        | No       | See MCP README (`0.0.0.0` for PaaS).                               |
 | `MCP_API_KEY`      | No       | If set, clients send `Authorization: Bearer` or `X-MCP-API-Key`.   |
@@ -324,10 +329,10 @@ Copy from each package’s `**.env.sample**` / `**.env.example**`. Never commit 
 | ------------------------------------------------- | -------- | ------------------------------------------------------------------- |
 | `PORT`                                            | No       | Default **5055**.                                                   |
 | `CORS_ORIGIN`                                     | No       | Vite origin (sample `http://localhost:5173`).                       |
-| `IDE_API_BASE_URL`                                | Yes      | IDE API — used for **x402** `GET .../api/datasets/:id/download`.    |
+| `IDE_API_BASE_URL`                                | Yes      | IDE API — **x402** `GET .../api/datasets/:id/download` — production: `https://ideapi.ibhagyesh.com`. |
 | `IDE_MCP_BASE_URL`                                | Yes      | MCP server (**no** trailing slash).                                 |
 | `IDE_MCP_API_KEY`                                 | No       | Must match `MCPServer` `MCP_API_KEY` if enabled.                    |
-| `IDE_FRONTEND_BASE_URL`                           | No       | Next app for “view listing” links (sample `http://localhost:3000`). |
+| `IDE_FRONTEND_BASE_URL`                           | No       | Marketplace for “view listing” links — production: `https://indiadataexchange.ibhagyesh.com`; local: `http://localhost:3000`. |
 | `OPENAI_API_KEY`                                  | Yes      | OpenAI API key (`gpt-4o-mini` usage).                               |
 | `AGENT_ALGOD_MNEMONIC` **or** `AGENT_PRIVATE_KEY` | Yes      | **Buyer** wallet for x402 (base64 64-byte secret if using key).     |
 | `MAX_DATASET_PRICE_USDC`                          | No       | Caps candidate prices passed to the LLM.                            |
@@ -373,7 +378,8 @@ Agents:
 ```typescript
 import { wrapFetchWithPayment } from "@x402-avm/fetch";
 const payingFetch = wrapFetchWithPayment(fetch, { agentWallet });
-await payingFetch(`${IDE_API_BASE_URL}/api/datasets/${id}/download`);
+await payingFetch(`https://ideapi.ibhagyesh.com/api/datasets/${id}/download`);
+// Local: http://localhost:5001/api/datasets/${id}/download
 ```
 
 ### Bounty lifecycle
