@@ -1,7 +1,8 @@
+import { ensureReady } from "./bootstrap";
 import { expressApp } from "./server";
 
 const serverInit = async () => {
-  await expressApp.init();
+  await ensureReady();
   const server = expressApp.listen();
 
   const gracefulShutdown = async (signal: string) => {

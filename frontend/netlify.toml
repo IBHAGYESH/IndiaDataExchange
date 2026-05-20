@@ -1,0 +1,16 @@
+# India Data Exchange — Next.js frontend
+#
+# Create a SEPARATE Netlify site for the frontend:
+#   Site settings → Build & deploy → Base directory: frontend
+#
+# Set NEXT_PUBLIC_* vars in Netlify UI (see .env.local.sample).
+# NEXT_PUBLIC_API_BASE_URL must point at your BACKEND Netlify site URL.
+
+[build]
+  command = "npm ci && npm run build"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  NODE_VERSION = "20"

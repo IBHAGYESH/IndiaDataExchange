@@ -4,7 +4,13 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@scalar/api-reference-react", "@scalar/api-reference"],
   images: {
-    domains: ["gateway.pinata.cloud"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "gateway.pinata.cloud",
+        pathname: "/ipfs/**",
+      },
+    ],
   },
   async redirects() {
     return [{ source: "/docs", destination: "/docs-api", permanent: true }];

@@ -1,0 +1,32 @@
+# India Data Exchange — API (Express as Netlify Functions)
+#
+# Create a SEPARATE Netlify site for the backend:
+#   Site settings → Build & deploy → Base directory: backend
+#   (Netlify will pick up this netlify.toml automatically.)
+#
+# Set all env vars from .env.sample in the Netlify UI (Site → Environment variables).
+# Required: API_PUBLIC_BASE_URL=https://your-api-site.netlify.app
+
+[build]
+  command = "npm ci && npm run build"
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NETLIFY = "true"
+  NODE_ENV = "production"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["dist/**"]
+
+[functions.api]
+  timeout = 26
+
+# Route all HTTP paths to the single Express handler
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api"
+  status = 200
+  force = true

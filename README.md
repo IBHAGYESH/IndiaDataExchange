@@ -99,8 +99,11 @@ _Deployment URLs._
 ```
 IndiaDataExchange/
 ├── frontend/                 # Next.js 15 (App Router), MUI v5, RTK Query, Pera Wallet
+│   └── netlify.toml        # Frontend site deploy config (@netlify/plugin-nextjs)
 ├── backend/                  # Express + TypeScript + MongoDB + x402 + Pinata
-│   ├── src/                # Auth, datasets, bounties, user, admin
+│   ├── src/                # Auth, datasets, bounties, user, admin (+ lambda.ts)
+│   ├── netlify/            # Netlify Functions entry (api.ts → dist/lambda.js)
+│   ├── netlify.toml        # API site deploy config
 │   ├── .env.sample
 │   └── AlgoKit/            # Algorand smart contracts (Puya)
 │       └── smart_contracts/
@@ -224,6 +227,49 @@ Use the Vite URL, send a chat message, **confirm** or **decline** purchase promp
 
 ---
 
+## 🌐 Deploy to Netlify
+
+Netlify does **not** run a 24/7 Node server. The **backend** runs as a **serverless function** (`serverless-http` + Express). The **frontend** uses **`@netlify/plugin-nextjs`** (official Next.js 15 support).
+
+Use **two Netlify sites** from this monorepo (one repo, two base directories):
+
+| Site | Base directory | Config file | Role |
+| ---- | -------------- | ----------- | ---- |
+| **IDE API** | `backend` | `backend/netlify.toml` | Express → `/.netlify/functions/api` |
+| **IDE Web** | `frontend` | `frontend/netlify.toml` | Next.js marketplace |
+
+### Backend site (API)
+
+1. Netlify → **Add new site** → Import repo → **Base directory:** `backend`.
+2. Build command / publish are read from `backend/netlify.toml` (`npm ci && npm run build`, functions in `netlify/functions/`).
+3. In **Site configuration → Environment variables**, copy every key from `backend/.env.sample`. **Required for production:**
+   - `MONGODB_URI` — use **MongoDB Atlas** (serverless cannot use `localhost`).
+   - `JWT_SECRET`, Pinata keys, `ADMIN_WALLET_ADDRESS`, Algorand URLs, `USDC_ASSET_ID`, `FACILITATOR_URL`, `BOUNTY_CONTRACT_APP_ID`.
+   - **`API_PUBLIC_BASE_URL`** — your API site URL, e.g. `https://your-ide-api.netlify.app` (no trailing slash). Used in `purchaseApiUrl` for x402.
+4. `NETLIFY=true` is set in `netlify.toml` automatically → **~6 MB** request/upload limit (Netlify payload cap). Large dataset uploads need a dedicated host or direct Pinata workflow.
+5. Deploy. Test: `https://your-ide-api.netlify.app/healthz`
+
+### Frontend site (Next.js)
+
+1. **Second Netlify site** → same repo → **Base directory:** `frontend`.
+2. Env vars from `frontend/.env.local.sample`:
+   - **`NEXT_PUBLIC_API_BASE_URL`** = backend site URL from step 5 above.
+   - `NEXT_PUBLIC_ALGORAND_NETWORK`, `NEXT_PUBLIC_USDC_ASSET_ID`, `NEXT_PUBLIC_PINATA_GATEWAY`.
+3. Deploy. Open the frontend URL and connect Pera (testnet).
+
+### Local vs Netlify
+
+| | Local (`npm run dev`) | Netlify API |
+| - | --------------------- | ----------- |
+| Process | Long-running Node | Lambda per request |
+| MongoDB | Local or Atlas | **Atlas** recommended |
+| Upload limit | Up to 500 MB (config) | **~6 MB** per request |
+| Entry | `src/index.ts` | `netlify/functions/api.ts` → `dist/lambda.js` |
+
+**MCP** and **AI-Agent** demos still run on a **long-running** host (Railway, Render, Fly.io, or local)—not on this Netlify API function bundle.
+
+---
+
 ## 🔐 Environment Variables (Complete Reference)
 
 Copy from each package’s `**.env.sample**` / `**.env.example**`. Never commit real secrets or mnemonics.
@@ -234,7 +280,8 @@ Copy from each package’s `**.env.sample**` / `**.env.example**`. Never commit 
 | ----------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------- |
 | `PORT`                                    | Yes              | HTTP port (sample: **5001**).                                                                     |
 | `NODE_ENV`                                | No               | e.g. `development` / `production`.                                                                |
-| `API_PUBLIC_BASE_URL`                     | No               | Public origin for absolute URLs (e.g. `purchaseApiUrl`). Use if `Host` / proxy headers are wrong. |
+| `API_PUBLIC_BASE_URL`                     | **Yes on Netlify** | Public API URL (e.g. `https://your-ide-api.netlify.app`). |
+| `NETLIFY`                                 | Auto on Netlify  | Set in `backend/netlify.toml`; enables serverless upload/body limits. |
 | `MONGODB_URI`                             | Yes              | Mongo connection string.                                                                          |
 | `JWT_SECRET`                              | Yes              | Min ~32 chars; signs SIWA session JWT.                                                            |
 | `JWT_EXPIRES_IN`                          | No               | e.g. `7d`.                                                                                        |

@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import express, { Request, Response, NextFunction, Router } from "express";
 import helmet from "helmet";
 import hpp from "hpp";
+import path from "path";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { appConfig } from "@/config";
@@ -91,6 +92,11 @@ export class App {
    * scripts and CDN resources are not blocked.
    */
   private initializeSwagger() {
+    // OpenAPI UI reads YAML from disk; skip on Netlify Functions (use frontend /docs-api or run locally).
+    if (appConfig.isServerless) {
+      return;
+    }
+
     const options: swaggerJSDoc.Options = {
       swaggerDefinition: {
         info: {
@@ -111,7 +117,7 @@ export class App {
           },
         },
       },
-      apis: ["./src/swagger/*.yaml"],
+      apis: [path.join(__dirname, "swagger", "*.yaml")],
     };
 
     const specs = swaggerJSDoc(options);

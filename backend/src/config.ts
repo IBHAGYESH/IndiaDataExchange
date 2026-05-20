@@ -6,9 +6,17 @@ if (process.env.NODE_ENV) {
   dotenvConfig({ path: `.env.${process.env.NODE_ENV}`, override: true });
 }
 
+const isServerlessRuntime =
+  process.env.NETLIFY === "true" || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+
 const env = cleanEnv(process.env, {
   NODE_ENV: str({ default: "development" }),
   PORT: port({ default: 5000 }),
+
+  /** Set to `true` on Netlify (see backend/netlify.toml). Tightens upload/body limits. */
+  NETLIFY: bool({ default: isServerlessRuntime }),
+
+  API_PUBLIC_BASE_URL: str({ default: "" }),
 
   MONGODB_URI: str({ default: "mongodb://localhost:27017/india-data-exchange" }),
 
@@ -31,7 +39,13 @@ const env = cleanEnv(process.env, {
 
   PLATFORM_FEE_PERCENTAGE: num({ default: 0 }),
 
-  BODY_SIZE_LIMIT: str({ default: "550mb" }),
+  BODY_SIZE_LIMIT: str({
+    default: isServerlessRuntime ? "6mb" : "550mb",
+  }),
+  /** Max single file upload (bytes). Netlify request payload is ~6MB. */
+  UPLOAD_MAX_FILE_BYTES: num({
+    default: isServerlessRuntime ? 6 * 1024 * 1024 : 500 * 1024 * 1024,
+  }),
   RATE_LIMIT_WINDOW_MS: num({ default: 60_000 }),
   RATE_LIMIT_MAX: num({ default: 300 }),
 
@@ -44,6 +58,8 @@ const env = cleanEnv(process.env, {
 export const appConfig = {
   nodeEnv: env.NODE_ENV,
   port: env.PORT,
+  isServerless: env.NETLIFY || isServerlessRuntime,
+  publicApiBaseUrl: env.API_PUBLIC_BASE_URL.trim(),
 
   db: {
     uri: env.MONGODB_URI,
@@ -84,6 +100,7 @@ export const appConfig = {
 
   http: {
     bodySizeLimit: env.BODY_SIZE_LIMIT,
+    uploadMaxFileBytes: env.UPLOAD_MAX_FILE_BYTES,
   },
 
   security: {

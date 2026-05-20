@@ -2,6 +2,9 @@
   "name": "india-data-exchange-frontend",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "i18n:gen": "node scripts/build-i18n-client.mjs",
     "prebuild": "npm run i18n:gen",
@@ -36,6 +39,7 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.9.4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -1,16 +1,17 @@
 import multer from "multer";
 import path from "path";
 import { Request } from "express";
+import { appConfig } from "@/config";
 
 const SAMPLE_MAX_SIZE = 10 * 1024 * 1024; // 10MB
-const FULL_DATA_MAX_SIZE = 500 * 1024 * 1024; // 500MB
+const uploadMaxBytes = appConfig.http.uploadMaxFileBytes;
 
 const storage = multer.memoryStorage();
 
 export const datasetUpload = multer({
   storage,
   limits: {
-    fileSize: FULL_DATA_MAX_SIZE,
+    fileSize: uploadMaxBytes,
   },
   fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowed = [
@@ -33,7 +34,7 @@ export const datasetUpload = multer({
 export const submissionUpload = multer({
   storage,
   limits: {
-    fileSize: FULL_DATA_MAX_SIZE,
+    fileSize: uploadMaxBytes,
   },
 }).fields([
   { name: "sampleFile", maxCount: 1 },
