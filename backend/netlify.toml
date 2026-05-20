@@ -17,6 +17,9 @@
   NETLIFY = "true"
   # Install devDependencies (typescript, shx, tsc-alias) during `npm ci`
   NPM_CONFIG_PRODUCTION = "false"
+  # Public defaults / samples / TEAL artifacts — not leaked credentials (see Netlify secrets scanning)
+  SECRETS_SCAN_OMIT_PATHS = ".env.sample,src/config.ts,src/swagger/**,AlgoKit/**,.gitignore,dist/**"
+  SECRETS_SCAN_OMIT_KEYS = "FACILITATOR_URL,USDC_ASSET_ID,ALGORAND_INDEXER_URL,ALGORAND_TESTNET_URL,NODE_ENV,RATE_LIMIT_WINDOW_MS"
 
 [functions]
   node_bundler = "esbuild"

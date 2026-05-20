@@ -249,6 +249,8 @@ Use **two Netlify sites** from this monorepo (one repo, two base directories):
 4. `NETLIFY=true` is set in `netlify.toml` automatically → **~6 MB** request/upload limit (Netlify payload cap). Large dataset uploads need a dedicated host or direct Pinata workflow.
 5. Deploy. Test: `https://your-ide-api.netlify.app/healthz`
 
+If the build fails on **secrets scanning** (public testnet URLs, USDC ASA id, `.env.sample`), `backend/netlify.toml` already sets `SECRETS_SCAN_OMIT_PATHS` / `SECRETS_SCAN_OMIT_KEYS`. Commit that file before redeploying.
+
 ### Frontend site (Next.js)
 
 1. **Second Netlify site** → same repo → **Base directory:** `frontend`.
