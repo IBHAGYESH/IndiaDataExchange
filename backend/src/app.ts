@@ -143,6 +143,24 @@ export class App {
         limit: appConfig.http.bodySizeLimit,
       })
     );
+    // Express 5 + serverless-http v3: body-parser skips when socket.readable=false,
+    // leaving req.body as a Buffer. v4 fixes via PassThrough; this parses that buffer.
+    if (appConfig.isServerless) {
+      this.app.use((req: Request, _res: Response, next: NextFunction) => {
+        const body = req.body as unknown;
+        if (Buffer.isBuffer(body)) {
+          const contentType = String(req.headers["content-type"] || "");
+          if (contentType.includes("application/json")) {
+            try {
+              req.body = JSON.parse(body.toString("utf8")) as Record<string, unknown>;
+            } catch {
+              req.body = {};
+            }
+          }
+        }
+        next();
+      });
+    }
     this.app.use(cookieParser());
   }
 
