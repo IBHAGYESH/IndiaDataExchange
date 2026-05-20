@@ -241,7 +241,7 @@ Use **two Netlify sites** from this monorepo (one repo, two base directories):
 ### Backend site (API)
 
 1. Netlify → **Add new site** → Import repo → **Base directory:** `backend`.
-2. Build command / publish are read from `backend/netlify.toml` (`npm ci && npm run build`, functions in `netlify/functions/`).
+2. Build command / publish are read from `backend/netlify.toml` (`npm ci && npm run build`, functions in `netlify/functions/`). `NPM_CONFIG_PRODUCTION=false` ensures TypeScript build tools install.
 3. In **Site configuration → Environment variables**, copy every key from `backend/.env.sample`. **Required for production:**
    - `MONGODB_URI` — use **MongoDB Atlas** (serverless cannot use `localhost`).
    - `JWT_SECRET`, Pinata keys, `ADMIN_WALLET_ADDRESS`, Algorand URLs, `USDC_ASSET_ID`, `FACILITATOR_URL`, `BOUNTY_CONTRACT_APP_ID`.

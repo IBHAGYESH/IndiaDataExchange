@@ -15,7 +15,8 @@
 [build.environment]
   NODE_VERSION = "20"
   NETLIFY = "true"
-  NODE_ENV = "production"
+  # Install devDependencies (typescript, shx, tsc-alias) during `npm ci`
+  NPM_CONFIG_PRODUCTION = "false"
 
 [functions]
   node_bundler = "esbuild"
