@@ -254,10 +254,11 @@ If the build fails on **secrets scanning** (public testnet URLs, USDC ASA id, `.
 ### Frontend site (Next.js)
 
 1. **Second Netlify site** → same repo → **Base directory:** `frontend`.
-2. Env vars from `frontend/.env.local.sample`:
+2. **Publish directory:** leave empty in the UI, or set to `.next` — `frontend/netlify.toml` sets `publish = ".next"`. Do **not** set publish to `frontend` or `.` (same as base → plugin error).
+3. Env vars from `frontend/.env.local.sample`:
    - **`NEXT_PUBLIC_API_BASE_URL`** = backend site URL from step 5 above.
    - `NEXT_PUBLIC_ALGORAND_NETWORK`, `NEXT_PUBLIC_USDC_ASSET_ID`, `NEXT_PUBLIC_PINATA_GATEWAY`.
-3. Deploy. Open the frontend URL and connect Pera (testnet).
+4. Deploy. Open the frontend URL and connect Pera (testnet).
 
 ### Local vs Netlify
 
