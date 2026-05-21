@@ -10,10 +10,10 @@ India Data Exchange (IDE) is a **decentralized data marketplace** on **Algorand*
 
 _Production deployment (Netlify + custom domains)._
 
-| Resource                   | URL                                                                 |
-| -------------------------- | ------------------------------------------------------------------- |
-| **Marketplace (frontend)** | [https://indiadataexchange.ibhagyesh.com](https://indiadataexchange.ibhagyesh.com/) |
-| **API (backend)**          | [https://ideapi.ibhagyesh.com](https://ideapi.ibhagyesh.com)        |
+| Resource                   | URL                                                                                                            |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Marketplace (frontend)** | [https://indiadataexchange.ibhagyesh.com](https://indiadataexchange.ibhagyesh.com/)                            |
+| **API (backend)**          | [https://ideapi.ibhagyesh.com](https://ideapi.ibhagyesh.com)                                                   |
 | **BountyEscrow (testnet)** | [https://lora.algokit.io/testnet/application/758618118](https://lora.algokit.io/testnet/application/758618118) |
 
 _Local development:_ frontend `http://localhost:3000`, API `http://localhost:5001` (see [Quick Start](#-quick-start-core-app)).
@@ -238,10 +238,10 @@ Netlify does **not** run a 24/7 Node server. The **backend** runs as a **serverl
 
 Use **two Netlify sites** from this monorepo (one repo, two base directories):
 
-| Site | Base directory | Config file | Role |
-| ---- | -------------- | ----------- | ---- |
-| **IDE API** | `backend` | `backend/netlify.toml` | Express → `/.netlify/functions/api` |
-| **IDE Web** | `frontend` | `frontend/netlify.toml` | Next.js marketplace |
+| Site        | Base directory | Config file             | Role                                |
+| ----------- | -------------- | ----------------------- | ----------------------------------- |
+| **IDE API** | `backend`      | `backend/netlify.toml`  | Express → `/.netlify/functions/api` |
+| **IDE Web** | `frontend`     | `frontend/netlify.toml` | Next.js marketplace                 |
 
 ### Backend site (API)
 
@@ -267,12 +267,12 @@ If the build fails on **secrets scanning** (public testnet URLs, USDC ASA id, `.
 
 ### Local vs Netlify
 
-| | Local (`npm run dev`) | Netlify API |
-| - | --------------------- | ----------- |
-| Process | Long-running Node | Lambda per request |
-| MongoDB | Local or Atlas | **Atlas** recommended |
-| Upload limit | Up to 500 MB (config) | **~6 MB** per request |
-| Entry | `src/index.ts` | `netlify/functions/api.ts` → `dist/lambda.js` |
+|              | Local (`npm run dev`) | Netlify API                                   |
+| ------------ | --------------------- | --------------------------------------------- |
+| Process      | Long-running Node     | Lambda per request                            |
+| MongoDB      | Local or Atlas        | **Atlas** recommended                         |
+| Upload limit | Up to 500 MB (config) | **~6 MB** per request                         |
+| Entry        | `src/index.ts`        | `netlify/functions/api.ts` → `dist/lambda.js` |
 
 **MCP** and **AI-Agent** demos still run on a **long-running** host (Railway, Render, Fly.io, or local)—not on this Netlify API function bundle.
 
@@ -284,60 +284,60 @@ Copy from each package’s `**.env.sample**` / `**.env.example**`. Never commit 
 
 ### Backend — `backend/.env`
 
-| Variable                                  | Required         | Description                                                                                       |
-| ----------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------- |
-| `PORT`                                    | Yes              | HTTP port (sample: **5001**).                                                                     |
-| `NODE_ENV`                                | No               | e.g. `development` / `production`.                                                                |
+| Variable                                  | Required           | Description                                                                                  |
+| ----------------------------------------- | ------------------ | -------------------------------------------------------------------------------------------- |
+| `PORT`                                    | Yes                | HTTP port (sample: **5001**).                                                                |
+| `NODE_ENV`                                | No                 | e.g. `development` / `production`.                                                           |
 | `API_PUBLIC_BASE_URL`                     | **Yes on Netlify** | Public API URL — production: `https://ideapi.ibhagyesh.com`; local: `http://localhost:5001`. |
-| `NETLIFY`                                 | Auto on Netlify  | Set in `backend/netlify.toml`; enables serverless upload/body limits. |
-| `MONGODB_URI`                             | Yes              | Mongo connection string.                                                                          |
-| `JWT_SECRET`                              | Yes              | Min ~32 chars; signs SIWA session JWT.                                                            |
-| `JWT_EXPIRES_IN`                          | No               | e.g. `7d`.                                                                                        |
-| `ALGORAND_TESTNET_URL`                    | Yes              | Algod REST (e.g. Algonode testnet).                                                               |
-| `ALGORAND_INDEXER_URL`                    | Yes              | Indexer base URL (testnet).                                                                       |
-| `USDC_ASSET_ID`                           | Yes              | Testnet USDC ASA ID (sample **10458941**).                                                        |
-| `BOUNTY_CONTRACT_APP_ID`                  | Yes for bounties | Deployed **BountyEscrow** app ID; use `0` only if you skip bounties.                              |
-| `PINATA_API_KEY`                          | Yes              | Pinata API key.                                                                                   |
-| `PINATA_API_SECRET`                       | Yes              | Pinata API secret.                                                                                |
-| `PINATA_GATEWAY_TOKEN`                    | Yes              | JWT for **private** gateway / signed retrieval (Pinata dashboard).                                |
-| `FACILITATOR_URL`                         | Yes              | x402 facilitator (sample: GoPlausible).                                                           |
-| `ADMIN_WALLET_ADDRESS`                    | Yes              | Algorand address with **admin** API access.                                                       |
-| `PLATFORM_FEE_PERCENTAGE`                 | No               | Optional platform fee (sample `0`).                                                               |
-| `RATE_LIMIT_WINDOW_MS` / `RATE_LIMIT_MAX` | No               | Throttling windows.                                                                               |
+| `NETLIFY`                                 | Auto on Netlify    | Set in `backend/netlify.toml`; enables serverless upload/body limits.                        |
+| `MONGODB_URI`                             | Yes                | Mongo connection string.                                                                     |
+| `JWT_SECRET`                              | Yes                | Min ~32 chars; signs SIWA session JWT.                                                       |
+| `JWT_EXPIRES_IN`                          | No                 | e.g. `7d`.                                                                                   |
+| `ALGORAND_TESTNET_URL`                    | Yes                | Algod REST (e.g. Algonode testnet).                                                          |
+| `ALGORAND_INDEXER_URL`                    | Yes                | Indexer base URL (testnet).                                                                  |
+| `USDC_ASSET_ID`                           | Yes                | Testnet USDC ASA ID (sample **10458941**).                                                   |
+| `BOUNTY_CONTRACT_APP_ID`                  | Yes for bounties   | Deployed **BountyEscrow** app ID; use `0` only if you skip bounties.                         |
+| `PINATA_API_KEY`                          | Yes                | Pinata API key.                                                                              |
+| `PINATA_API_SECRET`                       | Yes                | Pinata API secret.                                                                           |
+| `PINATA_GATEWAY_TOKEN`                    | Yes                | JWT for **private** gateway / signed retrieval (Pinata dashboard).                           |
+| `FACILITATOR_URL`                         | Yes                | x402 facilitator (sample: GoPlausible).                                                      |
+| `ADMIN_WALLET_ADDRESS`                    | Yes                | Algorand address with **admin** API access.                                                  |
+| `PLATFORM_FEE_PERCENTAGE`                 | No                 | Optional platform fee (sample `0`).                                                          |
+| `RATE_LIMIT_WINDOW_MS` / `RATE_LIMIT_MAX` | No                 | Throttling windows.                                                                          |
 
 ### Frontend — `frontend/.env.local`
 
-| Variable                       | Required | Description                                                                   |
-| ------------------------------ | -------- | ----------------------------------------------------------------------------- |
+| Variable                       | Required | Description                                                                                  |
+| ------------------------------ | -------- | -------------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_API_BASE_URL`     | Yes      | IDE API origin — production: `https://ideapi.ibhagyesh.com`; local: `http://localhost:5001`. |
-| `NEXT_PUBLIC_ALGORAND_NETWORK` | Yes      | e.g. `testnet`.                                                               |
-| `NEXT_PUBLIC_USDC_ASSET_ID`    | Yes      | Same ASA as backend.                                                          |
-| `NEXT_PUBLIC_PINATA_GATEWAY`   | Yes      | Public IPFS gateway prefix for samples (e.g. Pinata gateway).                 |
+| `NEXT_PUBLIC_ALGORAND_NETWORK` | Yes      | e.g. `testnet`.                                                                              |
+| `NEXT_PUBLIC_USDC_ASSET_ID`    | Yes      | Same ASA as backend.                                                                         |
+| `NEXT_PUBLIC_PINATA_GATEWAY`   | Yes      | Public IPFS gateway prefix for samples (e.g. Pinata gateway).                                |
 
 ### MCP server — `MCPServer/.env`
 
-| Variable           | Required | Description                                                        |
-| ------------------ | -------- | ------------------------------------------------------------------ |
+| Variable           | Required | Description                                                                                          |
+| ------------------ | -------- | ---------------------------------------------------------------------------------------------------- |
 | `IDE_API_BASE_URL` | Yes      | IDE **backend** origin — production: `https://ideapi.ibhagyesh.com`; local: `http://localhost:5001`. |
-| `PORT`             | No       | Default **5056**.                                                  |
-| `BIND_HOST`        | No       | See MCP README (`0.0.0.0` for PaaS).                               |
-| `MCP_API_KEY`      | No       | If set, clients send `Authorization: Bearer` or `X-MCP-API-Key`.   |
+| `PORT`             | No       | Default **5056**.                                                                                    |
+| `BIND_HOST`        | No       | See MCP README (`0.0.0.0` for PaaS).                                                                 |
+| `MCP_API_KEY`      | No       | If set, clients send `Authorization: Bearer` or `X-MCP-API-Key`.                                     |
 
 ### AI Agent demo — `testing/AI-Agent-x402demo/server/.env`
 
-| Variable                                          | Required | Description                                                         |
-| ------------------------------------------------- | -------- | ------------------------------------------------------------------- |
-| `PORT`                                            | No       | Default **5055**.                                                   |
-| `CORS_ORIGIN`                                     | No       | Vite origin (sample `http://localhost:5173`).                       |
-| `IDE_API_BASE_URL`                                | Yes      | IDE API — **x402** `GET .../api/datasets/:id/download` — production: `https://ideapi.ibhagyesh.com`. |
-| `IDE_MCP_BASE_URL`                                | Yes      | MCP server (**no** trailing slash).                                 |
-| `IDE_MCP_API_KEY`                                 | No       | Must match `MCPServer` `MCP_API_KEY` if enabled.                    |
+| Variable                                          | Required | Description                                                                                                                   |
+| ------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`                                            | No       | Default **5055**.                                                                                                             |
+| `CORS_ORIGIN`                                     | No       | Vite origin (sample `http://localhost:5173`).                                                                                 |
+| `IDE_API_BASE_URL`                                | Yes      | IDE API — **x402** `GET .../api/datasets/:id/download` — production: `https://ideapi.ibhagyesh.com`.                          |
+| `IDE_MCP_BASE_URL`                                | Yes      | MCP server (**no** trailing slash).                                                                                           |
+| `IDE_MCP_API_KEY`                                 | No       | Must match `MCPServer` `MCP_API_KEY` if enabled.                                                                              |
 | `IDE_FRONTEND_BASE_URL`                           | No       | Marketplace for “view listing” links — production: `https://indiadataexchange.ibhagyesh.com`; local: `http://localhost:3000`. |
-| `OPENAI_API_KEY`                                  | Yes      | OpenAI API key (`gpt-4o-mini` usage).                               |
-| `AGENT_ALGOD_MNEMONIC` **or** `AGENT_PRIVATE_KEY` | Yes      | **Buyer** wallet for x402 (base64 64-byte secret if using key).     |
-| `MAX_DATASET_PRICE_USDC`                          | No       | Caps candidate prices passed to the LLM.                            |
-| `MAX_DOWNLOAD_BYTES`                              | No       | Cap bytes read from purchased file.                                 |
-| `MCP_LIST_DATASETS_LIMIT`                         | No       | Page size for `ide_list_datasets`.                                  |
+| `OPENAI_API_KEY`                                  | Yes      | OpenAI API key (`gpt-4o-mini` usage).                                                                                         |
+| `AGENT_ALGOD_MNEMONIC` **or** `AGENT_PRIVATE_KEY` | Yes      | **Buyer** wallet for x402 (base64 64-byte secret if using key).                                                               |
+| `MAX_DATASET_PRICE_USDC`                          | No       | Caps candidate prices passed to the LLM.                                                                                      |
+| `MAX_DOWNLOAD_BYTES`                              | No       | Cap bytes read from purchased file.                                                                                           |
+| `MCP_LIST_DATASETS_LIMIT`                         | No       | Page size for `ide_list_datasets`.                                                                                            |
 
 ### AI Agent web — `testing/AI-Agent-x402demo/web/.env`
 
@@ -445,8 +445,8 @@ If this work helped you ship a demo, integration, or product idea, a ⭐ on the 
 
 Built and maintained by **Bhagyesh Jahangirpuria**.
 
-- 🌐 Website: [https://ibhagyesh.site](https://ibhagyesh.site)
-- 🔗 LinkedIn: [https://in.linkedin.com/in/bhagyesh-jahangirpuria](https://in.linkedin.com/in/bhagyesh-jahangirpuria)
+- 🌐 Website: [https://ibhagyesh.com](https://ibhagyesh.com)
+- 🔗 LinkedIn: [https://in.linkedin.com/in/ibhagyesh](https://in.linkedin.com/in/ibhagyesh)
 
 **Open to collaborations, feedback, and consulting on Algorand, data marketplaces, and agentic payments.**
 
